@@ -1,5 +1,4 @@
 
-
 BOOL    "boolean"
 BOOLLIT "true"|"false"
 CLASS   "class" 
@@ -41,17 +40,19 @@ ASSIGN  "="
 SEMI    ";" 
 COMMA   ","
 
-RESERVED    "++"|"--"|null|abstract|continue|for|new|switch|assert|default|package|synchronized|goto|private|this|break|implements|protected|throw|byte|else|import|throws|case|enum|instanceof|return|transient|catch|extends|short|try|final|interface|finally|long|strictfp|volatile|const|native|super|char|float    
+RESERVED    "++"|"--"|null|abstract|continue|for|new|switch|assert|default|package|synchronized|goto|private|this|break|implements|protected|throw|byte|import|throws|case|enum|instanceof|return|transient|catch|extends|short|try|final|interface|finally|long|strictfp|volatile|const|native|super|char|float    
 
 ID  [a-zA-Z_$]([a-zA-Z_$0-9])* 
 
-DECLIT  0 | [0-9]+ | [1-9]+_[0-9]+  
+NUMERO  [0-9]+(_*[0-9]+)*
 
-REALLIT [0-9]+"." ([0-9]+ | [eE] | [0-9]+[eE] )
+DECLIT 0|[1-9][0-9]*|{[1-9]+(_*[0-9]+)*}
+
+REALLIT ({NUMERO})* "."? {NUMERO} ([Ee])? ([+-][{NUMERO}])?
 
 %%
 
-
+{DECLIT}    {printf("DECLIT\n");}
 
 %%
 int main(int argc, char *argv[]){
