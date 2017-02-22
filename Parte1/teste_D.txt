@@ -1,0 +1,9 @@
+continue
+float
+++
+--
+null
+ola 
+esta
+tudo
+bem
