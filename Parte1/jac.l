@@ -51,8 +51,51 @@ DECLIT 0|[1-9][0-9]*|{[1-9]+(_*[0-9]+)*}
 REALLIT ({NUMERO})* "."? {NUMERO} ([Ee])? ([+-][{NUMERO}])?
 
 %%
+ 
+{OCURV}     {printf("OCURV");}
+{CCURV}     {printf("CCURV");}
+{OBRACE}    {printf("OBRACE");}
+{CBRACE}    {printf("CBRACE");}
+{OSQUARE}   {printf("OSQUARE");}
+{CSQUARE}   {printf("CSQUARE");}
+{AND}       {printf("AND");}
+{OR}        {printf("OR");}
+{LT}        {printf("LT");}
+{GT}        {printf("GT");}
+{EQ}        {printf("EQ");}
+{NEQ}       {printf("NEQ");}
+{LEQ}       {printf("LEQ");} 
+{GEQ}       {printf("GEQ");}
+{PLUS}      {printf("PLUS");}
+{MINUS}     {printf("MINUS");}
+{STAR}      {printf("STAR");}
+{DIV}       {printf("DIV");}
+{MOD}       {printf("MOD");}
+{NOT}       {printf("NOT");}
+{ASSIGN}    {printf("ASSIGN");}
+{SEMI}      {printf("SEMI");}
+{COMMA}     {printf("COMMA");}
 
-{DECLIT}    {printf("DECLIT\n");}
+{BOOL}          {printf("BOOL");}
+{BOOLLIT}       {printf("BOOLLIT");}
+{CLASS}         {printf("CLASS");}
+{DO}            {printf("DO");}
+{DOTLENGTH}     {printf("DOTLENGTH");}
+{DOUBLE}        {printf("DOUBLE");}
+{ELSE}          {printf("ELSE");}
+{IF}            {printf("IF");}
+{INT}           {printf("INT");}
+{PARSEINT}      {printf("PARSEINT");}
+{PRINT}         {printf("PRINT");}
+{PUBLIC}        {printf("PUBLIC");}
+{RETURN}        {printf("RETURN");}
+{STATIC}        {printf("STATIC");}
+{STRING}        {printf("STRING");}
+{VOID}          {printf("VOID");}
+{WHILE}         {printf("WHILE");}
+
+{RESERVED}  {printf("RESERVED(%s)", yytext);}
+
 
 %%
 int main(int argc, char *argv[]){
