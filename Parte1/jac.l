@@ -1,3 +1,18 @@
+%{
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+
+    /*as colunas e as linhas começam em 1*/
+    int lineNum = 1;
+    int columnNum = 1;
+
+    /*contador para as linhas dos comentários*/
+    int commentLineNum = 1;
+    int commenyColumnNum = 1;
+%}
+
+%X COMMENTS
 
 BOOL    "boolean"
 BOOLLIT "true"|"false"
@@ -44,59 +59,71 @@ RESERVED    "++"|"--"|null|abstract|continue|for|new|switch|assert|default|packa
 
 ID  [a-zA-Z_$]([a-zA-Z_$0-9])* 
 
-NUMERO  [0-9]+(_*[0-9]+)*
+STRLIT \"(\\f|\\n|\\r|\\t|\\\\|\\)\"
 
 DECLIT 0|[1-9][0-9]*|{[1-9]+(_*[0-9]+)*}
 
-REALLIT ({NUMERO})* "."? {NUMERO} ([Ee])? ([+-][{NUMERO}])?
+NUMERO  [0-9]+(_*[0-9]+)*
+REALLIT (({NUMERO})*"."?({NUMERO})*([Ee])?([+-][{NUMERO}])?)
 
 %%
- 
-{OCURV}     {printf("OCURV");}
-{CCURV}     {printf("CCURV");}
-{OBRACE}    {printf("OBRACE");}
-{CBRACE}    {printf("CBRACE");}
-{OSQUARE}   {printf("OSQUARE");}
-{CSQUARE}   {printf("CSQUARE");}
-{AND}       {printf("AND");}
-{OR}        {printf("OR");}
-{LT}        {printf("LT");}
-{GT}        {printf("GT");}
-{EQ}        {printf("EQ");}
-{NEQ}       {printf("NEQ");}
-{LEQ}       {printf("LEQ");} 
-{GEQ}       {printf("GEQ");}
-{PLUS}      {printf("PLUS");}
-{MINUS}     {printf("MINUS");}
-{STAR}      {printf("STAR");}
-{DIV}       {printf("DIV");}
-{MOD}       {printf("MOD");}
-{NOT}       {printf("NOT");}
-{ASSIGN}    {printf("ASSIGN");}
-{SEMI}      {printf("SEMI");}
-{COMMA}     {printf("COMMA");}
 
-{BOOL}          {printf("BOOL");}
-{BOOLLIT}       {printf("BOOLLIT");}
-{CLASS}         {printf("CLASS");}
-{DO}            {printf("DO");}
-{DOTLENGTH}     {printf("DOTLENGTH");}
-{DOUBLE}        {printf("DOUBLE");}
-{ELSE}          {printf("ELSE");}
-{IF}            {printf("IF");}
-{INT}           {printf("INT");}
-{PARSEINT}      {printf("PARSEINT");}
-{PRINT}         {printf("PRINT");}
-{PUBLIC}        {printf("PUBLIC");}
-{RETURN}        {printf("RETURN");}
-{STATIC}        {printf("STATIC");}
-{STRING}        {printf("STRING");}
-{VOID}          {printf("VOID");}
-{WHILE}         {printf("WHILE");}
+"/*"                    {BEGIN COMMENTS; commentLineNum = lineNum; commenyColumnNum = columnNum; columnNum += yyleng;}
+<COMMENTS>"\n"          {lineNum++; columnNum = 1;} 
+<COMMENTS><<EOF>>       {printf("Line <%d>, col <%d>: unterminated comment\n", commentLineNum, commenyColumnNum); BEGIN 0;}
+<COMMENTS>"*/"          {columnNum += yyleng; BEGIN 0;}
+<COMMENTS>.             {columnNum += yyleng;}
 
-{RESERVED}  {printf("RESERVED(%s)", yytext);}
+{OCURV}     {columnNum += yyleng; printf("OCURV\n");}
+{CCURV}     {columnNum += yyleng; printf("CCURV\n");}
+{OBRACE}    {columnNum += yyleng; printf("OBRACE\n");}
+{CBRACE}    {columnNum += yyleng; printf("CBRACE\n");}
+{OSQUARE}   {columnNum += yyleng; printf("OSQUARE\n");}
+{CSQUARE}   {columnNum += yyleng; printf("CSQUARE\n");}
+{AND}       {columnNum += yyleng; printf("AND\n");}
+{OR}        {columnNum += yyleng; printf("OR\n");}
+{LT}        {columnNum += yyleng; printf("LT\n");}
+{GT}        {columnNum += yyleng; printf("GT\n");}
+{EQ}        {columnNum += yyleng; printf("EQ\n");}
+{NEQ}       {columnNum += yyleng; printf("NEQ\n");}
+{LEQ}       {columnNum += yyleng; printf("LEQ\n");} 
+{GEQ}       {columnNum += yyleng; printf("GEQ\n");}
+{PLUS}      {columnNum += yyleng; printf("PLUS\n");}
+{MINUS}     {columnNum += yyleng; printf("MINUS\n");}
+{STAR}      {columnNum += yyleng; printf("STAR\n");}
+{DIV}       {columnNum += yyleng; printf("DIV\n");}
+{MOD}       {columnNum += yyleng; printf("MOD\n");}
+{NOT}       {columnNum += yyleng; printf("NOT\n");}
+{ASSIGN}    {columnNum += yyleng; printf("ASSIGN\n");}
+{SEMI}      {columnNum += yyleng; printf("SEMI\n");}
+{COMMA}     {columnNum += yyleng; printf("COMMA\n");}
+
+{BOOL}          {columnNum += yyleng; printf("BOOL\n");}
+{BOOLLIT}       {columnNum += yyleng; printf("BOOLLIT\n");}
+{CLASS}         {columnNum += yyleng; printf("CLASS\n");}
+{DO}            {columnNum += yyleng; printf("DO\n");}
+{DOTLENGTH}     {columnNum += yyleng; printf("DOTLENGTH\n");}
+{DOUBLE}        {columnNum += yyleng; printf("DOUBLE\n");}
+{ELSE}          {columnNum += yyleng; printf("ELSE\n");}
+{IF}            {columnNum += yyleng; printf("IF\n");}
+{INT}           {columnNum += yyleng; printf("INT\n");}
+{PARSEINT}      {columnNum += yyleng; printf("PARSEINT\n");}
+{PRINT}         {columnNum += yyleng; printf("PRINT\n");}
+{PUBLIC}        {columnNum += yyleng; printf("PUBLIC\n");}
+{RETURN}        {columnNum += yyleng; printf("RETURN\n");}
+{STATIC}        {columnNum += yyleng; printf("STATIC\n");}
+{STRING}        {columnNum += yyleng; printf("STRING\n");}
+{VOID}          {columnNum += yyleng; printf("VOID\n");}
+{WHILE}         {columnNum += yyleng; printf("WHILE\n");}
+
+{RESERVED}  {columnNum += yyleng; printf("RESERVED(%s)\n", yytext);}
 
 
+{ID}        {columnNum += yyleng; printf("ID(%s)\n", yytext);}
+
+{REALLIT}   {columnNum += yyleng; printf("REALLIT(%s)\n", yytext);}
+
+.  
 %%
 int main(int argc, char *argv[]){
     if(argc == 2){
