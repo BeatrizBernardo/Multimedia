@@ -61,10 +61,11 @@ ID  [a-zA-Z_$]([a-zA-Z_$0-9])*
 
 STRLIT \"(\\f|\\n|\\r|\\t|\\\\|\\)\"
 
-NUMERO	[1-9]+("_"*[0-9]+)*
+NUMEROS	[1-9]+("_"*[0-9]+)*
 
-DECLIT  [0-9]|{NUMERO}
+DECLIT  [0-9]|{NUMEROS}
 
+NUMERO	[0-9]+("_"*[0-9]+)*
 REALLIT (({NUMERO})*"."?({NUMERO})*([Ee])?([+-][{NUMERO}])?)
 
 %%
