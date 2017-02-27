@@ -59,14 +59,14 @@ RESERVED    "++"|"--"|null|abstract|continue|for|new|switch|assert|default|packa
 
 ID  [a-zA-Z_$]([a-zA-Z_$0-9])* 
 
-STRLIT \"(\\f|\\n|\\r|\\t|\\\\|\\)\"
+STRLIT \"(\\f|\\n|\\r|\\t|\\\\|\\)+\"*
 
 NUMEROS	[1-9]+("_"*[0-9]+)*
 
 DECLIT  [0-9]|{NUMEROS}
 
 NUMERO	[0-9]+("_"*[0-9]+)*
-REALLIT (({NUMERO})*"."?({NUMERO})*([Ee])?([+-][{NUMERO}])?)
+REALLIT (({NUMERO})*"."?({NUMERO})*([Ee])?([+-]{NUMERO})?)
 
 %%
 
@@ -122,10 +122,13 @@ REALLIT (({NUMERO})*"."?({NUMERO})*([Ee])?([+-][{NUMERO}])?)
 
 
 {ID}        {columnNum += yyleng; printf("ID(%s)\n", yytext);}
-
+{DECLIT}    {columnNum += yyleng; printf("DECLIT(%s)\n", yytext);}
 {REALLIT}   {columnNum += yyleng; printf("REALLIT(%s)\n", yytext);}
 
-[ \n]+|[ \r]+|[ \t]+|[ \f]+|[ \\] 	{columnNum += yyleng;}
+{STRLIT}    {columnNum += yyleng; printf("STRLIT(%s)\n", yytext);}
+
+[ \r]+|[ \t]+|[ \f]+|[ \\]+ 	{columnNum += yyleng;}
+[ \n]+      {lineNum++; columnNum = 1;}
 .  
 %%
 int main(int argc, char *argv[]){
