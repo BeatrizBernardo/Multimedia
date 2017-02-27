@@ -1,0 +1,9 @@
+"ola tudo bem?"
+"sim e contigo!"
+true
+false
+boolean
+
+if (6 < 3) {
+    return true;
+}
