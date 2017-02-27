@@ -61,9 +61,10 @@ ID  [a-zA-Z_$]([a-zA-Z_$0-9])*
 
 STRLIT \"(\\f|\\n|\\r|\\t|\\\\|\\)\"
 
-DECLIT 0|[1-9][0-9]*|{[1-9]+(_*[0-9]+)*}
+NUMERO	[1-9]+("_"*[0-9]+)*
 
-NUMERO  [0-9]+(_*[0-9]+)*
+DECLIT  [0-9]|{NUMERO}
+
 REALLIT (({NUMERO})*"."?({NUMERO})*([Ee])?([+-][{NUMERO}])?)
 
 %%
@@ -123,6 +124,7 @@ REALLIT (({NUMERO})*"."?({NUMERO})*([Ee])?([+-][{NUMERO}])?)
 
 {REALLIT}   {columnNum += yyleng; printf("REALLIT(%s)\n", yytext);}
 
+[ \n]+|[ \r]+|[ \t]+|[ \f]+|[ \\] 	{columnNum += yyleng;}
 .  
 %%
 int main(int argc, char *argv[]){
