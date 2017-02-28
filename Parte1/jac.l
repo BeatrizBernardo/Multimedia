@@ -9,10 +9,11 @@
 
     /*contador para as linhas dos comentários*/
     int commentLineNum = 1;
-    int commenyColumnNum = 1;
+    int commentColumnNum = 1;
 %}
 
 %X COMMENTS
+%X COMMENT
 
 BOOL    "boolean"
 BOOLLIT "true"|"false"
@@ -46,7 +47,7 @@ NEQ "!="
 LEQ "<=" 
 GEQ ">=" 
 PLUS    "+" 
-MINUS   "−" 
+MINUS   "-"
 STAR    "*" 
 DIV "/" 
 MOD "%" 
@@ -55,25 +56,38 @@ ASSIGN  "="
 SEMI    ";" 
 COMMA   ","
 
-RESERVED    "++"|"--"|null|abstract|continue|for|new|switch|assert|default|package|synchronized|goto|private|this|break|implements|protected|throw|byte|import|throws|case|enum|instanceof|return|transient|catch|extends|short|try|final|interface|finally|long|strictfp|volatile|const|native|super|char|float    
+RESERVED    "++"|"--"|null|abstract|continue|for|new|switch|assert|default|package|synchronized|goto|private|this|break|implements|protected|throw|byte|import|throws|case|enum|instanceof|return|transient|catch|extends|short|try|final|interface|finally|long|strictfp|volatile|const|native|super|char|float|System|Integer    
 
 ID  [a-zA-Z_$]([a-zA-Z_$0-9])* 
 
-STRLIT \"(\\f|\\n|\\r|\\t|\\\\|\\)\"
+ESC	(\\f|\\n|\\r|\\t|\\\\|\\)
+NOTESC	([^\n|\t|\r|\f|\|\\])
+STR1	{ESC}*
+STR2	{NOTESC}*
+STR3	{NOTESC}*{ESC}*
+STR4	{ESC}*{NOTESC}*
+STR5	{ESC}*{NOTESC}*{ESC}*
+STR6	{NOTESC}*{ESC}*{NOTESC}*
 
-NUMERO	[1-9]+("_"*[0-9]+)*
+STRLIT \"({STR1}|{STR2}|{STR3}|{STR4}|{STR5}|{STR6})*\"
 
-DECLIT  [0-9]|{NUMERO}
+NUMEROS	[1-9]+("_"*[0-9]+)*
+DECLIT  [0-9]|{NUMEROS}
 
-REALLIT (({NUMERO})*"."?({NUMERO})*([Ee])?([+-][{NUMERO}])?)
+NUMERO	[0-9]+("_"*[0-9]+)*
+REALLIT (({NUMERO})*"."?({NUMERO})*([Ee])?([+-]{NUMERO})?)
 
 %%
 
-"/*"                    {BEGIN COMMENTS; commentLineNum = lineNum; commenyColumnNum = columnNum; columnNum += yyleng;}
+"/*"                    {BEGIN COMMENTS; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
 <COMMENTS>"\n"          {lineNum++; columnNum = 1;} 
-<COMMENTS><<EOF>>       {printf("Line <%d>, col <%d>: unterminated comment\n", commentLineNum, commenyColumnNum); BEGIN 0;}
+<COMMENTS><<EOF>>       {printf("Line <%d>, col <%d>: unterminated comment\n", commentLineNum, commentColumnNum); BEGIN 0;}
 <COMMENTS>"*/"          {columnNum += yyleng; BEGIN 0;}
 <COMMENTS>.             {columnNum += yyleng;}
+
+"//"					{BEGIN COMMENT; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
+<COMMENT>"\n"           {lineNum++; columnNum = 1; BEGIN 0;} 
+<COMMENT>.          	{columnNum += yyleng;}
 
 {OCURV}     {columnNum += yyleng; printf("OCURV\n");}
 {CCURV}     {columnNum += yyleng; printf("CCURV\n");}
@@ -100,7 +114,7 @@ REALLIT (({NUMERO})*"."?({NUMERO})*([Ee])?([+-][{NUMERO}])?)
 {COMMA}     {columnNum += yyleng; printf("COMMA\n");}
 
 {BOOL}          {columnNum += yyleng; printf("BOOL\n");}
-{BOOLLIT}       {columnNum += yyleng; printf("BOOLLIT\n");}
+{BOOLLIT}       {columnNum += yyleng; printf("BOOLLIT(%s)\n", yytext);}
 {CLASS}         {columnNum += yyleng; printf("CLASS\n");}
 {DO}            {columnNum += yyleng; printf("DO\n");}
 {DOTLENGTH}     {columnNum += yyleng; printf("DOTLENGTH\n");}
@@ -121,10 +135,13 @@ REALLIT (({NUMERO})*"."?({NUMERO})*([Ee])?([+-][{NUMERO}])?)
 
 
 {ID}        {columnNum += yyleng; printf("ID(%s)\n", yytext);}
-
+{DECLIT}    {columnNum += yyleng; printf("DECLIT(%s)\n", yytext);}
 {REALLIT}   {columnNum += yyleng; printf("REALLIT(%s)\n", yytext);}
 
-[ \n]+|[ \r]+|[ \t]+|[ \f]+|[ \\] 	{columnNum += yyleng;}
+{STRLIT}    {columnNum += yyleng; printf("STRLIT(%s)\n", yytext);}
+
+[ \r]+|[ \t]+|[ \f]+|[ \\]+[ \\\\]+ 	{columnNum += yyleng;}
+[ \n]+      {lineNum++; columnNum = 1;}
 .  
 %%
 int main(int argc, char *argv[]){
