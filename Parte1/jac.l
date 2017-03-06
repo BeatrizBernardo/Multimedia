@@ -10,10 +10,9 @@
     /*contador para as linhas dos comentários*/
     int commentLineNum = 1;
     int commentColumnNum = 1;
-
-    /*contador para unterminated strings*/
-    int stringColumnNum = 1;
-    int stringLineNum = 1;
+    
+    int invLineNum = 1;
+    int invColumnNum = 1;
 %}
 
 %X COMMENTS
@@ -68,40 +67,35 @@ ID  [a-zA-Z_$]([a-zA-Z_$0-9])*
 ESC	\\[fnrt\"\\]
 NOTESC	[^\n\r\"\\]
 
-STRLIT      \"({ESC}|{NOTESC})*\"
-UNTSTRLIT   \"({ESC}|{NOTESC})*
-INVSTRLIT   \"({ESC}|{NOTESC}|\\.)*\"
+NOTESC2 \\[^\"\nfnrt\\]?
+
+STRLIT \"({ESC}|{NOTESC})*\"
 
 NUMEROS	[1-9]([0-9_]*[0-9])?
 DECLIT  0|{NUMEROS}
 
 NUMERO	[0-9]([0-9_]*[0-9])*
-EXP		[Ee][+-]?{NUMERO}
+EXP	[Ee][+-]?{NUMERO}
 REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\.{NUMERO})|({NUMERO}\.{NUMERO}?{EXP}?))
 
 %%
 
+\"								{BEGIN INVSTR; invLineNum = lineNum; invColumnNum = columnNum; columnNum += yyleng;}
+<INVSTR>{STRLIT}\"				{BEGIN 0; columnNum += yyleng; if(aux==1){printf("STRLIT(\"%s)\n",yytext);}}
+<INVSTR>({ESC}+|{NOTESC}+)		{columnNum+=yyleng;}
+<INVSTR>{NOTESC2}               {printf("Line %d, col %d: invalid escape sequence (%s)\n", lineNum, columnNum, yytext); columnNum+=yyleng;}
+<INVSTR>{NOTESC2}|("\n"|"\r"|"\r\n")   	{printf("Line %d, col %d: unterminated string literal\n", lineNum, invColumnNum); lineNum++; columnNum = 1; BEGIN 0;}
+<INVSTR>\"							   	{BEGIN 0;}
+
 "/*"                                {BEGIN COMMENTS; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
 <COMMENTS><<EOF>>                   {printf("Line %d, col %d: unterminated comment\n", commentLineNum, commentColumnNum); BEGIN 0;}
 <COMMENTS>"\n"|"\r"|"\r\n"          {lineNum++; columnNum = 1;} 
-<COMMENTS>.                         {columnNum += yyleng;}
+<COMMENTS>.                        	 {columnNum += yyleng;}
 <COMMENTS>"*/"                      {columnNum += yyleng; BEGIN 0;}
 
-"//"					            {BEGIN COMMENT; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
-<COMMENT>.          	            {columnNum += yyleng;}
+"//"				    {BEGIN COMMENT; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
 <COMMENT>"\n"|"\r"|"\r\n"           {lineNum++; columnNum = 1; BEGIN 0;} 
-
-\"		                            {BEGIN INVSTR; stringColumnNum = columnNum; stringLineNum = lineNum; columnNum += yyleng;}
-<INVSTR>{ESC}|{NOTESC}		        {columnNum += yyleng;}
-<INVSTR>\\[^\"\nfnrt\\]?            {printf("Line %d, col %d: invalid escape sequence (%s)\n", lineNum, columnNum, yytext); columnNum += yyleng; BEGIN 0;}
-<INVSTR>"\n"|"\r"|"\r\n"{NOTESC}*   {printf("Line %d, col %d: unterminated string literal\n", stringLineNum, stringColumnNum); lineNum++; columnNum = 1; BEGIN 0;}
-<INVSTR><<EOF>>						{printf("Line %d, col %d: unterminated string literal\n", stringLineNum, stringColumnNum); lineNum++; BEGIN 0;}
-<INVSTR>\"                          {columnNum += yyleng; BEGIN 0;}
-<INVSTR>\\[^\"\nfnrt\\]?{ESC}|{NOTESC} 		{columnNum += yyleng;}
-<INVSTR>\\[^\"\nfnrt\\]?\\[^\"\nfnrt\\]? 	{printf("Line %d, col %d: invalid escape sequence (%s)\n", lineNum,columnNum,yytext);columnNum += yyleng;}
-<INVSTR>\\[^\"\nfnrt\\]?\" 					{BEGIN 0;}
-<INVSTR>\\[^\"\nfnrt\\]?"\n"|"\r"|"\r\n"{NOTESC}* 	{printf("Line %d, col %d: unterminated string literal\n", lineNum, columnNum); lineNum++; columnNum = 1; BEGIN 0;}
-
+<COMMENT>.          	            {columnNum += yyleng;}
 
 {OCURV}     {columnNum += yyleng; if(aux==1){printf("OCURV\n");}}
 {CCURV}     {columnNum += yyleng; if(aux==1){printf("CCURV\n");}}
@@ -147,22 +141,26 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
 
 {RESERVED}  {columnNum += yyleng; if(aux==1){printf("RESERVED(%s)\n", yytext);}}
 
+
 {ID}        {columnNum += yyleng; if(aux==1){printf("ID(%s)\n", yytext);}}
 {DECLIT}    {columnNum += yyleng; if(aux==1){printf("DECLIT(%s)\n", yytext);}}
 {REALLIT}   {columnNum += yyleng; if(aux==1){printf("REALLIT(%s)\n", yytext);}}
 
-{STRLIT}        {columnNum += yyleng; if(aux==1){printf("STRLIT(%s)\n", yytext);}}
+{STRLIT}    {columnNum += yyleng; if(aux==1){printf("STRLIT(%s)\n", yytext);}}
 
+"\t"|"\f"|" " 	{columnNum += yyleng;}
+"\n"|"\r"|"\r\n"      {lineNum++; columnNum = 1;}
 
-"\t"|"\f"|" " 	        {columnNum += yyleng;}
-"\n"|"\r"|"\r\n"        {lineNum++; columnNum = 1;}
-.				        {printf("Line %d, col %d: illegal character (%c)\n", lineNum, columnNum, yytext[0]); columnNum+=yyleng;}  
+.		{printf("Line %d, col %d: illegal character (%c)\n", lineNum, columnNum, yytext[0]); columnNum+=yyleng;} 
+
 %%
 int main(int argc, char *argv[]){
     if(argc == 2){
-        if(strcmp(argv[1], "-l") == 0 || strcmp(argv[1], "-1") == 0){
+        if(strcmp(argv[1], "-l") == 0){
             /*deve mostrar o resultado*/
             aux=1;
+        } else if(strcmp(argv[1], "-1") == 0){
+        
         }
     }
     yylex();
