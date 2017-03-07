@@ -1,0 +1,18 @@
+"isto e completo"
+"isto e nao terminado
+                "isto e nao terminado
+"isto e outro \r
+"\aaaa"
+"\\ 
+"\x \r \y"
+"sidsdjosdk \"
+"mofdgefn\n"
+"gfjgfdj\r"
+"\p
+"BLA \p"
+"BLA \p
+"BLA \p
+"dfko \ \n
+"isto"
+"\n"
+"\ "
