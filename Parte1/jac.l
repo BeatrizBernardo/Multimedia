@@ -11,7 +11,6 @@
     int commentLineNum = 1;
     int commentColumnNum = 1;
     
-    int invLineNum = 1;
     int invColumnNum = 1;
 %}
 
@@ -67,7 +66,7 @@ ID  [a-zA-Z_$]([a-zA-Z_$0-9])*
 ESC	\\[fnrt\"\\]
 NOTESC	[^\n\r\"\\]
 
-NOTESC2 \\[^\"\nfnrt\\]?
+NOTESC2 \\[^\n\r]?
 
 STRLIT \"({ESC}|{NOTESC})*\"
 
@@ -80,6 +79,12 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
 
 %%
 
+\"				{BEGIN INVSTR; columnNum += yyleng; invColumnNum = columnNum-1;}
+<INVSTR>\"		{BEGIN 0; columnNum += yyleng;}
+			
+<INVSTR>({ESC}|{NOTESC})		        {columnNum+=yyleng;}
+<INVSTR>{NOTESC2}                 {printf("Line %d, col %d: invalid escape sequence (%s)\n", lineNum, columnNum, yytext); columnNum+=yyleng;}
+<INVSTR>("\n"|"\r"|"\r\n")            {printf("Line %d, col %d: unterminated string literal\n", lineNum, invColumnNum); lineNum++; columnNum = 1; BEGIN 0;}
 
 "/*"                                {BEGIN COMMENTS; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
 <COMMENTS><<EOF>>                   {printf("Line %d, col %d: unterminated comment\n", commentLineNum, commentColumnNum); BEGIN 0;}
@@ -141,12 +146,6 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
 {REALLIT}   {columnNum += yyleng; if(aux==1){printf("REALLIT(%s)\n", yytext);}}
 
 {STRLIT}    {columnNum += yyleng; if(aux==1){printf("STRLIT(%s)\n", yytext);}}
-\"								{BEGIN INVSTR; invLineNum = lineNum; invColumnNum = columnNum; columnNum += yyleng;}
-<INVSTR>{STRLIT}\"				{BEGIN 0; columnNum += yyleng; if(aux==1){printf("STRLIT(\"%s)\n",yytext);}}
-<INVSTR>({ESC}+|{NOTESC}+)		{columnNum+=yyleng;}
-<INVSTR>{NOTESC2}               {printf("Line %d, col %d: invalid escape sequence (%s)\n", lineNum, columnNum, yytext); columnNum+=yyleng;}
-<INVSTR>{NOTESC2}|("\n"|"\r"|"\r\n")   	{printf("Line %d, col %d: unterminated string literal\n", lineNum, invColumnNum); lineNum++; columnNum = 1; BEGIN 0;}
-<INVSTR>\"							   	{BEGIN 0;}
 
 "\t"|"\f"|" " 	{columnNum += yyleng;}
 "\n"|"\r"|"\r\n"      {lineNum++; columnNum = 1;}
