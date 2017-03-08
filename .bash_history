@@ -46,3 +46,7 @@ cc -o jac lex.yy.c -ldl
 flex jac.l
 cc -o jac lex.yy.c -ldl
 ./jac -l < outrostestes.txt 
+cd Parte1/
+ls
+flex jac.l
+flex jac.l
