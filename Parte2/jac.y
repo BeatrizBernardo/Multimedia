@@ -15,23 +15,137 @@
 
 %%
 
-calc: calc expression NEWLINE                        {printf("%d\n", $2);}
-    | {;}
+Program: CLASS ID OBRACE Program_2 CBRACE   
+        ;
+
+/*deve repetir 0 ou + vezes  { FieldDecl | MethodDecl | SEMI } */
+Program_2: Program_2 FieldDecl
+        |Program_2 MethodDecl
+        |Program_2 SEMI
+        |
+        ;
+
+FieldDecl: PUBLIC STATIC  Type ID comma_id SEMI 
+        ;
+
+/*deve repetir 0 ou + vezes { COMMA ID }*/
+comma_id: COMMA_ID COMMA ID
+        |
+        ;
+
+MethodDecl: PUBLIC STATIC MethodHeader MethodBody
+        ;
+
+MethodHeader: Type ID OCURV MethodHeader_2 CCURV 
+        |VOID ID OCURV MethodHeader_2 CCURV 
+        ;
+
+/*deve ser opcional - sim ou não - [ FormalParams ]*/        
+MethodHeader_2: FormalParams
+        |
+        ;
+
+MethodBody: OBRACE MethodBody_2 CBRACE
+        ;
+
+/*deve repetir 0 ou + vezes { VarDecl | Statement }*/
+MethodBody_2: MethodBody_2 VarDecl
+        |MethodBody_2 Statement
+        |
+        ;
+
+FormalParams: Type ID FormalParams_2
+        ;
+
+/*deve repetir 0 ou + vezes { COMMA Type ID }*/
+FormalParams_2:FormalParams_2 COMMA Type ID
+        |
+        ;
+
+FormalParams: STRING OSQUARE CSQUARE ID 
+        ;
+
+VarDecl: Type ID comma_id SEMI
+        ;
+
+Type: BOOL 
+    | INT 
+    | DOUBLE 
     ;
 
-expression: expression '+' expression   {$$=$1+$3;}
-    |   expression '-' expression       {$$=$1-$3;}
-    |   expression '*' expression       {$$=$1*$3;}
-    |   expression '/' expression       {   if($3 == 0){
-                                                printf("Divide by zero!\n");
-                                                return 1;   
-                                            }
-                                            $$=$1/$3;
-                                        }
-    |   '(' expression ')'              {$$=$2;} 
-    |   '-' expression                  {$$=$2;}
-    |   NUMBER                          {$$=$1;}
+Statement: OBRACE Statement_2 CBRACE
+        ;
+
+Statement → IF OCURV Expr CCURV Statement
+        |IF OCURV Expr CCURV Statement ELSE Statement
+        ;
+
+Statement: WHILE OCURV Expr CCURV Statement 
+
+Statement: DO Statement WHILE OCURV Expr CCURV SEMI 
+
+Statement: PRINT OCURV Expr CCURV SEMI
+        | PRINT OCURV STRLIT CCURV SEMI
+        ;
+
+Statement: Assignment SEMI
+        | MethodInvocation SEMI
+        | ParseArgs SEMI 
+        ;
+
+Statement: RETURN SEMI 
+        |RETURN Expr SEMI
+        ;
+
+/*deve repetir 0 ou + vezes { Statement }*/
+Statement_2:Statement_2 Statement
+        |
+        ;
+
+Assignment: ID ASSIGN Expr 
+        ;
+
+MethodInvocation: ID OCURV CCURV 
+        |ID OCURV Expr MethodInvocation_2 CCURV
+        ;
+
+/*deve repetir 0 ou + vezes { COMMA Expr }*/
+MethodInvocation_2: MethodInvocation_2 COMMA Expr
+        |
+        ;
+
+ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV 
+        ;
+
+Expr: Assignment 
+    | MethodInvocation 
+    | ParseArgs 
     ;
+    
+Expr: Expr AND Expr 
+    | Expr OR Expr 
+    | Expr EQ Expr
+    | Expr GEQ Expr
+    | Expr GT Expr
+    | Expr LEQ Expr
+    | Expr LT Expr
+    | Expr NEQ Expr 
+    | Expr PLUS Expr
+    | Expr MINUS Expr
+    | Expr STAR Expr
+    | Expr DIV Expr
+    | Expr MOD Expr 
+    | PLUS Expr
+    | MINUS Expr
+    | NOT Expr 
+    | ID
+    | ID DOTLENGTH
+    | OCURV Expr CCURV 
+    | BOOLLIT 
+    | DECLIT 
+    | REALLIT
+    ;
+
 %%
 
 int main() {
