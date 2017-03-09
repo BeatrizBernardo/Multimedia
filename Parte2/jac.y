@@ -4,7 +4,11 @@
     #include <string.h>
 
     int yylex(void);
-    void yyerror (const char *s);
+
+    /*importa as variaveis do lex*/
+    extern int lineNum;
+    extern int columnNum;
+
 %}
 
 %token OCURV CCURV OBRACE CBRACE OSQUARE CSQUARE 
@@ -155,3 +159,6 @@ Expr: Assignment
 
 %%
 
+void yyerror (char *s) {      
+        printf ("Line %d, col %d: %s: %s\n", lineNum, columnNum-(int)yyleng, s, yytext); 
+}
