@@ -13,5 +13,5 @@ class gcd {
                         b = b-a;        
                 System.out.println(a);    
             }  
-    } 
+    }
 }
