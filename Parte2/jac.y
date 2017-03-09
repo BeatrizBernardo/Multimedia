@@ -1,5 +1,8 @@
 %{
+    #include <stdlib.h>
     #include <stdio.h>
+    #include <string.h>
+
     int yylex(void);
     void yyerror (const char *s);
 %}
@@ -7,6 +10,13 @@
 %token OCURV CCURV OBRACE CBRACE OSQUARE CSQUARE 
 %token AND OR LT GT EQ NEQ LEQ GEQ PLUS MINUS STAR DIV MOD NOT ASSIGN SEMI COMMA
 %token BOOL CLASS DO DOTLENGTH DOUBLE ELSE IF INT PARSEINT PRINT PUBLIC RETURN STATIC STRING VOID WHILE
+%token <string> BOOLLIT
+%token <string> RESERVED
+%token <string> ID
+%token <string> DECLIT
+%token <string> REALLIT
+%token <string> STRLIT
+
 
 %left COMMA
 %right ASSIGN
@@ -18,6 +28,9 @@
 %left STAR DIV MOD
 %right NOT 
 %left OCURV CCURV OSQUARE CSQUARE
+
+%nonassoc IFX
+%nonassoc ELSE
 
 %%
 
@@ -80,7 +93,7 @@ Type: BOOL
     ;
 
 Statement: OBRACE Statement_2 CBRACE
-        | IF OCURV Expr CCURV Statement
+        | IF OCURV Expr CCURV Statement %prec IFX
         | IF OCURV Expr CCURV Statement ELSE Statement
         | WHILE OCURV Expr CCURV Statement 
         | DO Statement WHILE OCURV Expr CCURV SEMI 
@@ -141,3 +154,4 @@ Expr: Assignment
     ;
 
 %%
+
