@@ -74,27 +74,17 @@ Type: BOOL
     ;
 
 Statement: OBRACE Statement_2 CBRACE
-        ;
-
-Statement → IF OCURV Expr CCURV Statement
-        |IF OCURV Expr CCURV Statement ELSE Statement
-        ;
-
-Statement: WHILE OCURV Expr CCURV Statement 
-
-Statement: DO Statement WHILE OCURV Expr CCURV SEMI 
-
-Statement: PRINT OCURV Expr CCURV SEMI
+        | IF OCURV Expr CCURV Statement
+        | IF OCURV Expr CCURV Statement ELSE Statement
+        | WHILE OCURV Expr CCURV Statement 
+        | DO Statement WHILE OCURV Expr CCURV SEMI 
+        | PRINT OCURV Expr CCURV SEMI
         | PRINT OCURV STRLIT CCURV SEMI
-        ;
-
-Statement: Assignment SEMI
+        | Assignment SEMI
         | MethodInvocation SEMI
         | ParseArgs SEMI 
-        ;
-
-Statement: RETURN SEMI 
-        |RETURN Expr SEMI
+        | RETURN SEMI 
+        | RETURN Expr SEMI
         ;
 
 /*deve repetir 0 ou + vezes { Statement }*/
