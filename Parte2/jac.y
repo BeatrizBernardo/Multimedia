@@ -135,9 +135,3 @@ Expr: Assignment
     ;
 
 %%
-
-int main() {
-    yyparse();
-    return 0;
-}
-
