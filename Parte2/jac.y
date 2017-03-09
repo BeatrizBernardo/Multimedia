@@ -110,9 +110,7 @@ ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV
 Expr: Assignment 
     | MethodInvocation 
     | ParseArgs 
-    ;
-    
-Expr: Expr AND Expr 
+    | Expr AND Expr 
     | Expr OR Expr 
     | Expr EQ Expr
     | Expr GEQ Expr
