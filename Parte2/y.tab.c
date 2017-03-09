@@ -67,11 +67,19 @@
     #include <stdlib.h>
     #include <stdio.h>
     #include <string.h>
+    #include "y.tab.h"
 
+    void yyerror (char *s);
     int yylex(void);
-    void yyerror (const char *s);
 
-#line 75 "y.tab.c" /* yacc.c:339  */
+    /*importa as variaveis do lex*/
+    extern int lineNum;
+    extern int columnNum;
+    extern char *yytext; 
+    extern int yyleng;
+
+
+#line 83 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -203,6 +211,21 @@ extern int yydebug;
 #define IFX 303
 
 /* Value type.  */
+#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+
+union YYSTYPE
+{
+#line 18 "jac.y" /* yacc.c:355  */
+
+        char* string;
+
+#line 223 "y.tab.c" /* yacc.c:355  */
+};
+
+typedef union YYSTYPE YYSTYPE;
+# define YYSTYPE_IS_TRIVIAL 1
+# define YYSTYPE_IS_DECLARED 1
+#endif
 
 
 extern YYSTYPE yylval;
@@ -213,7 +236,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 217 "y.tab.c" /* yacc.c:358  */
+#line 240 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -515,14 +538,14 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    37,    37,    41,    42,    43,    44,    47,    51,    52,
-      55,    58,    59,    63,    64,    67,    71,    72,    73,    76,
-      80,    81,    84,    87,    90,    91,    92,    95,    96,    97,
-      98,    99,   100,   101,   102,   103,   104,   105,   106,   110,
-     111,   114,   117,   118,   122,   123,   126,   129,   130,   131,
-     132,   133,   134,   135,   136,   137,   138,   139,   140,   141,
-     142,   143,   144,   145,   146,   147,   148,   149,   150,   151,
-     152,   153
+       0,    49,    49,    53,    54,    55,    56,    59,    63,    64,
+      67,    70,    71,    75,    76,    79,    83,    84,    85,    88,
+      92,    93,    96,    99,   102,   103,   104,   107,   108,   109,
+     110,   111,   112,   113,   114,   115,   116,   117,   118,   122,
+     123,   126,   129,   130,   134,   135,   138,   141,   142,   143,
+     144,   145,   146,   147,   148,   149,   150,   151,   152,   153,
+     154,   155,   156,   157,   158,   159,   160,   161,   162,   163,
+     164,   165
 };
 #endif
 
@@ -1438,7 +1461,7 @@ yyreduce:
   switch (yyn)
     {
       
-#line 1442 "y.tab.c" /* yacc.c:1646  */
+#line 1465 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1666,6 +1689,9 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 156 "jac.y" /* yacc.c:1906  */
+#line 168 "jac.y" /* yacc.c:1906  */
 
 
+void yyerror (char *s) {      
+        printf ("Line %d, col %d: %s: %s\n", lineNum, columnNum-(int)yyleng, s, yytext); 
+}

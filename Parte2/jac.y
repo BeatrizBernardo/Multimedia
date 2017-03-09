@@ -2,14 +2,22 @@
     #include <stdlib.h>
     #include <stdio.h>
     #include <string.h>
+    #include "y.tab.h"
 
+    void yyerror (char *s);
     int yylex(void);
 
     /*importa as variaveis do lex*/
     extern int lineNum;
     extern int columnNum;
+    extern char *yytext; 
+    extern int yyleng;
 
 %}
+
+%union{
+        char* string;
+}
 
 %token OCURV CCURV OBRACE CBRACE OSQUARE CSQUARE 
 %token AND OR LT GT EQ NEQ LEQ GEQ PLUS MINUS STAR DIV MOD NOT ASSIGN SEMI COMMA
