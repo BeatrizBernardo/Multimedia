@@ -2,6 +2,8 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include "y.tab.h"
+    
 	int aux=0;
     /*as colunas e as linhas começam em 1*/
     int lineNum = 1;

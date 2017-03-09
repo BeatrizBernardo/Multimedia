@@ -4,14 +4,20 @@
     void yyerror (const char *s);
 %}
 
-%token NUMBER
-%token NEWLINE
-%token END
+%token OCURV CCURV OBRACE CBRACE OSQUARE CSQUARE 
+%token AND OR LT GT EQ NEQ LEQ GEQ PLUS MINUS STAR DIV MOD NOT ASSIGN SEMI COMMA
+%token BOOL CLASS DO DOTLENGTH DOUBLE ELSE IF INT PARSEINT PRINT PUBLIC RETURN STATIC STRING VOID WHILE
 
-%left '+' '-'
-%left '*' '/'
-%right '('
-%left ')'
+%left COMMA
+%right ASSIGN
+%left OR
+%left AND
+%left EQ NEQ 
+%left LT LEQ GT GEQ 
+%left PLUS MINUS
+%left STAR DIV MOD
+%right NOT 
+%left OCURV CCURV OSQUARE CSQUARE
 
 %%
 
@@ -29,7 +35,7 @@ FieldDecl: PUBLIC STATIC  Type ID comma_id SEMI
         ;
 
 /*deve repetir 0 ou + vezes { COMMA ID }*/
-comma_id: COMMA_ID COMMA ID
+comma_id: comma_id COMMA ID
         |
         ;
 
