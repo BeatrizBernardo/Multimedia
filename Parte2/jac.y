@@ -57,6 +57,7 @@ Program_2: Program_2 FieldDecl
         ;
 
 FieldDecl: PUBLIC STATIC  Type ID comma_id SEMI 
+        | error SEMI
         ;
 
 /*deve repetir 0 ou + vezes { COMMA ID }*/
@@ -116,6 +117,7 @@ Statement: OBRACE Statement_2 CBRACE
         | ParseArgs SEMI 
         | RETURN SEMI 
         | RETURN Expr SEMI
+        | error SEMI;
         ;
 
 /*deve repetir 0 ou + vezes { Statement }*/
@@ -136,6 +138,7 @@ MethodInvocation_2: MethodInvocation_2 COMMA Expr
         ;
 
 ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV 
+        | PARSEINT OCURV error CCURV
         ;
 
 Expr: Assignment 
@@ -163,6 +166,7 @@ Expr: Assignment
     | BOOLLIT 
     | DECLIT 
     | REALLIT
+    | OCURV error CCURV
     ;
 
 %%
