@@ -50,7 +50,7 @@ Program: CLASS ID OBRACE Program_2 CBRACE
         ;
 
 /*deve repetir 0 ou + vezes  { FieldDecl | MethodDecl | SEMI } */
-Program_2: Program_2 FieldDecl
+Program_2: Program_2 FieldDecl          {}
         |Program_2 MethodDecl
         |Program_2 SEMI
         |

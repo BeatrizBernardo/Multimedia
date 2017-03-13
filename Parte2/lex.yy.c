@@ -692,6 +692,7 @@ char *yytext;
     #include "y.tab.h"
 
 	int aux = 0;
+    int aux_2 = 0;
     /*as colunas e as linhas começam em 1*/
     int lineNum = 1;
     int columnNum = 1;
@@ -704,7 +705,7 @@ char *yytext;
 
 
 
-#line 708 "lex.yy.c"
+#line 709 "lex.yy.c"
 
 #define INITIAL 0
 #define COMMENTS 1
@@ -916,10 +917,10 @@ YY_DECL
 		}
 
 	{
-#line 82 "jac.l"
+#line 83 "jac.l"
 
 
-#line 923 "lex.yy.c"
+#line 924 "lex.yy.c"
 
 	while ( 1 )		/* loops until end-of-file is reached */
 		{
@@ -978,132 +979,139 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 84 "jac.l"
+#line 85 "jac.l"
 {BEGIN INVSTR; columnNum += yyleng; invColumnNum = columnNum-1;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 85 "jac.l"
+#line 86 "jac.l"
 {BEGIN 0; columnNum += yyleng;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 87 "jac.l"
+#line 88 "jac.l"
 {columnNum+=yyleng;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 88 "jac.l"
+#line 89 "jac.l"
 {printf("Line %d, col %d: invalid escape sequence (%s)\n", lineNum, columnNum, yytext); columnNum+=yyleng;}
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 89 "jac.l"
+#line 90 "jac.l"
 {printf("Line %d, col %d: unterminated string literal\n", lineNum, invColumnNum); lineNum++; columnNum = 1; BEGIN 0;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 91 "jac.l"
+#line 92 "jac.l"
 {BEGIN COMMENTS; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
 	YY_BREAK
 case YY_STATE_EOF(COMMENTS):
-#line 92 "jac.l"
+#line 93 "jac.l"
 {printf("Line %d, col %d: unterminated comment\n", commentLineNum, commentColumnNum); BEGIN 0;}
 	YY_BREAK
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
-#line 93 "jac.l"
+#line 94 "jac.l"
 {lineNum++; columnNum = 1;} 
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 94 "jac.l"
+#line 95 "jac.l"
 {columnNum += yyleng;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 95 "jac.l"
+#line 96 "jac.l"
 {columnNum += yyleng; BEGIN 0;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 97 "jac.l"
+#line 98 "jac.l"
 {BEGIN COMMENT; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
 	YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 98 "jac.l"
+#line 99 "jac.l"
 {lineNum++; columnNum = 1; BEGIN 0;} 
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 99 "jac.l"
+#line 100 "jac.l"
 {columnNum += yyleng;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 101 "jac.l"
+#line 102 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("OCURV\n");
-                }else{
+                }
+                if(aux_2 == 1){
 	                return OCURV;	
                 }
             }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 109 "jac.l"
+#line 111 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("CCURV\n");
-                }else{
+                } 
+                if(aux_2 == 1){
                     return CCURV;	
                 }
             }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 117 "jac.l"
+#line 120 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("OBRACE\n");
-                }else
+                }
+                if(aux_2 == 1){
                 	return OBRACE;
+                }
             }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 124 "jac.l"
+#line 129 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("CBRACE\n");
-                }else{ 
+                }
+                if(aux_2 == 1){ 
                 	return CBRACE;
                 }
             }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 132 "jac.l"
+#line 138 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("OSQUARE\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
             		return OSQUARE;
                 }
             }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 140 "jac.l"
+#line 147 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("CSQUARE\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return CSQUARE;
                 	
                 }
@@ -1111,209 +1119,228 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 149 "jac.l"
+#line 157 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("AND\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
             		return AND;
                 }
             }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 157 "jac.l"
+#line 166 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("OR\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return OR;
                 }
             }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 165 "jac.l"
+#line 175 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("LT\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
             		return LT;
                 }
             }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 173 "jac.l"
+#line 184 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("GT\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
         			return GT;
                 }
             }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 181 "jac.l"
+#line 193 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("EQ\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return EQ;
                 }
             }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 189 "jac.l"
+#line 202 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("NEQ\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return NEQ;
                 }
             }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 197 "jac.l"
+#line 211 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("LEQ\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return LEQ;
                 }
             }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 205 "jac.l"
+#line 220 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("GEQ\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return GEQ;
                 }
             }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 213 "jac.l"
+#line 229 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("PLUS\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return PLUS;
                 }
             }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 221 "jac.l"
+#line 238 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("MINUS\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return MINUS;
                 }
             }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 229 "jac.l"
+#line 247 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("STAR\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return STAR;
                 }
             }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 237 "jac.l"
+#line 256 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("DIV\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return DIV;
                 }
             }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 245 "jac.l"
+#line 265 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("MOD\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return MOD;
                 }
             }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 253 "jac.l"
+#line 274 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("NOT\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return NOT;
                 }
             }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 261 "jac.l"
+#line 283 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("ASSIGN\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return ASSIGN;
                 }
             }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 269 "jac.l"
+#line 292 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("SEMI\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return SEMI;
                 }
             }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 277 "jac.l"
+#line 301 "jac.l"
 {columnNum += yyleng; 
                 if(aux==1){
                     printf("COMMA\n");
-                }else{
+                }
+                if(aux_2 == 1){ 
                 	return COMMA;
                 }
             }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 285 "jac.l"
+#line 310 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("BOOL\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return BOOL;
                     }
                 }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 293 "jac.l"
+#line 319 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("BOOLLIT(%s)\n", yytext);
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
 	                    yylval.string=(char*)strdup(yytext);
 	                    return BOOLLIT;
                     }
@@ -1321,176 +1348,192 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 302 "jac.l"
+#line 329 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("CLASS\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return CLASS;
                     }
                 }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 310 "jac.l"
+#line 338 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("DO\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return DO;
                     }
                 }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 318 "jac.l"
+#line 347 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("DOTLENGTH\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return DOTLENGTH;
                     }
                 }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 326 "jac.l"
+#line 356 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("DOUBLE\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return DOUBLE;
                     }
                 }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 334 "jac.l"
+#line 365 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("ELSE\n");
-                    }else{	
+                    }
+                    if(aux_2 == 1){ 
                     	return ELSE;
                     }
                 }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 342 "jac.l"
+#line 374 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("IF\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return IF;
                     }
                 }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 350 "jac.l"
+#line 383 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("INT\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return INT;
                     }
                 }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 358 "jac.l"
+#line 392 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("PARSEINT\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return PARSEINT;
                     }
                 }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 366 "jac.l"
+#line 401 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("PRINT\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return PRINT;
                     }
                 }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 374 "jac.l"
+#line 410 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("PUBLIC\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return PUBLIC;
                     }
                 }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 382 "jac.l"
+#line 419 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("RETURN\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return RETURN;
                     }
                 }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 390 "jac.l"
+#line 428 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("STATIC\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return STATIC;
                     }
                 }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 398 "jac.l"
+#line 437 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("STRING\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return STRING;
                     }
                 }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 406 "jac.l"
+#line 446 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("VOID\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return VOID;
                     }
                 }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 414 "jac.l"
+#line 455 "jac.l"
 {   columnNum += yyleng; 
                     if(aux==1){
                         printf("WHILE\n");
-                    }else{
+                    }
+                    if(aux_2 == 1){ 
                     	return WHILE;
                     }
                 }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 422 "jac.l"
+#line 464 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("RESERVED(%s)\n", yytext);
-                }else{
+                }
+                if(aux_2 == 1){ 
 			        yylval.string=(char*)strdup(yytext);
 			        return RESERVED;
                 }
@@ -1498,11 +1541,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 432 "jac.l"
+#line 475 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("ID(%s)\n", yytext);
-                }else{
+                }
+                if(aux_2 == 1){ 
 	                yylval.string=(char*)strdup(yytext);
 	                return ID;
                 }
@@ -1510,11 +1554,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 441 "jac.l"
+#line 485 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("DECLIT(%s)\n", yytext);
-                }else{
+                }
+                if(aux_2 == 1){ 
 		            yylval.string=(char*)strdup(yytext);
 		            return DECLIT;
                 }
@@ -1522,11 +1567,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 450 "jac.l"
+#line 495 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("REALLIT(%s)\n", yytext);
-                }else{
+                }
+                if(aux_2 == 1){ 
 	                yylval.string=(char*)strdup(yytext);
 	                return REALLIT;
                 }
@@ -1534,11 +1580,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 459 "jac.l"
+#line 505 "jac.l"
 {   columnNum += yyleng; 
                 if(aux==1){
                     printf("STRLIT(%s)\n", yytext);
-                }else{
+                }
+                if(aux_2 == 1){ 
 	                yylval.string=(char*)strdup(yytext);
 	                return STRLIT;
                 }
@@ -1546,26 +1593,26 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 468 "jac.l"
+#line 515 "jac.l"
 {columnNum += yyleng;}
 	YY_BREAK
 case 59:
 /* rule 59 can match eol */
 YY_RULE_SETUP
-#line 469 "jac.l"
+#line 516 "jac.l"
 {lineNum++; columnNum = 1;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 471 "jac.l"
+#line 518 "jac.l"
 {printf("Line %d, col %d: illegal character (%c)\n", lineNum, columnNum, yytext[0]); columnNum+=yyleng;} 
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 473 "jac.l"
+#line 520 "jac.l"
 ECHO;
 	YY_BREAK
-#line 1569 "lex.yy.c"
+#line 1616 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 case YY_STATE_EOF(INVSTR):
@@ -2562,7 +2609,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 473 "jac.l"
+#line 520 "jac.l"
 
 
 int main(int argc, char *argv[]){
@@ -2576,6 +2623,7 @@ int main(int argc, char *argv[]){
         }
     }else{
         /*sem nenhuma opção deve detetar erros lexicais ou de sintaxe e emitir mensagens de erro*/
+        aux_2 = 1;
         yyparse();
     }
     return 0;
