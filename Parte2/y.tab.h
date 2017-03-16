@@ -146,11 +146,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 18 "jac.y" /* yacc.c:1909  */
+#line 23 "jac.y" /* yacc.c:1909  */
 
-        char* string;
+        char* string;   
+        struct arvore *arv;
 
-#line 154 "y.tab.h" /* yacc.c:1909  */
+#line 155 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

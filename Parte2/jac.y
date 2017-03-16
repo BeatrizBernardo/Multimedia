@@ -3,6 +3,8 @@
     #include <stdio.h>
     #include <string.h>
     #include "y.tab.h"
+    #include "estruturas.h"
+    #include "ast.h"
 
     void yyerror (char *s);
     int yylex(void);
@@ -13,11 +15,17 @@
     extern char *yytext; 
     extern int yyleng;
 
+    /*importa do lex mas para AST*/
+    extern ARVORE *raiz;
+    
 %}
 
 %union{
-        char* string;
+        char* string;   
+        struct arvore *arv;
 }
+
+%type <arv> Program Program_2 FieldDecl MethodDecl
 
 %token OCURV CCURV OBRACE CBRACE OSQUARE CSQUARE 
 %token AND OR LT GT EQ NEQ LEQ GEQ PLUS MINUS STAR DIV MOD NOT ASSIGN SEMI COMMA
@@ -46,17 +54,17 @@
 
 %%
 
-Program: CLASS ID OBRACE Program_2 CBRACE   
+Program: CLASS ID OBRACE Program_2 CBRACE   {raiz = criarNo("Null", "Program"); raiz->filho = $4;}
         ;
 
 /*deve repetir 0 ou + vezes  { FieldDecl | MethodDecl | SEMI } */
-Program_2: Program_2 FieldDecl          {}
-        |Program_2 MethodDecl
-        |Program_2 SEMI
-        |
+Program_2: Program_2 FieldDecl          {$$ = $1; criarIrmao($$, $2);}
+        |Program_2 MethodDecl           {$$ = $1; criarIrmao($$, $2);}
+        |Program_2 SEMI                 {$$ = $1;}
+        |                               {;}
         ;
 
-FieldDecl: PUBLIC STATIC  Type ID comma_id SEMI 
+FieldDecl: PUBLIC STATIC Type ID comma_id SEMI 
         | error SEMI
         ;
 

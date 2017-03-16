@@ -50,3 +50,36 @@ cd Parte1/
 ls
 flex jac.l
 flex jac.l
+ls
+cd Parte
+cd Parte2
+ls
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./compile
+./makefile
+./compile
+./compile
+./compile
+./compile
+./compile

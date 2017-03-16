@@ -68,6 +68,8 @@
     #include <stdio.h>
     #include <string.h>
     #include "y.tab.h"
+    #include "estruturas.h"
+    #include "ast.h"
 
     void yyerror (char *s);
     int yylex(void);
@@ -78,8 +80,11 @@
     extern char *yytext; 
     extern int yyleng;
 
+    /*importa do lex mas para AST*/
+    extern ARVORE *raiz;
+    
 
-#line 83 "y.tab.c" /* yacc.c:339  */
+#line 88 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -215,11 +220,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 18 "jac.y" /* yacc.c:355  */
+#line 23 "jac.y" /* yacc.c:355  */
 
-        char* string;
+        char* string;   
+        struct arvore *arv;
 
-#line 223 "y.tab.c" /* yacc.c:355  */
+#line 229 "y.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -236,7 +242,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 240 "y.tab.c" /* yacc.c:358  */
+#line 246 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -538,14 +544,14 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    49,    49,    53,    54,    55,    56,    59,    60,    64,
-      65,    68,    71,    72,    76,    77,    80,    84,    85,    86,
-      89,    93,    94,    97,   100,   103,   104,   105,   108,   109,
-     110,   111,   112,   113,   114,   115,   116,   117,   118,   119,
-     120,   124,   125,   128,   131,   132,   136,   137,   140,   141,
-     144,   145,   146,   147,   148,   149,   150,   151,   152,   153,
-     154,   155,   156,   157,   158,   159,   160,   161,   162,   163,
-     164,   165,   166,   167,   168,   169
+       0,    57,    57,    61,    62,    63,    64,    67,    68,    72,
+      73,    76,    79,    80,    84,    85,    88,    92,    93,    94,
+      97,   101,   102,   105,   108,   111,   112,   113,   116,   117,
+     118,   119,   120,   121,   122,   123,   124,   125,   126,   127,
+     128,   132,   133,   136,   139,   140,   144,   145,   148,   149,
+     152,   153,   154,   155,   156,   157,   158,   159,   160,   161,
+     162,   163,   164,   165,   166,   167,   168,   169,   170,   171,
+     172,   173,   174,   175,   176,   177
 };
 #endif
 
@@ -1469,8 +1475,38 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-      
-#line 1474 "y.tab.c" /* yacc.c:1646  */
+        case 2:
+#line 57 "jac.y" /* yacc.c:1646  */
+    {raiz = criarNo("Null", "Program"); raiz->filho = (yyvsp[-1].arv);}
+#line 1482 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 3:
+#line 61 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = (yyvsp[-1].arv); criarIrmao((yyval.arv), (yyvsp[0].arv));}
+#line 1488 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 4:
+#line 62 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = (yyvsp[-1].arv); criarIrmao((yyval.arv), (yyvsp[0].arv));}
+#line 1494 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 5:
+#line 63 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = (yyvsp[-1].arv);}
+#line 1500 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 6:
+#line 64 "jac.y" /* yacc.c:1646  */
+    {;}
+#line 1506 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+
+#line 1510 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1698,7 +1734,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 172 "jac.y" /* yacc.c:1906  */
+#line 180 "jac.y" /* yacc.c:1906  */
 
 
 void yyerror (char *s) {      

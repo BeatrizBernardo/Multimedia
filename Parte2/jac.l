@@ -3,6 +3,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include "y.tab.h"
+    #include "ast.h"
 
 	int aux = 0;
     int aux_2 = 0;
@@ -15,6 +16,9 @@
     int commentColumnNum = 1;
     
     int invColumnNum = 1;
+
+    /*cenas sobre a AST*/
+    ARVORE *raiz;
 %}
 
 %X COMMENTS
@@ -528,9 +532,9 @@ int main(int argc, char *argv[]){
             yylex();
         }
     }else{
-        /*sem nenhuma opção deve detetar erros lexicais ou de sintaxe e emitir mensagens de erro*/
         aux_2 = 1;
         yyparse();
+        imprimirAST(raiz);
     }
     return 0;
 }
