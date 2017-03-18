@@ -1,7 +1,6 @@
 #ifndef ESTRUTURAS_FILE
 #define ESTRUTURAS_FILE
 
-typedef struct arvore *ARVORE;
 typedef struct arvore{
     /*dados*/
     char* valor;
@@ -9,6 +8,6 @@ typedef struct arvore{
     /*filho*/
     struct arvore *filho;
     struct arvore *irmao;
-};
+}ARVORE;
 
 #endif

@@ -4,6 +4,7 @@
     #include <string.h>
     #include "y.tab.h"
     #include "ast.h"
+    #include "estruturas.h"
 
 	int aux = 0;
     int aux_2 = 0;

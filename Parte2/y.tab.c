@@ -71,7 +71,7 @@
     #include "estruturas.h"
     #include "ast.h"
 
-    void yyerror (char *s);
+    void yyerror (const char *s);
     int yylex(void);
 
     /*importa as variaveis do lex*/
@@ -1737,6 +1737,6 @@ yyreturn:
 #line 180 "jac.y" /* yacc.c:1906  */
 
 
-void yyerror (char *s) {      
+void yyerror (const char *s) {      
         printf ("Line %d, col %d: %s: %s\n", lineNum, columnNum-(int)yyleng, s, yytext); 
 }
