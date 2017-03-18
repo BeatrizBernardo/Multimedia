@@ -6,7 +6,7 @@
     #include "estruturas.h"
     #include "ast.h"
 
-    void yyerror (char *s);
+    void yyerror (const char *s);
     int yylex(void);
 
     /*importa as variaveis do lex*/
@@ -179,6 +179,6 @@ Expr: Assignment
 
 %%
 
-void yyerror (char *s) {      
+void yyerror (const char *s) {      
         printf ("Line %d, col %d: %s: %s\n", lineNum, columnNum-(int)yyleng, s, yytext); 
 }
