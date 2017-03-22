@@ -125,7 +125,7 @@ Statement: OBRACE Statement_2 CBRACE
         | ParseArgs SEMI                                        {$$ = $1;}
         | RETURN SEMI                                           {$$ = criarNo("Return", "Null");}
         | RETURN Expr SEMI                                      {$$ = criarNo("Return", "Null"); $$->filho = $2;}
-        | error SEMI;                                           {;}
+        | error SEMI                                            {;}
         ;
 
 /*deve repetir 0 ou + vezes { Statement }*/
