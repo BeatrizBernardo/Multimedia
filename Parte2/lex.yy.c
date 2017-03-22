@@ -1612,16 +1612,24 @@ YY_RULE_SETUP
 #line 523 "jac.l"
 {printf("Line %d, col %d: illegal character (%c)\n", lineNum, columnNum, yytext[0]); columnNum+=yyleng;} 
 	YY_BREAK
-case 61:
-YY_RULE_SETUP
-#line 525 "jac.l"
-ECHO;
-	YY_BREAK
-#line 1621 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 case YY_STATE_EOF(INVSTR):
-	yyterminate();
+#line 525 "jac.l"
+{   columnNum += yyleng; 
+            if(aux==1){
+                yyterminate();
+            }else{
+                return 0;
+            }
+        }
+	YY_BREAK
+case 61:
+YY_RULE_SETUP
+#line 532 "jac.l"
+ECHO;
+	YY_BREAK
+#line 1633 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2614,7 +2622,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 525 "jac.l"
+#line 532 "jac.l"
 
 
 int main(int argc, char *argv[]){

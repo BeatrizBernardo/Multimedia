@@ -14,4 +14,11 @@ class gcd {
                 System.out.println(a);    
             }  
     }
+
+    public static int cenas(String[] args){
+        int a;
+        a = 1;
+        System.out.println(a);
+        return a;
+    }
 }

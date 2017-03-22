@@ -522,6 +522,13 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
 
 .		{printf("Line %d, col %d: illegal character (%c)\n", lineNum, columnNum, yytext[0]); columnNum+=yyleng;} 
 
+<<EOF>> {   columnNum += yyleng; 
+            if(aux==1){
+                yyterminate();
+            }else{
+                return 0;
+            }
+        }
 %%
 int main(int argc, char *argv[]){
     if(argc == 2){

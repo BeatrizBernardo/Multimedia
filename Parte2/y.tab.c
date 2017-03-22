@@ -1477,7 +1477,7 @@ yyreduce:
     {
         case 2:
 #line 57 "jac.y" /* yacc.c:1646  */
-    {raiz = criarNo("Null", "Program"); raiz->filho = (yyvsp[-1].arv);}
+    {raiz = criarNo("Program", "Null"); raiz->filho = (yyvsp[-1].arv);}
 #line 1482 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1505,8 +1505,218 @@ yyreduce:
 #line 1506 "y.tab.c" /* yacc.c:1646  */
     break;
 
+  case 7:
+#line 67 "jac.y" /* yacc.c:1646  */
+    {;}
+#line 1512 "y.tab.c" /* yacc.c:1646  */
+    break;
 
-#line 1510 "y.tab.c" /* yacc.c:1646  */
+  case 8:
+#line 68 "jac.y" /* yacc.c:1646  */
+    {;}
+#line 1518 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 9:
+#line 72 "jac.y" /* yacc.c:1646  */
+    {;}
+#line 1524 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 10:
+#line 73 "jac.y" /* yacc.c:1646  */
+    {;}
+#line 1530 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 25:
+#line 111 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Bool", "Null");}
+#line 1536 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 26:
+#line 112 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Int", "Null");}
+#line 1542 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 27:
+#line 113 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Double", "Null");}
+#line 1548 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 42:
+#line 133 "jac.y" /* yacc.c:1646  */
+    {;}
+#line 1554 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 43:
+#line 136 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Assign", "Null"); (yyval.arv)->filho = criarNo("Id", (yyvsp[-2].string)); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1560 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 44:
+#line 139 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Id", "Null");}
+#line 1566 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 50:
+#line 152 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = (yyvsp[0].arv);}
+#line 1572 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 51:
+#line 153 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = (yyvsp[0].arv);}
+#line 1578 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 52:
+#line 154 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = (yyvsp[0].arv);}
+#line 1584 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 53:
+#line 155 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("And", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1590 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 54:
+#line 156 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Or", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1596 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 55:
+#line 157 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Eq", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1602 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 56:
+#line 158 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Geq", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1608 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 57:
+#line 159 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Gt", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1614 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 58:
+#line 160 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Leq", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1620 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 59:
+#line 161 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Lt", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1626 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 60:
+#line 162 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Neq", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1632 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 61:
+#line 163 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Plus", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1638 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 62:
+#line 164 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Minus", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1644 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 63:
+#line 165 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Star", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1650 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 64:
+#line 166 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Div", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1656 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 65:
+#line 167 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Mod", "Null"); (yyval.arv)->filho = (yyvsp[-2].arv); criarIrmao((yyval.arv)->filho, (yyvsp[0].arv));}
+#line 1662 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 66:
+#line 168 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Plus", "Null"); (yyval.arv)->filho = (yyvsp[0].arv);}
+#line 1668 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 67:
+#line 169 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Minus", "Null"); (yyval.arv)->filho = (yyvsp[0].arv);}
+#line 1674 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 68:
+#line 170 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Not", "Null"); (yyval.arv)->filho = (yyvsp[0].arv);}
+#line 1680 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 69:
+#line 171 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("Id", (yyvsp[0].string));}
+#line 1686 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 71:
+#line 173 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = (yyvsp[-1].arv);}
+#line 1692 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 72:
+#line 174 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("BoolLit", (yyvsp[0].string));}
+#line 1698 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 73:
+#line 175 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("DecLit", (yyvsp[0].string));}
+#line 1704 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 74:
+#line 176 "jac.y" /* yacc.c:1646  */
+    {(yyval.arv) = criarNo("RealLit", (yyvsp[0].string));}
+#line 1710 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 75:
+#line 177 "jac.y" /* yacc.c:1646  */
+    {;}
+#line 1716 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+
+#line 1720 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
