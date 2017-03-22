@@ -515,6 +515,14 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
 "\t"|"\f"|" " 	        {columnNum += yyleng;}
 "\n"|"\r"|"\r\n"        {lineNum++; columnNum = 1;}
 
+<<EOF>> {   columnNum += yyleng; 
+            if(aux==1){
+                yyterminate();
+            }else{
+                return 0;
+            }
+        }
+
 .		{printf("Line %d, col %d: illegal character (%c)\n", lineNum, columnNum, yytext[0]); columnNum+=yyleng;} 
 
 %%
