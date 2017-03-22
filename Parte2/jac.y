@@ -16,7 +16,7 @@
     extern int yyleng;
 
     /*importa do lex mas para AST*/
-    extern ARVORE *raiz;
+    extern ARVORE raiz;
     
 %}
 
@@ -64,12 +64,12 @@ Program_2: Program_2 FieldDecl          {$$ = $1; criarIrmao($$, $2);}
         |                               {;}
         ;
 
-FieldDecl: PUBLIC STATIC Type ID comma_id SEMI          {;}
+FieldDecl: PUBLIC STATIC Type ID comma_id SEMI          {$$ = criarNo("FieldDecl", "Null"); $$->filho = $3; criarIrmao($$->filho, criarNo("Id", $4)); criarIrmao($$->filho, $5);}
         | error SEMI                                    {;}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA ID }*/
-comma_id: comma_id COMMA ID                     {;}
+comma_id: comma_id COMMA ID                     {$$ = $1; criarIrmao($$, criarNo("Id", $3));}
         |                                       {;}
         ;
 
@@ -91,21 +91,21 @@ MethodBody: OBRACE MethodBody_2 CBRACE          {$$ = $2;}
 /*deve repetir 0 ou + vezes { VarDecl | Statement }*/
 MethodBody_2: MethodBody_2 VarDecl              {$$ = $1; criarIrmao($$, $2);}
         |MethodBody_2 Statement                 {$$ = $1; criarIrmao($$, $2);}
-        |
+        |                                       {;}
         ;
 
-FormalParams: Type ID FormalParams_2
+FormalParams: Type ID FormalParams_2            {$$ = $1; criarIrmao($$, criarNo("Id", $2)); criarIrmao($$, $3);}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA Type ID }*/
-FormalParams_2:FormalParams_2 COMMA Type ID
-        |
+FormalParams_2:FormalParams_2 COMMA Type ID             {$$ = $1; criarIrmao($$, $3); criarIrmao($$, criarNo("Id", $4));}
+        |                                               {;}
         ;
 
-FormalParams: STRING OSQUARE CSQUARE ID 
+FormalParams: STRING OSQUARE CSQUARE ID         {criarIrmao($$, criarNo("Id", $4));}
         ;
 
-VarDecl: Type ID comma_id SEMI
+VarDecl: Type ID comma_id SEMI          {$$ = criarNo("VarDecl", "Null"); $$->filho = $1; criarIrmao($$->filho, criarNo("Id", $2));}
         ;
 
 Type: BOOL              {$$ = criarNo("Bool", "Null");}      
@@ -113,11 +113,11 @@ Type: BOOL              {$$ = criarNo("Bool", "Null");}
     | DOUBLE            {$$ = criarNo("Double", "Null");}
     ;
 
-Statement: OBRACE Statement_2 CBRACE
-        | IF OCURV Expr CCURV Statement %prec IFX
-        | IF OCURV Expr CCURV Statement ELSE Statement
-        | WHILE OCURV Expr CCURV Statement 
-        | DO Statement WHILE OCURV Expr CCURV SEMI 
+Statement: OBRACE Statement_2 CBRACE                            {$$ = $2;}
+        | IF OCURV Expr CCURV Statement %prec IFX               {$$ = criarNo("If", "Null"); $$->filho = $3; criarIrmao($$->filho, $5);}
+        | IF OCURV Expr CCURV Statement ELSE Statement          {$$ = criarNo("If", "Null"); $$->filho = $3; criarIrmao($$->filho, $5); criarIrmao($$->filho, $7);}
+        | WHILE OCURV Expr CCURV Statement                      {$$ = criarNo("While", "Null"); $$->filho = $3; criarIrmao($$->filho, $5);}
+        | DO Statement WHILE OCURV Expr CCURV SEMI              {$$ = criarNo("DoWhile", "Null"); $$->filho = $2; criarIrmao($$->filho, $5);}
         | PRINT OCURV Expr CCURV SEMI                           {$$ = criarNo("Print", "Null"); $$->filho = $3;}
         | PRINT OCURV STRLIT CCURV SEMI                         {$$ = criarNo("Print", $3);}
         | Assignment SEMI                                       {$$ = $1;}
@@ -129,7 +129,7 @@ Statement: OBRACE Statement_2 CBRACE
         ;
 
 /*deve repetir 0 ou + vezes { Statement }*/
-Statement_2:Statement_2 Statement
+Statement_2:Statement_2 Statement       {$$ = $1; criarIrmao($$, $2);}
         |                               {;}
         ;
 
@@ -141,11 +141,11 @@ MethodInvocation: ID OCURV CCURV                                {$$ = criarNo("I
         ;
 
 /*deve repetir 0 ou + vezes { COMMA Expr }*/
-MethodInvocation_2: MethodInvocation_2 COMMA Expr
-        |
+MethodInvocation_2: MethodInvocation_2 COMMA Expr               {$$ = $1; criarIrmao($$, $3);}
+        |                                                       {;}
         ;
 
-ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV 
+ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV         {$$ = criarNo("ParseArgs", "Null"); $$->filho = criarNo("Id", $3); criarIrmao($$->filho, $5);}
         | PARSEINT OCURV error CCURV                            {;}
         ;
 
@@ -169,7 +169,7 @@ Expr: Assignment                {$$ = $1;}              /*E' -> € {E'.n = E'.i
     | MINUS Expr                {$$ = criarNo("Minus", "Null"); $$->filho = $2;}                   /*O meu nó actual (Minus) vai ser irmão do novo nó (Expr), que no final estará no posso da pilha $$*/
     | NOT Expr                  {$$ = criarNo("Not", "Null"); $$->filho = $2;}   
     | ID                        {$$ = criarNo("Id", $1);}      /*T->ID  {T.n = mkleaf("Id", ID.lexval)}*/
-    | ID DOTLENGTH              
+    | ID DOTLENGTH              {$$ = criarNo("Id", $1);} 
     | OCURV Expr CCURV          {$$ = $2;}                      /*T->(E) {T.n = E.n}*/
     | BOOLLIT                   {$$ = criarNo("BoolLit", $1);}
     | DECLIT                    {$$ = criarNo("DecLit", $1);}

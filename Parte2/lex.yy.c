@@ -706,7 +706,7 @@ char *yytext;
     int invColumnNum = 1;
 
     /*cenas sobre a AST*/
-    ARVORE *raiz;
+    ARVORE raiz;
 
 
 

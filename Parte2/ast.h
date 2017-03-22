@@ -3,8 +3,8 @@
 
 #include "estruturas.h"
 
-ARVORE *criarNo (char *tipoVariavel, char *valor);
-void criarIrmao(ARVORE *noActual, ARVORE *novoNo);
-void imprimirAST(ARVORE *noActual);
+ARVORE criarNo (char *tipoVariavel, char *valor);
+void criarIrmao(ARVORE noActual, ARVORE novoNo);
+void imprimirAST(ARVORE noActual);
 
 #endif

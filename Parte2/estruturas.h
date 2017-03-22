@@ -1,13 +1,14 @@
 #ifndef ESTRUTURAS_FILE
 #define ESTRUTURAS_FILE
 
+typedef struct arvore *ARVORE;
 typedef struct arvore{
     /*dados*/
     char* valor;
     char* tipoVariavel;
     /*filho*/
-    struct arvore *filho;
-    struct arvore *irmao;
-}ARVORE;
+    ARVORE filho;
+    ARVORE irmao;
+}ARV;
 
 #endif
