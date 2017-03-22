@@ -83,3 +83,68 @@ ls
 ./compile
 ./compile
 ./compile
+cd Parte2
+ls
+./compile
+./compile
+cd ..
+cd Práticas/
+cd p-04-yacc/
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+./ficha4.exemplo
+flex ficha4.exemplo.l
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+./ficha4.exemplo
+./ficha4.exemplo
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+./ficha4.exemplo
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+./ficha4.exemplo
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+./ficha4.exemplo
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+./ficha4.exemplo
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+./ficha4.exemplo
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+./ficha4.exemplo
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+./ficha4.exemplo
+./ficha4.exemplo
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+flex ficha4.exemplo.l
+yacc -d -v ficha4.exemplo.y
+cc lex.yy.c y.tab.c -o ficha4.exemplo
+./ficha4.exemplo
+flex ficha4.exemplo.l
+flex ficha4.exemplo.l
+flex ficha4.exemplo.l
+flex ficha4.exemplo.l
+flex ficha4.exemplo.l

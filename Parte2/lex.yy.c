@@ -690,8 +690,8 @@ char *yytext;
     #include <stdlib.h>
     #include <string.h>
     #include "y.tab.h"
-    #include "ast.h"
     #include "estruturas.h"
+    #include "ast.h"
 
 	int aux = 0;
     int aux_2 = 0;

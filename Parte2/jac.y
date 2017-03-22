@@ -22,7 +22,7 @@
 
 %union{
         char* string;   
-        struct arvore *arv;
+        struct arvore *arv; /*definimos uma estrutura do tipo arvore*/
 }
 
 %type <arv> Program Program_2 FieldDecl MethodDecl
@@ -54,7 +54,7 @@
 
 %%
 
-Program: CLASS ID OBRACE Program_2 CBRACE   {raiz = criarNo("Null", "Program"); raiz->filho = $4;}
+Program: CLASS ID OBRACE Program_2 CBRACE   {raiz = criarNo("Program", "Null"); raiz->filho = $4;}
         ;
 
 /*deve repetir 0 ou + vezes  { FieldDecl | MethodDecl | SEMI } */
@@ -64,13 +64,13 @@ Program_2: Program_2 FieldDecl          {$$ = $1; criarIrmao($$, $2);}
         |                               {;}
         ;
 
-FieldDecl: PUBLIC STATIC Type ID comma_id SEMI 
-        | error SEMI
+FieldDecl: PUBLIC STATIC Type ID comma_id SEMI          {;}
+        | error SEMI                                    {;}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA ID }*/
-comma_id: comma_id COMMA ID
-        |
+comma_id: comma_id COMMA ID                     {;}
+        |                                       {;}
         ;
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody
@@ -108,9 +108,9 @@ FormalParams: STRING OSQUARE CSQUARE ID
 VarDecl: Type ID comma_id SEMI
         ;
 
-Type: BOOL 
-    | INT 
-    | DOUBLE 
+Type: BOOL              {$$ = criarNo("Bool", "Null");}      
+    | INT               {$$ = criarNo("Int", "Null");}          /*porque são tipos, não tem "valor"*/
+    | DOUBLE            {$$ = criarNo("Double", "Null");}
     ;
 
 Statement: OBRACE Statement_2 CBRACE
@@ -149,10 +149,10 @@ ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV
         | PARSEINT OCURV error CCURV
         ;
 
-Expr: Assignment 
-    | MethodInvocation 
-    | ParseArgs 
-    | Expr AND Expr 
+Expr: Assignment                {$$ = $1;}              /*E' -> € {E'.n = E'.i}*/
+    | MethodInvocation          {$$ = $1;}
+    | ParseArgs                 {$$ = $1;}
+    | Expr AND Expr             {$$ = $1; $$->irmao = criarIrmao(criarNo("And", "Null"), $2);} /*Expr vai para o topo da pilha, está no topo e a este vamos acrescentar um irmao (AND) e a este outro irmão Expr*/
     | Expr OR Expr 
     | Expr EQ Expr
     | Expr GEQ Expr
@@ -165,16 +165,16 @@ Expr: Assignment
     | Expr STAR Expr
     | Expr DIV Expr
     | Expr MOD Expr 
-    | PLUS Expr
-    | MINUS Expr
-    | NOT Expr 
-    | ID
-    | ID DOTLENGTH
-    | OCURV Expr CCURV 
-    | BOOLLIT 
-    | DECLIT 
-    | REALLIT
-    | OCURV error CCURV
+    | PLUS Expr                 {$$ = criarIrmao(criarNo("Plus", "Null"), $2);}              /*E'->NAND T E'1 {E'1.i = mknode("NAND", E'.i, Tn)}*/
+    | MINUS Expr                {$$ = criarIrmao(criarNo("Minus", "Null"), $2);}                /*O meu nó actual (Minus) vai ser irmão do novo nó (Expr), que no final estará no posso da pilha $$*/
+    | NOT Expr                  {$$ = criarIrmao(criarNo("Not", "Null"), $2);}
+    | ID                        {$$ = criarNo("Id", $1);}      /*T->ID  {T.n = mkleaf("Id", ID.lexval)}*/
+    | ID DOTLENGTH              
+    | OCURV Expr CCURV          {$$ = $2;}                      /*T->(E) {T.n = E.n}*/
+    | BOOLLIT                   {$$ = criarNo("BoolLit", $1);}
+    | DECLIT                    {$$ = criarNo("DecLit", $1);}
+    | REALLIT                   {$$ = criarNo("RealLit", $1);}
+    | OCURV error CCURV         {;}
     ;
 
 %%

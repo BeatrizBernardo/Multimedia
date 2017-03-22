@@ -223,7 +223,7 @@ union YYSTYPE
 #line 23 "jac.y" /* yacc.c:355  */
 
         char* string;   
-        struct arvore *arv;
+        struct arvore *arv; /*definimos uma estrutura do tipo arvore*/
 
 #line 229 "y.tab.c" /* yacc.c:355  */
 };

@@ -4,14 +4,19 @@
 #include "estruturas.h"
 #include "ast.h"
 
+/*declaração das funções do ficheiro*/
+ARVORE *criarNo (char *tipoVariavel, char *valor);
+void criarIrmao(ARVORE *noActual, ARVORE *novoNo);
+void imprimirAST(ARVORE *noActual);
+
 /* Cada nó tem que ser criado, introduzindo o valor da variavel (p.e. 5) e o tipo da variavel (p.e. INT)
 *  No final o nó deve ser devolvido outra vez
 */
-ARVORE criarNo (char *valor, char *tipoVariavel){
-    ARVORE no = malloc(sizeof(ARVORE));
+ARVORE *criarNo (char *tipoVariavel, char *valor){
+    ARVORE *no = (ARVORE*)malloc(sizeof(ARVORE));
     if(no != NULL){
-        no->valor = valor;
         no->tipoVariavel = tipoVariavel;
+        no->valor = valor;
         no->filho = NULL;
         no->irmao = NULL;
     }
@@ -38,7 +43,7 @@ void criarIrmao(ARVORE *noActual, ARVORE *novoNo){
 void imprimirAST(ARVORE *noActual){
     if(noActual != NULL){
         imprimirAST(noActual->filho);
-        printf("variavel %c tipoVariavel %c", noActual.valor, noActual.tipoVariavel);
+        printf("variavel %s tipoVariavel %s", noActual->valor, noActual->tipoVariavel);
         imprimirAST(noActual->irmao);
     }   
 }
