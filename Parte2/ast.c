@@ -8,15 +8,16 @@
 *  No final o nó deve ser devolvido outra vez
 */
 ARVORE criarNo (char *tipoVariavel, char *valor){
-    ARVORE no = (ARVORE)malloc(sizeof(ARVORE));
+    ARVORE no = (ARVORE)malloc(sizeof(ARV));
     if(no != NULL){
-        no->tipoVariavel = tipoVariavel;
-        no->valor = valor;
+        strcpy(no->tipoVariavel,tipoVariavel);
+        strcpy(no->valor, valor);
+        //no->tipoVariavel = tipoVariavel;
+        //no->valor = valor;
         no->filho = NULL;
-        no->irmao = NULL;
-        return no;
+        no->irmao = NULL;        
     }
-    return NULL;
+    return no;
 }
 
 /* Os nós IRMAOS sao criados aqui. 
@@ -31,15 +32,20 @@ void criarIrmao(ARVORE noActual, ARVORE novoNo){
     if(novoNo != NULL){
         noActual->irmao = novoNo;
     }else{
-        noActual->irmao = criarNo("Null", "Null");;
+        noActual->irmao = criarNo("Null", "Null");
     }
 }
 
 
 void imprimirAST(ARVORE noActual){
     if(noActual != NULL){
-        imprimirAST(noActual->filho);
+        if(noActual->filho != NULL){
+            imprimirAST(noActual->filho);
+        }
         printf("variavel %s tipoVariavel %s", noActual->valor, noActual->tipoVariavel);
-        imprimirAST(noActual->irmao);
+        if(noActual->irmao != NULL){
+            imprimirAST(noActual->irmao);
+        }
+        
     }   
 }

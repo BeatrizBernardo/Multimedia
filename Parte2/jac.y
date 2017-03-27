@@ -65,7 +65,7 @@ Program_2: Program_2 FieldDecl          {$$ = $1; criarIrmao($$, $2);}
         ;
 
 FieldDecl: PUBLIC STATIC Type ID comma_id SEMI          {$$ = criarNo("FieldDecl", "Null"); $$->filho = $3; criarIrmao($$->filho, criarNo("Id", $4)); criarIrmao($$->filho, $5);}
-        | error SEMI                                    {;}
+        | error SEMI                                    {$$ = criarNo("FieldDecl", "error");}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA ID }*/
@@ -81,7 +81,7 @@ MethodHeader: Type ID OCURV MethodHeader_2 CCURV        {$$ = criarNo("MethodHea
         ;
 
 /*deve ser opcional - sim ou não - [ FormalParams ]*/        
-MethodHeader_2: FormalParams            {$$ = $1;}
+MethodHeader_2: FormalParams            {$$ = criarNo("MethodParams", "Null"); $$ = $1;}
         |                               {;}
         ;
 
@@ -95,14 +95,12 @@ MethodBody_2: MethodBody_2 VarDecl              {$$ = $1; criarIrmao($$, $2);}
         ;
 
 FormalParams: Type ID FormalParams_2            {$$ = $1; criarIrmao($$, criarNo("Id", $2)); criarIrmao($$, $3);}
+        | STRING OSQUARE CSQUARE ID             {$$ = criarNo("StringArray", "Null"); criarIrmao($$, criarNo("Id", $4));}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA Type ID }*/
 FormalParams_2:FormalParams_2 COMMA Type ID             {$$ = $1; criarIrmao($$, $3); criarIrmao($$, criarNo("Id", $4));}
         |                                               {;}
-        ;
-
-FormalParams: STRING OSQUARE CSQUARE ID         {criarIrmao($$, criarNo("Id", $4));}
         ;
 
 VarDecl: Type ID comma_id SEMI          {$$ = criarNo("VarDecl", "Null"); $$->filho = $1; criarIrmao($$->filho, criarNo("Id", $2));}
@@ -125,7 +123,7 @@ Statement: OBRACE Statement_2 CBRACE                            {$$ = $2;}
         | ParseArgs SEMI                                        {$$ = $1;}
         | RETURN SEMI                                           {$$ = criarNo("Return", "Null");}
         | RETURN Expr SEMI                                      {$$ = criarNo("Return", "Null"); $$->filho = $2;}
-        | error SEMI                                            {;}
+        | error SEMI                                            {$$ = criarNo("Statement", "error");}
         ;
 
 /*deve repetir 0 ou + vezes { Statement }*/
@@ -138,6 +136,7 @@ Assignment: ID ASSIGN Expr      {$$ = criarNo("Assign", "Null"); $$->filho = cri
 
 MethodInvocation: ID OCURV CCURV                                {$$ = criarNo("Id", "Null");}
         |ID OCURV Expr MethodInvocation_2 CCURV                 {$$ = criarNo("Id", "Null"); $$->filho = $3; criarIrmao($$->filho, $4);}
+        |ID OCURV error CCURV                                   {$$ = criarNo("Id", "error");}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA Expr }*/
@@ -146,7 +145,7 @@ MethodInvocation_2: MethodInvocation_2 COMMA Expr               {$$ = $1; criarI
         ;
 
 ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV         {$$ = criarNo("ParseArgs", "Null"); $$->filho = criarNo("Id", $3); criarIrmao($$->filho, $5);}
-        | PARSEINT OCURV error CCURV                            {;}
+        | PARSEINT OCURV error CCURV                            {$$ = criarNo("ParseArgs", "error");}
         ;
 
 Expr: Assignment                {$$ = $1;}              /*E' -> € {E'.n = E'.i}*/
@@ -169,12 +168,12 @@ Expr: Assignment                {$$ = $1;}              /*E' -> € {E'.n = E'.i
     | MINUS Expr                {$$ = criarNo("Minus", "Null"); $$->filho = $2;}                   /*O meu nó actual (Minus) vai ser irmão do novo nó (Expr), que no final estará no posso da pilha $$*/
     | NOT Expr                  {$$ = criarNo("Not", "Null"); $$->filho = $2;}   
     | ID                        {$$ = criarNo("Id", $1);}      /*T->ID  {T.n = mkleaf("Id", ID.lexval)}*/
-    | ID DOTLENGTH              {$$ = criarNo("Id", $1);} 
+    | ID DOTLENGTH              {$$ = criarNo("Length", "Null"); $$->filho = criarNo("Id", $1);} 
     | OCURV Expr CCURV          {$$ = $2;}                      /*T->(E) {T.n = E.n}*/
     | BOOLLIT                   {$$ = criarNo("BoolLit", $1);}
     | DECLIT                    {$$ = criarNo("DecLit", $1);}
     | REALLIT                   {$$ = criarNo("RealLit", $1);}
-    | OCURV error CCURV         {;}
+    | OCURV error CCURV         {$$ = criarNo("Expr", "error");}
     ;
 
 %%

@@ -35,10 +35,11 @@ Gramática
    18             | %empty
 
    19 FormalParams: Type ID FormalParams_2
-   20             | STRING OSQUARE CSQUARE ID
 
-   21 FormalParams_2: FormalParams_2 COMMA Type ID
-   22               | %empty
+   20 FormalParams_2: FormalParams_2 COMMA Type ID
+   21               | %empty
+
+   22 FormalParams: STRING OSQUARE CSQUARE ID
 
    23 VarDecl: Type ID comma_id SEMI
 
@@ -111,8 +112,8 @@ OCURV (258) 11 12 28 29 30 31 32 33 43 44 45 48 49 71 75
 CCURV (259) 11 12 28 29 30 31 32 33 43 44 45 48 49 71 75
 OBRACE (260) 1 15 27
 CBRACE (261) 1 15 27
-OSQUARE (262) 20 48
-CSQUARE (263) 20 48
+OSQUARE (262) 22 48
+CSQUARE (263) 22 48
 AND (264) 53
 OR (265) 54
 LT (266) 59
@@ -129,7 +130,7 @@ MOD (276) 65
 NOT (277) 68
 ASSIGN (278) 42
 SEMI (279) 4 6 7 23 31 32 33 34 35 36 37 38 39
-COMMA (280) 8 21 46
+COMMA (280) 8 20 46
 BOOL (281) 24
 CLASS (282) 1
 DO (283) 31
@@ -143,12 +144,12 @@ PRINT (290) 32 33
 PUBLIC (291) 6 10
 RETURN (292) 37 38
 STATIC (293) 6 10
-STRING (294) 20
+STRING (294) 22
 VOID (295) 12
 WHILE (296) 30 31
 BOOLLIT (297) 72
 RESERVED (298)
-ID (299) 1 6 8 11 12 19 20 21 23 42 43 44 45 48 69 70
+ID (299) 1 6 8 11 12 19 20 22 23 42 43 44 45 48 69 70
 DECLIT (300) 73
 REALLIT (301) 74
 STRLIT (302) 33
@@ -178,13 +179,13 @@ MethodBody (57)
 MethodBody_2 (58)
     à esquerda: 16 17 18, à direita: 15 16 17
 FormalParams (59)
-    à esquerda: 19 20, à direita: 13
+    à esquerda: 19 22, à direita: 13
 FormalParams_2 (60)
-    à esquerda: 21 22, à direita: 19 21
+    à esquerda: 20 21, à direita: 19 20
 VarDecl (61)
     à esquerda: 23, à direita: 16
 Type (62)
-    à esquerda: 24 25 26, à direita: 6 11 19 21 23
+    à esquerda: 24 25 26, à direita: 6 11 19 20 23
 Statement (63)
     à esquerda: 27 28 29 30 31 32 33 34 35 36 37 38 39, à direita:
     17 28 29 30 31 40
@@ -481,7 +482,7 @@ Estado28
 
 Estado29
 
-   20 FormalParams: STRING . OSQUARE CSQUARE ID
+   22 FormalParams: STRING . OSQUARE CSQUARE ID
 
     OSQUARE  fazer shift, e ir para o estado 52
 
@@ -679,7 +680,7 @@ Estado51
 
 Estado52
 
-   20 FormalParams: STRING OSQUARE . CSQUARE ID
+   22 FormalParams: STRING OSQUARE . CSQUARE ID
 
     CSQUARE  fazer shift, e ir para o estado 83
 
@@ -695,7 +696,7 @@ Estado54
 
    19 FormalParams: Type ID . FormalParams_2
 
-    $default  reduzir usando a regra 22 (FormalParams_2)
+    $default  reduzir usando a regra 21 (FormalParams_2)
 
     FormalParams_2  ir para o estado 84
 
@@ -1078,7 +1079,7 @@ Estado82
 
 Estado83
 
-   20 FormalParams: STRING OSQUARE CSQUARE . ID
+   22 FormalParams: STRING OSQUARE CSQUARE . ID
 
     ID  fazer shift, e ir para o estado 119
 
@@ -1086,7 +1087,7 @@ Estado83
 Estado84
 
    19 FormalParams: Type ID FormalParams_2 .
-   21 FormalParams_2: FormalParams_2 . COMMA Type ID
+   20 FormalParams_2: FormalParams_2 . COMMA Type ID
 
     COMMA  fazer shift, e ir para o estado 120
 
@@ -1712,14 +1713,14 @@ Estado118
 
 Estado119
 
-   20 FormalParams: STRING OSQUARE CSQUARE ID .
+   22 FormalParams: STRING OSQUARE CSQUARE ID .
 
-    $default  reduzir usando a regra 20 (FormalParams)
+    $default  reduzir usando a regra 22 (FormalParams)
 
 
 Estado120
 
-   21 FormalParams_2: FormalParams_2 COMMA . Type ID
+   20 FormalParams_2: FormalParams_2 COMMA . Type ID
 
     BOOL    fazer shift, e ir para o estado 15
     DOUBLE  fazer shift, e ir para o estado 16
@@ -2206,7 +2207,7 @@ Estado145
 
 Estado146
 
-   21 FormalParams_2: FormalParams_2 COMMA Type . ID
+   20 FormalParams_2: FormalParams_2 COMMA Type . ID
 
     ID  fazer shift, e ir para o estado 155
 
@@ -2337,9 +2338,9 @@ Estado154
 
 Estado155
 
-   21 FormalParams_2: FormalParams_2 COMMA Type ID .
+   20 FormalParams_2: FormalParams_2 COMMA Type ID .
 
-    $default  reduzir usando a regra 21 (FormalParams_2)
+    $default  reduzir usando a regra 20 (FormalParams_2)
 
 
 Estado156

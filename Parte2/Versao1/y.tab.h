@@ -148,7 +148,7 @@ union YYSTYPE
 {
 #line 18 "jac.y" /* yacc.c:1909  */
 
-        char* string;
+        char* string;   
 
 #line 154 "y.tab.h" /* yacc.c:1909  */
 };

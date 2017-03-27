@@ -148,3 +148,85 @@ flex ficha4.exemplo.l
 flex ficha4.exemplo.l
 flex ficha4.exemplo.l
 flex ficha4.exemplo.l
+cd Parte2
+ls
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+cd Versão1/
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+cd ..
+./compile 
+./compile 
+./compile 
+cd Versão1/
+./compile 
+./compile 
+./compile 
+./compile 
+cd ..
+./compile 
+./compile 
+cd Versão1/
+./compile 
+./compile 
+cd ..
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+./compile 
+valgrind ./compile
+drmemory./compile
+drmemory
+drmemory ./compile 
+drmemory -- ./compile 
+cd Parte2
+ls
+./compile 
+drmemory.exe -- ./compile 
+cd Parte2
+drmemory -- jac.exe
+drmemory -- ./jac.exe
