@@ -10,12 +10,15 @@
 ARVORE criarNo (char *tipoVariavel, char *valor){
     ARVORE no = (ARVORE)malloc(sizeof(ARV));
     if(no != NULL){
-        strcpy(no->tipoVariavel,tipoVariavel);
+
+        /*NECESSÁRIO ALOCAR MEMORIA PARA O COPY DA STRING*/
+        no->tipoVariavel = (char*)malloc(strlen(tipoVariavel) + 1);
+        no->valor = (char*)malloc(strlen(valor) + 1);
+        strcpy(no->tipoVariavel, tipoVariavel);
         strcpy(no->valor, valor);
-        //no->tipoVariavel = tipoVariavel;
-        //no->valor = valor;
         no->filho = NULL;
         no->irmao = NULL;        
+        printf("<<<<<< >>>>>>><<<<<<<<<>>>>>>> %s %s\n", no->tipoVariavel, tipoVariavel);
     }
     return no;
 }
@@ -25,6 +28,9 @@ ARVORE criarNo (char *tipoVariavel, char *valor){
 * e só depois usar a função acima para criar o no: criarNo
 */
 void criarIrmao(ARVORE noActual, ARVORE novoNo){
+    if(noActual == NULL){
+        printf("\nERROORRRRRRRRRRRRRRRRRRRRRRO\n");
+    }
     while(noActual->irmao != NULL){
         noActual = noActual->irmao;
     }
@@ -32,7 +38,7 @@ void criarIrmao(ARVORE noActual, ARVORE novoNo){
     if(novoNo != NULL){
         noActual->irmao = novoNo;
     }else{
-        noActual->irmao = criarNo("Null", "Null");
+        noActual->irmao = criarNo(NULL, NULL);
     }
 }
 

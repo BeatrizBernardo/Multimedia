@@ -71,7 +71,7 @@ FieldDecl: PUBLIC STATIC Type ID comma_id SEMI          {$$ = criarNo("FieldDecl
         ;
 
 /*deve repetir 0 ou + vezes { COMMA ID }*/
-comma_id: comma_id COMMA ID                     {$$ = $1; criarIrmao($$, criarNo("Id", $3));}
+comma_id: comma_id COMMA ID                     {$$ = $1; criarIrmao($$, criarNo("Id", $3));  printf("------>>> %s\n", $3);}
         |                                       {;}
         ;
 
@@ -83,7 +83,7 @@ MethodHeader: Type ID OCURV MethodHeader_2 CCURV        {$$ = criarNo("MethodHea
         ;
 
 /*deve ser opcional - sim ou não - [ FormalParams ]*/        
-MethodHeader_2: FormalParams            {$$ = criarNo("MethodParams", "Null"); $$ = $1;}
+MethodHeader_2: FormalParams            {$$ = criarNo("MethodParams", "Null"); criarIrmao($$, criarNo("ParamDecl", "Null")); $$ = $1;}
         |                               {;}
         ;
 
@@ -99,7 +99,7 @@ MethodBody_2: MethodBody_2 VarDecl              {$$ = $1; criarIrmao($$, $2);}
 FormalParams: Type ID FormalParams_2            {$$ = $1; criarIrmao($$, criarNo("Id", $2)); criarIrmao($$, $3);}
         | STRING OSQUARE CSQUARE ID             {$$ = criarNo("StringArray", "Null"); criarIrmao($$, criarNo("Id", $4));}
         ;
-
+  
 /*deve repetir 0 ou + vezes { COMMA Type ID }*/
 FormalParams_2:FormalParams_2 COMMA Type ID             {$$ = $1; criarIrmao($$, $3); criarIrmao($$, criarNo("Id", $4));}
         |                                               {;}
