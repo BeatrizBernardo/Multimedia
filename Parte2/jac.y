@@ -25,7 +25,7 @@
         struct arvore *arv; /*definimos uma estrutura do tipo arvore*/
 }
 
-%type <arv> Program Program_2 FieldDecl MethodDecl Type comma_id MethodHeader MethodBody MethodHeader_2 FormalParams MethodBody_2 VarDecl Statement FormalParams_2 Statement_2 Expr Assignment MethodInvocation ParseArgs MethodInvocation_2
+%type <arv> Program Program_2 FieldDecl MethodDecl Type comma_id MethodHeader MethodBody MethodHeader_2 FormalParams MethodBody_2 VarDecl Statement FormalParams_2 Statement_2 Expr Expr2 Assignment MethodInvocation ParseArgs MethodInvocation_2
 
 %token OCURV CCURV OBRACE CBRACE OSQUARE CSQUARE 
 %token AND OR LT GT EQ NEQ LEQ GEQ PLUS MINUS STAR DIV MOD NOT ASSIGN SEMI COMMA
