@@ -6,7 +6,6 @@
 
 	int aux = 0;
     int aux_2 = 0;
-    int tree = 0;
     /*as colunas e as linhas começam em 1*/
     int lineNum = 1;
     int columnNum = 1;

@@ -230,3 +230,17 @@ drmemory.exe -- ./compile
 cd Parte2
 drmemory -- jac.exe
 drmemory -- ./jac.exe
+ls
+cd Parte2
+cd Versao1/
+flex jac.l 
+yacc -d -v jac.y
+cc lex.yy.c y.tab.c -o jac
+./jac < gcd.ja 
+./jac.exe < gcd.ja 
+./jac.exe < gcd.ja 
+flex jac.l 
+cc lex.yy.c y.tab.c -o jac
+yacc -d -v jac.y
+cc lex.yy.c y.tab.c -o jac
+./jac.exe < gcd.ja 

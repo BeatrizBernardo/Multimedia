@@ -161,19 +161,19 @@ Expr2: MethodInvocation          {}
     | Expr2 DIV Expr2             {}
     | Expr2 MOD Expr2             {}
     | NOT Expr2    		    	{}
-    | PLUS Expr2	%prec NOT            	{}     
-    | MINUS Expr2	%prec NOT          		{}                   
+    | PLUS Expr2	            	{}     
+    | MINUS Expr2	          		{}                   
     | ID                   		{}     
     | ID DOTLENGTH         		{}       
     | BOOLLIT              		{}    
     | DECLIT               		{}     
-    | REALLIT              		{} 
-    | OCURV Expr CCURV     		{}    
+    | REALLIT              		{}     
     | OCURV error CCURV    		{}       
 	;
 
 Expr: Assignment                {}
    	| Expr2 {}
+   	| OCURV Expr CCURV     		{}
     ;
 
 %%
