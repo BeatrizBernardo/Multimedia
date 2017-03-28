@@ -20,6 +20,9 @@
 
     /*cenas sobre a AST*/
     ARVORE raiz = NULL;
+
+    /*Flag para verificar se há erro sintatico*/
+    int error = 0;
 %}
 
 %X COMMENTS

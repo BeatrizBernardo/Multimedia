@@ -17,6 +17,9 @@
 
     /*importa do lex mas para AST*/
     extern ARVORE raiz;
+
+    /*importa flag de error*/
+    extern int error;
     
 %}
 
@@ -64,7 +67,7 @@ Program_2: Program_2 FieldDecl          {$$ = $1; criarIrmao($$, $2);}
         ;
 
 FieldDecl: PUBLIC STATIC Type ID comma_id SEMI          {$$ = criarNo("FieldDecl", "Null"); $$->filho = $3; criarIrmao($$->filho, criarNo("Id", $4)); criarIrmao($$->filho, $5);}
-        | error SEMI                                    {$$ = criarNo("FieldDecl", "error");}
+        | error SEMI                                    {error = 1;}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA ID }*/
@@ -123,7 +126,7 @@ Statement: OBRACE Statement_2 CBRACE                            {$$ = $2;}
         | SEMI                                                  {;}
         | RETURN SEMI                                           {$$ = criarNo("Return", "Null");}
         | RETURN Expr SEMI                                      {$$ = criarNo("Return", "Null"); $$->filho = $2;}
-        | error SEMI                                            {$$ = criarNo("Statement", "error");}
+        | error SEMI                                            {error = 1;}
         ;
 
 /*deve repetir 0 ou + vezes { Statement }*/
@@ -136,7 +139,7 @@ Assignment: ID ASSIGN Expr      {$$ = criarNo("Assign", "Null"); $$->filho = cri
 
 MethodInvocation: ID OCURV CCURV                                {$$ = criarNo("Id", "Null");}
         |ID OCURV Expr MethodInvocation_2 CCURV                 {$$ = criarNo("Id", "Null"); $$->filho = $3; criarIrmao($$->filho, $4);}
-        |ID OCURV error CCURV                                   {$$ = criarNo("Id", "error");}
+        |ID OCURV error CCURV                                   {error = 1;}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA Expr }*/
@@ -145,7 +148,7 @@ MethodInvocation_2: MethodInvocation_2 COMMA Expr               {$$ = $1; criarI
         ;
 
 ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV         {$$ = criarNo("ParseArgs", "Null"); $$->filho = criarNo("Id", $3); criarIrmao($$->filho, $5);}
-        | PARSEINT OCURV error CCURV                            {$$ = criarNo("ParseArgs", "error");}
+        | PARSEINT OCURV error CCURV                            {error = 1;}
         ;
 
 Expr2:MethodInvocation                  {$$ = $1;}              /*E' -> € {E'.n = E'.i}*/             
@@ -172,7 +175,7 @@ Expr2:MethodInvocation                  {$$ = $1;}              /*E' -> € {E'.
     | DECLIT                            {$$ = criarNo("DecLit", $1);}
     | REALLIT                           {$$ = criarNo("RealLit", $1);}
     | OCURV Expr CCURV                  {$$ = $2;}                      /*T->(E) {T.n = E.n}*/
-    | OCURV error CCURV                 {$$ = criarNo("Expr", "error");}
+    | OCURV error CCURV                 {error = 1;}
     ;
 
 Expr:  Assignment       {$$ = $1;}              
