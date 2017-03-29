@@ -8,25 +8,29 @@
 *  No final o nó deve ser devolvido outra vez
 */
 ARVORE criarNo (char *tipoVariavel, char *valor){
-    ARVORE no = (ARVORE)malloc(sizeof(ARV));
+    ARVORE no;
+    no = (ARVORE)malloc(sizeof(ARV));
+
     if(no != NULL){
+        /*NECESSÁRIO ALOCAR MEMORIA PARA O COPY DA STRING*/
         if(valor == NULL){
             no->valor = valor;
         }else{
-            no->valor = (char*)malloc(strlen(valor) + 1);
-            strcpy(no->valor, valor);
+            no->valor = strdup (valor); 
         }
 
-        /*NECESSÁRIO ALOCAR MEMORIA PARA O COPY DA STRING*/
-        no->tipoVariavel = (char*)malloc(strlen(tipoVariavel) + 1);
-        strcpy(no->tipoVariavel, tipoVariavel);
-
+        if(tipoVariavel == NULL){
+            no->tipoVariavel = tipoVariavel;
+        }else{
+            no->tipoVariavel = strdup(tipoVariavel);
+        }
+        
         //no->valor = (char*)malloc(strlen(valor) + 1);
         //strcpy(no->valor, valor);
-
+        
         no->filho = NULL;
         no->irmao = NULL;        
-        printf("<<<<<< >>>>>>><<<<<<<<<>>>>>>> %s %s\n", no->tipoVariavel, tipoVariavel);
+        //printf("<<<<<< >>>>>>><<<<<<<<<>>>>>>> %s\n", no->tipoVariavel);
     }
     return no;
 }
@@ -34,14 +38,14 @@ ARVORE criarNo (char *tipoVariavel, char *valor){
 /* Os nós IRMAOS sao criados aqui. 
 * A ideia é percorrer todos os nós irmaos de um no filho até ao ultimo 
 * e só depois usar a função acima para criar o no: criarNo
+* Deve retornar o nó que é criado quando noActual não é NULL
 */
-void criarIrmao(ARVORE noActual, ARVORE novoNo){
+ARVORE criarIrmao(ARVORE noActual, ARVORE novoNo){
     if(noActual == NULL){
-        printf("\nERROORRRRRRRRRRRRRRRRRRRRRRO\n");
+        printf("\n ---- %s %s", novoNo->tipoVariavel, novoNo->valor);
+        return novoNo;
     }
-    if(noActual->irmao == NULL){
-        printf("\n\n null\n\n");
-    }
+
     while(noActual->irmao != NULL){
         noActual = noActual->irmao;
     }
@@ -51,18 +55,65 @@ void criarIrmao(ARVORE noActual, ARVORE novoNo){
     }else{
         noActual->irmao = criarNo(NULL, NULL);
     }
+    
+    return noActual;
 }
 
 
-void imprimirAST(ARVORE noActual){
-    if(noActual != NULL){
-        if(noActual->filho != NULL){
-            imprimirAST(noActual->filho);
-        }
-        printf("variavel %s tipoVariavel %s", noActual->valor, noActual->tipoVariavel);
-        if(noActual->irmao != NULL){
-            imprimirAST(noActual->irmao);
-        }
+void imprimirAST(ARVORE noActual, int error, int numFilhos){
+    if(error ==  0){
+        //printf("aqui\n");
+        //printf("kjsdkasjnd %s\n", noActual->tipoVariavel);
+        if(noActual != NULL){
+            if(noActual->valor != NULL){
+                for(int i=0; i < numFilhos; i++){
+                    printf("..");
+                }
+                printf("%s(%s)\n", noActual->tipoVariavel, noActual->valor);
+            }else{
+                for(int i=0; i < numFilhos; i++){
+                    printf("..");
+                }
+                printf("%s\n", noActual->tipoVariavel);
+            }
+            
+            //printf("oiw %s \n", noActual->filho->tipoVariavel);
+            //printf("kdsm %s \n", noActual->irmao->tipoVariavel);
+
+            if(noActual->filho != NULL){
+                //printf("anksn %s \n", noActual->filho->valor);
+                numFilhos += 1;
+                imprimirAST(noActual->filho, error, numFilhos);
+                numFilhos -=1;
+            }
+
+            if(noActual->irmao != NULL ){
+                //printf("ASDKJ %s \n", noActual->irmao->valor);
+                imprimirAST(noActual->irmao, error, numFilhos);
+            }
+            
+        } 
         
-    }   
+        /*if(noActual->tipoVariavel != NULL){
+            free(noActual->tipoVariavel);
+        }
+        if(noActual->valor != NULL){
+            free(noActual->valor);
+        }
+        free(noActual);*/
+        
+    }  
+}
+
+void freeArvore(ARVORE noActual){
+    ARVORE auxiliar = noActual;
+    while(auxiliar != NULL){
+        if(auxiliar->filho != NULL){
+            freeArvore(auxiliar->filho);
+        }
+        if(auxiliar->irmao != NULL){
+            freeArvore(auxiliar->irmao);
+        }
+        free(auxiliar);
+    }
 }

@@ -2669,7 +2669,8 @@ int main(int argc, char *argv[]){
     }else{
         aux_2 = 1;
         yyparse();
-        imprimirAST(raiz);
+        imprimirAST(raiz, error, 0);
+        //freeArvore(raiz);
     }
     return 0;
 }
