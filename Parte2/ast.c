@@ -42,20 +42,15 @@ ARVORE criarNo (char *tipoVariavel, char *valor){
 */
 ARVORE criarIrmao(ARVORE noActual, ARVORE novoNo){
     if(noActual == NULL){
-        printf("\n ---- %s %s", novoNo->tipoVariavel, novoNo->valor);
         return novoNo;
     }
-
+    
+    
     while(noActual->irmao != NULL){
         noActual = noActual->irmao;
     }
     
-    if(novoNo != NULL){
-        noActual->irmao = novoNo;
-    }else{
-        noActual->irmao = criarNo(NULL, NULL);
-    }
-    
+    noActual->irmao = novoNo;
     return noActual;
 }
 
@@ -84,7 +79,7 @@ void imprimirAST(ARVORE noActual, int error, int numFilhos){
                 //printf("anksn %s \n", noActual->filho->valor);
                 numFilhos += 1;
                 imprimirAST(noActual->filho, error, numFilhos);
-                numFilhos -=1;
+                numFilhos -= 1;
             }
 
             if(noActual->irmao != NULL ){

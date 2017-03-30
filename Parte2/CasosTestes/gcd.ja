@@ -1,4 +1,6 @@
-class gcd {   
+class gcd {
+    public static int a;
+    public static int a, b, c;   
     public static void main(String[] args) {    
         int a, b;    
         a = Integer.parseInt(args[0]);    

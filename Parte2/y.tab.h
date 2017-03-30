@@ -146,7 +146,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 26 "jac.y" /* yacc.c:1909  */
+#line 29 "jac.y" /* yacc.c:1909  */
 
         char* string;   
         struct arvore *arv; /*definimos uma estrutura do tipo arvore*/
