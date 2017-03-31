@@ -6,6 +6,7 @@
     #include "estruturas.h"
     #include "ast.h"
 
+
     void yyerror (const char *s);
     int yylex(void);
 
@@ -21,8 +22,8 @@
     /*importa flag de error*/
     extern int error;
 
-    /*para copia de Type no FieldDecl*/
-    ARVORE copiaType;
+    /*para copiar*/
+    ARVORE copia;
         
 %}
 
@@ -60,7 +61,7 @@
 %%
 
 Program: CLASS ID OBRACE Program_2 CBRACE   {   $$ = criarNo("Program", NULL);
-                                                $$->filho = criarIrmao(criarNo("Id", $2),$4);
+                                                $$->filho = criarIrmao(criarNo("Id", $2),$4); free($2);
                                                 raiz = $$;}
         ; 
 
@@ -76,23 +77,12 @@ FieldDecl: PUBLIC STATIC FieldDecl_2 SEMI               {$$ = $3;}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA ID }*/
-FieldDecl_2: FieldDecl_2 COMMA ID                       {       printf("--ss %s %s\n", $$->tipoVariavel, $$->valor);
-                                                                $$->irmao = criarIrmao($$->irmao, criarNo("FieldDecl", "se"));
-
-                                                                printf("--rr %s %s\n", $$->irmao->tipoVariavel, $$->irmao->valor);
-                                                                
-                                                                $$->irmao->filho = criarNo(copiaType->tipoVariavel, NULL);
-                                                                $$->irmao->filho= criarIrmao($$->irmao->filho, criarNo("Id", $3));
-                                                                
-                                                                //printf("--ddd %s %s\n", $$->irmao->filho->tipoVariavel, $$->irmao->filho->valor);
-                                                                //printf("--ddd %s %s\n", $$->irmao->filho->irmao->tipoVariavel, $$->irmao->filho->irmao->valor);
+FieldDecl_2: FieldDecl_2 COMMA ID                       {       $$ = criarIrmao($1, copia=criarNo("FieldDecl", NULL));
+                                                                copia->filho = criarIrmao(criarNo($$->filho->tipoVariavel, $$->filho->valor), criarNo("Id", $3));
+                                                                free($3);
                                                         }
-        | Type ID                                       {       
-                                                                $$ = criarNo("FieldDecl", "pr"); 
-                                                                //$$->filho = $1; 
-                                                                copiaType = $1;
-                                                                $$->filho = criarIrmao($1, criarNo("Id", $2));
-                                                                //$$->irmao=NULL;
+        | Type ID                                       {       $$ = criarNo("FieldDecl", NULL); 
+                                                                $$->filho = criarIrmao($1, criarNo("Id", $2)); free($2);
                                                         }
         ;
 
@@ -101,24 +91,21 @@ MethodDecl: PUBLIC STATIC MethodHeader MethodBody       {$$ = criarNo("MethodDec
 
 MethodHeader: Type ID OCURV MethodHeader_2 CCURV        {       $$ = criarNo("MethodHeader", NULL); 
                                                                 $$->filho = $1; 
-                                                                $$->filho = criarIrmao($$->filho, criarNo("Id", $2)); 
+                                                                $$->filho = criarIrmao($$->filho, criarNo("Id", $2)); free($2);
                                                                 $$->filho = criarIrmao($$->filho, $4);
                                                         }
         |VOID ID OCURV MethodHeader_2 CCURV             {       $$ = criarNo("MethodHeader", NULL); 
-                                                                $$->filho = criarIrmao(criarNo("Void", NULL), criarNo("Id", $2)); 
+                                                                $$->filho = criarIrmao(criarNo("Void", NULL), criarNo("Id", $2)); free($2);
                                                                 $$->filho = criarIrmao($$->filho, $4);
                                                         }
         ;
 
 /*deve ser opcional - sim ou não - [ FormalParams ]*/        
-MethodHeader_2: FormalParams            {                                                      
-                                                $$ = criarNo("MethodParams", NULL); 
-                                                $$ = $1;
-                                        }
-        |                               {$$ = NULL;}
+MethodHeader_2: FormalParams            {$$ = $1;}
+        |                               {$$ = criarNo("MethodParam", NULL); $$->filho = NULL;}
         ;
 
-MethodBody: OBRACE MethodBody_2 CBRACE          {$$ = $2;}
+MethodBody: OBRACE MethodBody_2 CBRACE          {$$ = criarNo("MethodBody", NULL); $$->filho = $2;}
         ;
 
 /*deve repetir 0 ou + vezes { VarDecl | Statement }*/
@@ -127,18 +114,19 @@ MethodBody_2: MethodBody_2 VarDecl              {$$ = $1; $$ = criarIrmao($1, $2
         |                                       {$$ = NULL;}
         ;
 
-FormalParams: FormalParams_2                    {$$ = $1;}
-        | STRING OSQUARE CSQUARE ID             {       $$ = criarNo("ParamDecl", NULL);
-                                                        $$->filho = criarIrmao(criarNo("StringArray", NULL), criarNo("Id", $4));
+FormalParams: FormalParams_2                    {$$ = criarNo("MethodParam", NULL); $$->filho = $1;}
+        | STRING OSQUARE CSQUARE ID             {       $$ = criarNo("MethodParam", NULL);
+                                                        $$->filho = criarNo("ParamDecl", NULL);
+                                                        $$->filho->filho = criarIrmao(criarNo("StringArray", NULL), criarNo("Id", $4));free($4);
                                                 }
         ;
   
 /*deve repetir 0 ou + vezes { COMMA Type ID }*/
-FormalParams_2:FormalParams_2 COMMA Type ID     {       $$->irmao = criarNo("ParamDecl", NULL); 
-                                                        $$->irmao->filho = criarIrmao($3, criarNo("Id", $4));
+FormalParams_2:FormalParams_2 COMMA Type ID     {       $$ = criarIrmao($1, copia=criarNo("ParamDecl", NULL));
+                                                        copia->filho = criarIrmao($3, criarNo("Id", $4)); free($4);
                                                 }
         | Type ID                               {       $$ = criarNo("ParamDecl", NULL);
-                                                        $$->filho = criarIrmao($1, criarNo("Id", $2));
+                                                        $$->filho = criarIrmao($1, criarNo("Id", $2)); free($2);
                                                 }
         ;
 
@@ -146,12 +134,12 @@ VarDecl: VarDecl_2 SEMI          {$$ = $1;}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA ID }*/
-VarDecl_2: VarDecl_2 COMMA ID           {       $$->irmao = criarIrmao($$->irmao, criarNo("VarDecl", NULL));
-                                                $$->irmao->filho = criarIrmao(criarNo(copiaType->tipoVariavel, copiaType->valor), criarNo("Id", $3));
+VarDecl_2: VarDecl_2 COMMA ID           {       $$ = criarIrmao($1, copia=criarNo("VarDecl", NULL));
+                                                copia->filho = criarIrmao(criarNo($$->filho->tipoVariavel, $$->filho->valor), criarNo("Id", $3));
+                                                free($3);
                                         }
-        | Type ID                       {       $$ = criarNo("VarDecl", NULL);
-                                                copiaType = $1;
-                                                $$->filho = criarIrmao($1, criarNo("Id", $2));
+        | Type ID                       {       $$ = criarNo("VarDecl", NULL); 
+                                                $$->filho = criarIrmao($1, criarNo("Id", $2)); free($2);
                                         }
         ;
 
@@ -177,7 +165,7 @@ Statement: OBRACE Statement_2 CBRACE                            {$$ = $2;}
         | PRINT OCURV Expr CCURV SEMI                           {       $$ = criarNo("Print", NULL); 
                                                                         $$->filho = $3;
                                                                 }
-        | PRINT OCURV STRLIT CCURV SEMI                         {$$ = criarNo("Print", $3);}
+        | PRINT OCURV STRLIT CCURV SEMI                         {$$ = criarNo("Print", NULL); $$->filho = criarNo("StrLit", $3);}
         | Assignment SEMI                                       {$$ = $1;}
         | MethodInvocation SEMI                                 {$$ = $1;}
         | ParseArgs SEMI                                        {$$ = $1;}
@@ -193,13 +181,16 @@ Statement_2:Statement_2 Statement       {$$ = $1; $$ = criarIrmao($1, $2);}
         ;
 
 Assignment: ID ASSIGN Expr      {       $$ = criarNo("Assign", NULL); 
-                                        $$->filho = criarIrmao(criarNo("Id", $1), $3);
+                                        $$->filho = criarIrmao(criarNo("Id", $1), $3); free($1);
                                 }
         ;
 
-MethodInvocation: ID OCURV CCURV                                {$$ = criarNo("Id", NULL);}
-        |ID OCURV Expr MethodInvocation_2 CCURV                 {       $$ = criarNo("Id", NULL); 
-                                                                        $$->filho = criarIrmao($3, $4);
+MethodInvocation: ID OCURV CCURV                                {       $$ = criarNo("Call", NULL);
+                                                                        $$->filho = criarNo("Id", $1); free($1);
+                                                                }
+        |ID OCURV Expr MethodInvocation_2 CCURV                 {       $$ = criarNo("Call", NULL);
+                                                                        $$->filho = criarIrmao(criarIrmao(criarNo("Id", $1), $3), $4); 
+                                                                        free($1);
                                                                 }
         |ID OCURV error CCURV                                   {error = 1;}
         ;
@@ -210,7 +201,7 @@ MethodInvocation_2: MethodInvocation_2 COMMA Expr               {$$ = $1; $$ = c
         ;
 
 ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV         {       $$ = criarNo("ParseArgs", NULL); 
-                                                                        $$->filho = criarIrmao(criarNo("Id", $3), $5);}
+                                                                        $$->filho = criarIrmao(criarNo("Id", $3), $5); free($3);}
         | PARSEINT OCURV error CCURV                            {error = 1;}
         ;
 
@@ -224,19 +215,19 @@ Expr2:MethodInvocation                  {$$ = $1;}              /*E' -> € {E'.
     | Expr2 LEQ Expr2                   {$$ = criarNo("Leq", NULL);  $$->filho = criarIrmao($1, $3);}
     | Expr2 LT Expr2                    {$$ = criarNo("Lt", NULL);  $$->filho = criarIrmao($1, $3);}
     | Expr2 NEQ Expr2                   {$$ = criarNo("Neq", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 PLUS Expr2                  {$$ = criarNo("Plus", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 MINUS Expr2                 {$$ = criarNo("Minus", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 STAR Expr2                  {$$ = criarNo("Star", NULL);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 PLUS Expr2                  {$$ = criarNo("Add", NULL);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 MINUS Expr2                 {$$ = criarNo("Sub", NULL);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 STAR Expr2                  {$$ = criarNo("Mul", NULL);  $$->filho = criarIrmao($1, $3);}
     | Expr2 DIV Expr2                   {$$ = criarNo("Div", NULL);  $$->filho = criarIrmao($1, $3);}
     | Expr2 MOD Expr2                   {$$ = criarNo("Mod", NULL);  $$->filho = criarIrmao($1, $3);}
     | NOT Expr2                         {$$ = criarNo("Not", NULL); $$->filho = $2;}   
     | PLUS Expr2      %prec NOT         {$$ = criarNo("Plus", NULL); $$->filho = $2;}              /*E'->NAND T E'1 {E'1.i = mknode("NAND", E'.i, Tn)}*/
     | MINUS Expr2     %prec NOT         {$$ = criarNo("Minus", NULL); $$->filho = $2;}                   /*O meu nó actual (Minus) vai ser irmão do novo nó (Expr), que no final estará no posso da pilha $$*/
-    | ID                                {$$ = criarNo("Id", $1);}      /*T->ID  {T.n = mkleaf("Id", ID.lexval)}*/
-    | ID DOTLENGTH                      {$$ = criarNo("Length", NULL); $$->filho = criarNo("Id", $1);} 
-    | BOOLLIT                           {$$ = criarNo("BoolLit", $1);}
-    | DECLIT                            {$$ = criarNo("DecLit", $1);}
-    | REALLIT                           {$$ = criarNo("RealLit", $1);}
+    | ID                                {$$ = criarNo("Id", $1); free($1);}      /*T->ID  {T.n = mkleaf("Id", ID.lexval)}*/
+    | ID DOTLENGTH                      {$$ = criarNo("Length", NULL); $$->filho = criarNo("Id", $1); free($1);} 
+    | BOOLLIT                           {$$ = criarNo("BoolLit", $1); free($1);}
+    | DECLIT                            {$$ = criarNo("DecLit", $1); free($1);}
+    | REALLIT                           {$$ = criarNo("RealLit", $1); free($1);}
     | OCURV Expr CCURV                  {$$ = $2;}                      /*T->(E) {T.n = E.n}*/
     | OCURV error CCURV                 {error = 1;}
     ;

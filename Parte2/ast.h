@@ -5,7 +5,7 @@
 
 ARVORE criarNo (char *tipoVariavel, char *valor);
 ARVORE criarIrmao(ARVORE noActual, ARVORE novoNo);
-void imprimirAST(ARVORE noActual, int error, int numFilhos);
+void imprimirAST(ARVORE noActual, int error, int numFilhos, int imprime);
 void freeArvore(ARVORE noActual);
 
 #endif

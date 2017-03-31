@@ -541,11 +541,16 @@ int main(int argc, char *argv[]){
             yylex();
         } else if(strcmp(argv[1], "-1") == 0){
             yylex();
+        } else if(strcmp(argv[1], "-t") == 0){
+            aux_2 = 1;
+            yyparse();
+            /*semErros = 0 --> quando não sao detectados erros*/
+            imprimirAST(raiz, error, 0, 0);
         }
     }else{
-        aux_2 = 1;
         yyparse();
-        imprimirAST(raiz, error, 0);
+        /*quando sao detectados*/
+        imprimirAST(raiz, error, 0, 1);
         //freeArvore(raiz);
     }
     return 0;

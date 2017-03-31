@@ -1,18 +1,30 @@
 class gcd {   
+    public static boolean x;
+    public static double y, z;
     public static int a, b, c, d;
-    //public static int a, b;
 
-    /*public static void cenas(){
+    public static void cenas(){
 
-    }*/
-    /*public static int cenas_2(int a){
+    }
+
+    public static int cenas_3(){
+
+    }
+
+    public static void cenas(){
+        int a;
+        boolean c, b;
+    }
+
+    public static int cenas_2(int a){
         
-    }*/
-    /*public static int main (String[] args){
+    }
+    public static int main (String[] args){
 
-    }*/
+    }
 
-    /*public static void main (String[] args){
-
-    }*/
+    public static void main (String[] args){
+        cenas();
+        cenas_2(2+2);
+    }
 }

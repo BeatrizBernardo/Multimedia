@@ -4,6 +4,7 @@
 #include "estruturas.h"
 #include "ast.h"
 
+
 /* Cada nó tem que ser criado, introduzindo o valor da variavel (p.e. 5) e o tipo da variavel (p.e. INT)
 *  No final o nó deve ser devolvido outra vez
 */
@@ -41,25 +42,24 @@ ARVORE criarNo (char *tipoVariavel, char *valor){
 * Deve retornar o nó que é criado quando noActual não é NULL
 */
 ARVORE criarIrmao(ARVORE noActual, ARVORE novoNo){
+    ARVORE aux;
     if(noActual == NULL){
         return novoNo;
     }
     
-    
-    while(noActual->irmao != NULL){
-        noActual = noActual->irmao;
+    aux = noActual;
+    while(aux->irmao != NULL){
+        aux = aux->irmao;
     }
     
-    noActual->irmao = novoNo;
+    aux->irmao = novoNo;
     return noActual;
 }
 
 
-void imprimirAST(ARVORE noActual, int error, int numFilhos){
-    if(error ==  0){
-        //printf("aqui\n");
-        //printf("kjsdkasjnd %s\n", noActual->tipoVariavel);
-        if(noActual != NULL){
+void imprimirAST(ARVORE noActual, int error, int numFilhos, int imprime){
+    if(noActual != NULL){
+        if(error ==  0 && imprime == 0){
             if(noActual->valor != NULL){
                 for(int i=0; i < numFilhos; i++){
                     printf("..");
@@ -71,31 +71,27 @@ void imprimirAST(ARVORE noActual, int error, int numFilhos){
                 }
                 printf("%s\n", noActual->tipoVariavel);
             }
+        }
             
-            //printf("oiw %s \n", noActual->filho->tipoVariavel);
-            //printf("kdsm %s \n", noActual->irmao->tipoVariavel);
+        if(noActual->filho != NULL){
+            numFilhos += 1;
+            imprimirAST(noActual->filho, error, numFilhos, imprime);
+            numFilhos -= 1;
+        }
 
-            if(noActual->filho != NULL){
-                //printf("anksn %s \n", noActual->filho->valor);
-                numFilhos += 1;
-                imprimirAST(noActual->filho, error, numFilhos);
-                numFilhos -= 1;
-            }
-
-            if(noActual->irmao != NULL ){
-                //printf("ASDKJ %s \n", noActual->irmao->valor);
-                imprimirAST(noActual->irmao, error, numFilhos);
-            }
-            
-        } 
+        if(noActual->irmao != NULL ){
+            imprimirAST(noActual->irmao, error, numFilhos, imprime);
+        }
         
-        /*if(noActual->tipoVariavel != NULL){
+    
+        
+        if(noActual->tipoVariavel != NULL){
             free(noActual->tipoVariavel);
         }
         if(noActual->valor != NULL){
             free(noActual->valor);
         }
-        free(noActual);*/
+        free(noActual);
         
     }  
 }
