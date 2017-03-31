@@ -2672,10 +2672,10 @@ int main(int argc, char *argv[]){
             imprimirAST(raiz, error, 0, 0);
         }
     }else{
+        aux_2 = 1;
         yyparse();
         /*quando sao detectados*/
         imprimirAST(raiz, error, 0, 1);
-        //freeArvore(raiz);
     }
     return 0;
 }

@@ -57,9 +57,9 @@ ARVORE criarIrmao(ARVORE noActual, ARVORE novoNo){
 }
 
 
-void imprimirAST(ARVORE noActual, int error, int numFilhos, int imprime){
+void imprimirAST(ARVORE noActual, int error, int numFilhos, int flagImprimir){
     if(noActual != NULL){
-        if(error ==  0 && imprime == 0){
+        if(error ==  0 && flagImprimir == 0){
             if(noActual->valor != NULL){
                 for(int i=0; i < numFilhos; i++){
                     printf("..");
@@ -75,12 +75,12 @@ void imprimirAST(ARVORE noActual, int error, int numFilhos, int imprime){
             
         if(noActual->filho != NULL){
             numFilhos += 1;
-            imprimirAST(noActual->filho, error, numFilhos, imprime);
+            imprimirAST(noActual->filho, error, numFilhos, flagImprimir);
             numFilhos -= 1;
         }
 
         if(noActual->irmao != NULL ){
-            imprimirAST(noActual->irmao, error, numFilhos, imprime);
+            imprimirAST(noActual->irmao, error, numFilhos, flagImprimir);
         }
         
     
@@ -94,17 +94,4 @@ void imprimirAST(ARVORE noActual, int error, int numFilhos, int imprime){
         free(noActual);
         
     }  
-}
-
-void freeArvore(ARVORE noActual){
-    ARVORE auxiliar = noActual;
-    while(auxiliar != NULL){
-        if(auxiliar->filho != NULL){
-            freeArvore(auxiliar->filho);
-        }
-        if(auxiliar->irmao != NULL){
-            freeArvore(auxiliar->irmao);
-        }
-        free(auxiliar);
-    }
 }

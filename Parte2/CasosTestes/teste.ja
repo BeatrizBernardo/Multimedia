@@ -3,6 +3,8 @@ class gcd {
     public static double y, z;
     public static int a, b, c, d;
 
+    //public static ;
+
     public static void cenas(){
 
     }
@@ -16,9 +18,15 @@ class gcd {
         boolean c, b;
     }
 
-    public static int cenas_2(int a){
+    public static int cenasVV(int a, int b){
+        double c;
+        boolean d, g;
+    }
+
+    public static int cenas_2(int a, boolean c, double t){
         
     }
+
     public static int main (String[] args){
 
     }
