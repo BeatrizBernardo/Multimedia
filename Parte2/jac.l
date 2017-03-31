@@ -550,7 +550,7 @@ int main(int argc, char *argv[]){
     }else{
         aux_2 = 1;
         yyparse();
-        /*quando sao detectados*/
+        /*não tem erros mas não deve imprimir*/
         imprimirAST(raiz, error, 0, 1);
     }
     return 0;

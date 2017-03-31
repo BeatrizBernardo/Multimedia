@@ -110,7 +110,18 @@ MethodBody: OBRACE MethodBody_2 CBRACE          {$$ = criarNo("MethodBody", NULL
 
 /*deve repetir 0 ou + vezes { VarDecl | Statement }*/
 MethodBody_2: MethodBody_2 VarDecl              {$$ = $1; $$ = criarIrmao($1, $2);}
-        |MethodBody_2 Statement                 {$$ = $1; $$ = criarIrmao($1, $2);}
+        |MethodBody_2 Statement                 {       $$ = $1; 
+                                                        if($2 != NULL){
+                                                                if($2->irmao != NULL){
+                                                                        $$ = criarIrmao($1, copia = criarNo("Block", NULL));
+                                                                        copia->filho = $2;
+                                                                }else{
+                                                                      $$ = criarIrmao($1, $2);  
+                                                                }
+                                                        }else{
+                                                                $$ = criarIrmao($1, $2);
+                                                        }
+                                                }
         |                                       {$$ = NULL;}
         ;
 
@@ -148,29 +159,87 @@ Type: BOOL              {$$ = criarNo("Bool", NULL);}
     | DOUBLE            {$$ = criarNo("Double", NULL);}
     ;
 
-Statement: OBRACE Statement_2 CBRACE                            {$$ = $2;}
-        | IF OCURV Expr CCURV Statement %prec IFX               {       $$ = criarNo("If", NULL); 
-                                                                        $$->filho = criarIrmao($3, $5);
-                                                                        $$->filho = criarIrmao($$->filho, criarNo(NULL, NULL));
+Statement: OBRACE Statement_2 CBRACE                            {       if($2 != NULL){
+                                                                                if($2->irmao != NULL){
+                                                                                        $$ = criarNo("Block", NULL);
+                                                                                        $$->filho = $2;
+                                                                                }else{
+                                                                                        $$ = $2;
+                                                                                }
+                                                                        }else{
+                                                                                $$ = $2;
+                                                                        }
                                                                 }
-        | IF OCURV Expr CCURV Statement ELSE Statement          {       $$ = criarNo("If", NULL);                                                                        $$->filho = $3; 
-                                                                        $$->filho = criarIrmao($3, $5); 
-                                                                        $$->filho = criarIrmao($$->filho, $7);
+        | IF OCURV Expr CCURV Statement %prec IFX               {       $$ = criarNo("If", NULL); 
+                                                                        if($5 != NULL){
+                                                                                if($5->irmao != NULL){
+                                                                                        $$->filho = criarIrmao($3, copia = criarNo("Block", NULL));
+                                                                                        copia->filho = criarIrmao($5, criarNo("Block", NULL));
+                                                                                }else{
+                                                                                        $$->filho = criarIrmao(criarIrmao($3, $5), criarNo("Block", NULL));
+                                                                                }
+                                                                        }else{
+                                                                                $$->filho = criarIrmao($3, criarIrmao(criarNo("Block", NULL), criarNo("Block", NULL)));
+                                                                        }
+                                                                        
+                                                                }
+        | IF OCURV Expr CCURV Statement ELSE Statement         {        $$ = criarNo("If", NULL); 
+                                                                        if($5 != NULL){
+                                                                                if($5->irmao != NULL){
+                                                                                        $$->filho = criarIrmao($3, copia = criarNo("Block", NULL));
+                                                                                        copia->filho = criarIrmao($5, criarNo("Block", NULL));
+                                                                                }else{
+                                                                                        $$->filho = criarIrmao($3, $5);
+                                                                                }
+                                                                        }else{
+                                                                                $$->filho = criarIrmao($3,  criarNo("Block", NULL));
+                                                                        }
+                                                                        
+                                                                        if($7 != NULL){
+                                                                                if($7->irmao != NULL){
+                                                                                        $$->filho = criarIrmao($$->filho, copia = criarNo("Block", NULL));
+                                                                                        copia->filho = $7;
+                                                                                }else{
+                                                                                        $$->filho = criarIrmao($$->filho, $7);
+                                                                                }
+                                                                        }else{
+                                                                               $$->filho = criarIrmao($$->filho, criarNo("Block", NULL));
+                                                                        }
+                                                                        
                                                                 }
         | WHILE OCURV Expr CCURV Statement                      {       $$ = criarNo("While", NULL); 
-                                                                        $$->filho = criarIrmao($3, $5);
+                                                                        if($5 != NULL){
+                                                                                if($5->irmao != NULL){
+                                                                                        $$->filho = criarIrmao($3, copia = criarNo("Block", NULL));
+                                                                                        copia->filho = $5;
+                                                                                }else{
+                                                                                        $$->filho = criarIrmao($3, $5);
+                                                                                }
+                                                                        }else{                                                                                                                          
+                                                                                $$->filho = criarIrmao($3, criarNo("Block", NULL));
+                                                                        }
                                                                 }
         | DO Statement WHILE OCURV Expr CCURV SEMI              {       $$ = criarNo("DoWhile", NULL);
-                                                                        $$->filho = criarIrmao($2, $5);
+                                                                        if($2 != NULL){
+                                                                                if($2->irmao != NULL){
+                                                                                        $$->filho = criarIrmao(copia = criarNo("Block", NULL), $5);
+                                                                                        copia->filho = $2;
+                                                                                }else{
+                                                                                        $$->filho = criarIrmao($2, $5);
+                                                                                }
+                                                                        }else{
+                                                                             $$->filho = criarIrmao(criarNo("Block", NULL), $5);
+                                                                        }
+                                                                        
                                                                 }
         | PRINT OCURV Expr CCURV SEMI                           {       $$ = criarNo("Print", NULL); 
                                                                         $$->filho = $3;
                                                                 }
-        | PRINT OCURV STRLIT CCURV SEMI                         {$$ = criarNo("Print", NULL); $$->filho = criarNo("StrLit", $3);}
+        | PRINT OCURV STRLIT CCURV SEMI                         {$$ = criarNo("Print", NULL); $$->filho = criarNo("StrLit", $3); free($3);}
         | Assignment SEMI                                       {$$ = $1;}
         | MethodInvocation SEMI                                 {$$ = $1;}
         | ParseArgs SEMI                                        {$$ = $1;}
-        | SEMI                                                  {;}
+        | SEMI                                                  {$$ = NULL;}
         | RETURN SEMI                                           {$$ = criarNo("Return", NULL);}
         | RETURN Expr SEMI                                      {$$ = criarNo("Return", NULL); $$->filho = $2;}
         | error SEMI                                            {$$ = criarNo("Error", NULL); error = 1;}
@@ -180,6 +249,8 @@ Statement: OBRACE Statement_2 CBRACE                            {$$ = $2;}
 Statement_2:Statement_2 Statement       {$$ = $1; $$ = criarIrmao($1, $2);}
         |                               {$$ = NULL;}
         ;
+
+
 
 Assignment: ID ASSIGN Expr      {       $$ = criarNo("Assign", NULL); 
                                         $$->filho = criarIrmao(criarNo("Id", $1), $3); free($1);
