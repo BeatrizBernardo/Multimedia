@@ -56,13 +56,13 @@ Program_2: Program_2 FieldDecl   {}
         |                               
         ;
 
-FieldDecl: PUBLIC STATIC Type ID comma_id SEMI    {}      
+FieldDecl: PUBLIC STATIC FieldDecl_2 SEMI    {}      
         | error SEMI   {}                                 
         ;
 
 /*deve repetir 0 ou + vezes { COMMA ID }*/
-comma_id: comma_id COMMA ID   {}                  
-        |                                       
+FieldDecl_2: FieldDecl_2 COMMA ID     {}                                            
+        | Type ID {}
         ;
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody   {}    
@@ -86,18 +86,22 @@ MethodBody_2: MethodBody_2 VarDecl              {}
         |                                       
         ;
 
-FormalParams: Type ID FormalParams_2            {}
+FormalParams: FormalParams_2            {}
+        | STRING OSQUARE CSQUARE ID         {}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA Type ID }*/
 FormalParams_2:FormalParams_2 COMMA Type ID     {} 
-        |                                              
+        |   Type ID                                            
         ;
 
-FormalParams: STRING OSQUARE CSQUARE ID         {}
+
+VarDecl: VarDecl_2 SEMI          {}
         ;
 
-VarDecl: Type ID comma_id SEMI          {}
+/*deve repetir 0 ou + vezes { COMMA ID }*/
+VarDecl_2: VarDecl_2 COMMA ID
+        | Type ID 
         ;
 
 Type: BOOL              {}
