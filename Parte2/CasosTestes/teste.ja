@@ -1,38 +1,12 @@
-class gcd {   
+class gcd { 
+    
     public static boolean x;
     public static double y, z;
     public static int a, b, c, d;
 
-    //public static ;
+
 
     public static void cenas(){
-
-    }
-
-    public static int cenas_3(){
-
-    }
-
-    public static void cenas(){
-        int a;
-        boolean c, b;
-    }
-
-    public static int cenasVV(int a, int b){
-        double c;
-        boolean d, g;
-    }
-
-    public static int cenas_2(int a, boolean c, double t){
-        
-    }
-
-    public static int main (String[] args){
-
-    }
-
-    public static void main (String[] args){
-        cenas();
-        cenas_2(2+2);
+        {{a = b;}}
     }
 }
