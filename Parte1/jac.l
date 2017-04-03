@@ -82,17 +82,17 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
 \"				{BEGIN INVSTR; columnNum += yyleng; invColumnNum = columnNum-1;}
 <INVSTR>\"		{BEGIN 0; columnNum += yyleng;}
 			
-<INVSTR>({ESC}|{NOTESC})		        {columnNum+=yyleng;}
+<INVSTR>({ESC}|{NOTESC})		  {columnNum+=yyleng;}
 <INVSTR>{NOTESC2}                 {printf("Line %d, col %d: invalid escape sequence (%s)\n", lineNum, columnNum, yytext); columnNum+=yyleng;}
-<INVSTR>("\n"|"\r"|"\r\n")            {printf("Line %d, col %d: unterminated string literal\n", lineNum, invColumnNum); lineNum++; columnNum = 1; BEGIN 0;}
+<INVSTR>("\n"|"\r"|"\r\n")        {printf("Line %d, col %d: unterminated string literal\n", lineNum, invColumnNum); lineNum++; columnNum = 1; BEGIN 0;}
 
 "/*"                                {BEGIN COMMENTS; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
 <COMMENTS><<EOF>>                   {printf("Line %d, col %d: unterminated comment\n", commentLineNum, commentColumnNum); BEGIN 0;}
 <COMMENTS>"\n"|"\r"|"\r\n"          {lineNum++; columnNum = 1;} 
-<COMMENTS>.                        	 {columnNum += yyleng;}
+<COMMENTS>.                        	{columnNum += yyleng;}
 <COMMENTS>"*/"                      {columnNum += yyleng; BEGIN 0;}
 
-"//"				    {BEGIN COMMENT; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
+"//"				                {BEGIN COMMENT; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
 <COMMENT>"\n"|"\r"|"\r\n"           {lineNum++; columnNum = 1; BEGIN 0;} 
 <COMMENT>.          	            {columnNum += yyleng;}
 

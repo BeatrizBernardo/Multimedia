@@ -1,0 +1,12 @@
+class gcd { 
+    
+    public static boolean x;
+    public static double y, z;
+    public static int a, b, c, d;
+
+
+
+    public static void cenas(){
+        {{a = b;}}
+    }
+}

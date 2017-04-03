@@ -3,11 +3,10 @@
     #include <stdlib.h>
     #include <string.h>
     #include "y.tab.h"
-    #include "estruturas.h"
-    #include "ast.h"
 
 	int aux = 0;
     int aux_2 = 0;
+    int tree = 0;
     /*as colunas e as linhas começam em 1*/
     int lineNum = 1;
     int columnNum = 1;
@@ -17,12 +16,6 @@
     int commentColumnNum = 1;
     
     int invColumnNum = 1;
-
-    /*cenas sobre a AST*/
-    ARVORE raiz = NULL;
-
-    /*Flag para verificar se há erro sintatico*/
-    int error = 0;
 %}
 
 %X COMMENTS
@@ -523,8 +516,6 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
 "\t"|"\f"|" " 	        {columnNum += yyleng;}
 "\n"|"\r"|"\r\n"        {lineNum++; columnNum = 1;}
 
-.		{printf("Line %d, col %d: illegal character (%c)\n", lineNum, columnNum, yytext[0]); columnNum+=yyleng;} 
-
 <<EOF>> {   columnNum += yyleng; 
             if(aux==1){
                 yyterminate();
@@ -532,6 +523,9 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 return 0;
             }
         }
+
+.		{printf("Line %d, col %d: illegal character (%c)\n", lineNum, columnNum, yytext[0]); columnNum+=yyleng;} 
+
 %%
 int main(int argc, char *argv[]){
     if(argc == 2){
@@ -541,17 +535,11 @@ int main(int argc, char *argv[]){
             yylex();
         } else if(strcmp(argv[1], "-1") == 0){
             yylex();
-        } else if(strcmp(argv[1], "-t") == 0){
-            aux_2 = 1;
-            yyparse();
-            /*semErros = 0 --> quando não sao detectados erros*/
-            imprimirAST(raiz, error, 0, 0);
         }
     }else{
+        /*sem nenhuma opção deve detetar erros lexicais ou de sintaxe e emitir mensagens de erro*/
         aux_2 = 1;
         yyparse();
-        /*não tem erros mas não deve imprimir*/
-        imprimirAST(raiz, error, 0, 1);
     }
     return 0;
 }
