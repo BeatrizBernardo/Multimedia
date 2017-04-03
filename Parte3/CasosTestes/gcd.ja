@@ -1,0 +1,12 @@
+class gcd { 
+    public static void main(String[] args) {    
+       {if(true)
+            ;
+       }
+       {if(true)return a;}
+
+       {if(true)return a;else;}
+
+       {if (true) { return a; return b;}}
+    }
+}
