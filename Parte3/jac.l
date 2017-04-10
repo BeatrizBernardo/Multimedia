@@ -539,19 +539,23 @@ int main(int argc, char *argv[]){
             /*deve mostrar o resultado*/
             aux = 1;
             yylex();
-        } else if(strcmp(argv[1], "-1") == 0){
+        }else if(strcmp(argv[1], "-1") == 0){
             yylex();
-        } else if(strcmp(argv[1], "-t") == 0){
+        }else if(strcmp(argv[1], "-t") == 0){
             aux_2 = 1;
             yyparse();
             /*semErros = 0 --> quando não sao detectados erros*/
             imprimirAST(raiz, error, 0, 0);
+        }else if(strcmp(argv[1], "-2") == 0){
+            aux_2 = 1;
+            yyparse();
+            /*não tem erros mas não deve imprimir*/
+            imprimirAST(raiz, error, 0, 1);
+        }else if(strcmp(argv[1]), "-s" == 0){
+
         }
     }else{
-        aux_2 = 1;
-        yyparse();
-        /*não tem erros mas não deve imprimir*/
-        imprimirAST(raiz, error, 0, 1);
+        
     }
     return 0;
 }
