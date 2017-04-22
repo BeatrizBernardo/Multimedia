@@ -1,4 +1,4 @@
-flex jac.l && yacc -d -v jac.y && cc -o jac -g lex.yy.c y.tab.c estruturas.h ast.c ast.h
+lex jac.l && yacc -d -v jac.y && cc -o jac lex.yy.c y.tab.c ast.c ast.h estruturas.h astAnotada.c astAnotada.h
 echo
-echo Compilacao 
-./jac < CasosTestes/gcd.ja
+echo Compilacao
+./jac -s < CasosTestes/gcd.ja

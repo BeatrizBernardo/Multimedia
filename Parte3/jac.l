@@ -5,6 +5,7 @@
     #include "y.tab.h"
     #include "estruturas.h"
     #include "ast.h"
+    #include "astAnotada.h"
 
 	int aux = 0;
     int aux_2 = 0;
@@ -551,8 +552,10 @@ int main(int argc, char *argv[]){
             yyparse();
             /*não tem erros mas não deve imprimir*/
             imprimirAST(raiz, error, 0, 1);
-        }else if(strcmp(argv[1]), "-s" == 0){
-
+        }else if(strcmp(argv[1], "-s") == 0){
+            aux_2 = 1;
+            yyparse();
+            symbolTabel(raiz);
         }
     }else{
         
