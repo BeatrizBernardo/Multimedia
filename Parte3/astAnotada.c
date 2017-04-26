@@ -6,7 +6,13 @@
 #include "ast.h"
 #include "astAnotada.h"
 
-CLASSE tabelaSimbolos;
+CLASSE tabelaSimbolos = NULL;
+
+void inicializarTabelaSimbolos(){
+    tabelaSimbolos = (CLASSE)malloc(sizeof(CLSS));
+    tabelaSimbolos->proximaClass = NULL;
+    tabelaSimbolos->proximoMethod = NULL;
+}
 
 char *paraMinusculas(char *string){
     char *str = strdup(string);
@@ -36,6 +42,51 @@ int retornaNumero(char *tipoVariavel){
     }
 }
 
+/*adicionar à estrutura CLASSE*/
+void ultimoNoClasse(CLASSE tabelaSimbolos, CLASSE noActual){
+    /*se a head de CLASSE estiver vazia*/
+    if(tabelaSimbolos == NULL){
+        tabelaSimbolos = noActual;
+    }else{
+        /*procura o ultimo*/
+        while(tabelaSimbolos->proximaClass != NULL){
+            tabelaSimbolos = tabelaSimbolos->proximaClass;
+        }
+        tabelaSimbolos->proximaClass = noActual;
+    }
+}
+
+void imprimirTabelaSimbolos(){
+    CLASSE aux = tabelaSimbolos;
+
+    while(aux != NULL){
+        if(aux->name != NULL){
+                printf("%s\t%s\t%s\n",aux->name, aux->paramTypes, aux->type);
+        }
+        aux = aux->proximaClass;
+    }
+}
+
+void paramDecl(ARVORE noActual, CLASSE tabelaSimbolos){
+    printf("---%s\n", noActual->tipoVariavel);
+    if(noActual != NULL){
+        if(noActual->filho != NULL){
+            noActual = noActual->filho;
+            printf("-!--%s\n", noActual->filho->tipoVariavel);
+            if(strcmp(noActual->filho->tipoVariavel, "StringArray") == 0){
+                strcpy(tabelaSimbolos->paramTypes, "(String[])");
+            }else{
+                while(noActual != NULL){
+                    printf("%s\n", noActual->tipoVariavel);
+                    noActual = noActual->irmao;
+                }
+            }
+        }else{
+            tabelaSimbolos->paramTypes = NULL;
+        }
+    }
+}
+
 void symbolTabel(ARVORE noActual){
 
     if(noActual != NULL){
@@ -51,9 +102,8 @@ void symbolTabel(ARVORE noActual){
                     no->name = strdup(noActual->filho->irmao->valor);
                     no->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
                     no->proximoMethod = NULL;
+                    ultimoNoClasse(tabelaSimbolos, no);
                 }
-                printf("1 %s %s\n",noActual->filho->tipoVariavel, noActual->filho->irmao->valor);
-                printf("1 %s %s\n",no->name, no->type);
             };break;
             case 2:{
                 /*VarDecl*/
@@ -61,11 +111,21 @@ void symbolTabel(ARVORE noActual){
             };break;
             case 3:{
                 /*MethodDecl*/
-                printf("3\n");
             };break;
             case 4:{
                 /*MethodHeader*/
-                printf("4\n");
+                CLASSE no;
+                no = (CLASSE)malloc(sizeof(CLSS));
+
+                if(no != NULL){
+                    no->name = strdup(noActual->filho->irmao->valor);
+                    no->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                    no->proximoMethod = NULL;
+                    ultimoNoClasse(tabelaSimbolos, no);
+                }
+
+                ARVORE aux = noActual->filho->irmao->irmao;
+                paramDecl(aux, no);
             };break;
             case 5:{
                 /*MethodParams*/
@@ -73,7 +133,16 @@ void symbolTabel(ARVORE noActual){
             };break;
             case 6:{
                 /*ParamDecl*/
-                printf("6\n");
+                /*CLASSE no;
+                no = (CLASSE)malloc(sizeof(CLSS));
+
+                if(no != NULL){
+                    no->name = strdup(noActual->filho->irmao->valor);
+                    no->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                    no->proximoMethod = NULL;
+                    ultimoNoClasse(tabelaSimbolos, no);
+                }
+                printf("-->> %s %s\n", noActual->filho->tipoVariavel, noActual->filho->irmao->valor);*/
             };break;
             case 7:{
                 /*MethodBody*/

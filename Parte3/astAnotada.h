@@ -8,6 +8,7 @@ typedef struct method{
     char *name;
     char *type;
     int is_param;
+    METHOD maisMethod;
 }MTHD;
 
 typedef struct classe *CLASSE;
@@ -22,4 +23,8 @@ typedef struct classe{
 void symbolTabel(ARVORE noActual);
 int retornaNumero(char *tipoVariavel);
 char *paraMinusculas(char *string);
+void ultimoNoClasse(CLASSE tabela, CLASSE noActual);
+void imprimirTabelaSimbolos();
+void inicializarTabelaSimbolos();
+void paramDecl(ARVORE noActual, CLASSE tabelaSimbolos);
 #endif
