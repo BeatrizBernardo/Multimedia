@@ -2679,7 +2679,6 @@ int main(int argc, char *argv[]){
         }else if(strcmp(argv[1], "-s") == 0){
             aux_2 = 1;
             yyparse();
-            inicializarTabelaSimbolos();
             symbolTabel(raiz);
             imprimirTabelaSimbolos();
         }
