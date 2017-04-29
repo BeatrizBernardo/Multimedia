@@ -3,7 +3,7 @@ class gcd {
     public static boolean b;
     public static void main(int c, int d) {    
         int a, b;    
-        /*a = Integer.parseInt(args[0]);    
+        a = Integer.parseInt(args[0]);    
         b = Integer.parseInt(args[1]);    
         if (a == 0)        
             System.out.println(b);    
@@ -14,6 +14,6 @@ class gcd {
                 else                
                     b = b-a;        
                 System.out.println(a);    
-            }  */
+        }
     } 
 }
