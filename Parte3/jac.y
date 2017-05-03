@@ -1,3 +1,4 @@
+
 %{
     #include <stdlib.h>
     #include <stdio.h>
@@ -5,7 +6,6 @@
     #include "y.tab.h"
     #include "estruturas.h"
     #include "ast.h"
-
 
     void yyerror (const char *s);
     int yylex(void);
@@ -67,7 +67,7 @@
 %%
 
 Program: CLASS ID OBRACE Program_2 CBRACE   {   $$ = criarNo("Program", NULL, @1.last_line, @1.first_column);
-                                                $$->filho = criarIrmao(criarNo("Id", $2),$4); free($2);
+                                                $$->filho = criarIrmao(criarNo("Id", $2, @1.last_line, @1.first_column),$4); free($2);
                                                 raiz = $$; }
         ; 
 
@@ -108,7 +108,7 @@ MethodHeader: Type ID OCURV MethodHeader_2 CCURV        {       $$ = criarNo("Me
 
 /*deve ser opcional - sim ou não - [ FormalParams ]*/        
 MethodHeader_2: FormalParams            {$$ = $1;}
-        |                               {$$ = criarNo("MethodParams", NULL, @1.last_line, @1.first_column); $$->filho = NULL;}
+        |                               {$$ = criarNo("MethodParams", NULL, -1, -1); $$->filho = NULL;}
         ;
 
 MethodBody: OBRACE MethodBody_2 CBRACE          {$$ = criarNo("MethodBody", NULL, @1.last_line, @1.first_column); $$->filho = $2;}
@@ -160,9 +160,9 @@ VarDecl_2: VarDecl_2 COMMA ID           {       $$ = criarIrmao($1, copia=criarN
                                         }
         ;
 
-Type: BOOL              {$$ = criarNo("Bool", NULL);}      
-    | INT               {$$ = criarNo("Int", NULL);}          /*porque são tipos, não tem "valor"*/
-    | DOUBLE            {$$ = criarNo("Double", NULL);}
+Type: BOOL              {$$ = criarNo("Bool", NULL, @1.last_line, @1.first_column);}      
+    | INT               {$$ = criarNo("Int", NULL, @1.last_line, @1.first_column);}          /*porque são tipos, não tem "valor"*/
+    | DOUBLE            {$$ = criarNo("Double", NULL, @1.last_line, @1.first_column);}
     ;
 
 Statement: OBRACE Statement_2 CBRACE                            {       if($2 != NULL){
@@ -301,7 +301,7 @@ Expr2:MethodInvocation                  {$$ = $1;}              /*E' -> € {E'.
     | NOT Expr2                         {$$ = criarNo("Not", NULL, @1.last_line, @1.first_column); $$->filho = $2;}   
     | PLUS Expr2      %prec NOT         {$$ = criarNo("Plus", NULL, @1.last_line, @1.first_column); $$->filho = $2;}              /*E'->NAND T E'1 {E'1.i = mknode("NAND", E'.i, Tn)}*/
     | MINUS Expr2     %prec NOT         {$$ = criarNo("Minus", NULL, @1.last_line, @1.first_column); $$->filho = $2;}                   /*O meu nó actual (Minus) vai ser irmão do novo nó (Expr), que no final estará no posso da pilha $$*/
-    | ID                                {$$ = criarNo("Id", $1); free($1);}      /*T->ID  {T.n = mkleaf("Id", ID.lexval)}*/
+    | ID                                {$$ = criarNo("Id", $1, @1.last_line, @1.first_column); free($1);}      /*T->ID  {T.n = mkleaf("Id", ID.lexval)}*/
     | ID DOTLENGTH                      {$$ = criarNo("Length", NULL, @1.last_line, @1.first_column); $$->filho = criarNo("Id", $1, @1.last_line, @1.first_column); free($1);} 
     | BOOLLIT                           {$$ = criarNo("BoolLit", $1, @1.last_line, @1.first_column); free($1);}
     | DECLIT                            {$$ = criarNo("DecLit", $1, @1.last_line, @1.first_column); free($1);}

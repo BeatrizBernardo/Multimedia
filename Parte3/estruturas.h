@@ -6,6 +6,9 @@ typedef struct arvore{
     /*dados*/
     char* valor;
     char* tipoVariavel;
+    /*AST*/
+    int noAnotado; /*0 - NO, 1 - YES*/
+    char* stringAST;
     /*posicao dos elementos*/
     int numLinha;
     int numColuna;

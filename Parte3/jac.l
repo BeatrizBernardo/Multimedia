@@ -1,3 +1,4 @@
+%option yylineno
 %{
     #include <stdio.h>
     #include <stdlib.h>
@@ -6,6 +7,11 @@
     #include "estruturas.h"
     #include "ast.h"
     #include "astAnotada.h"
+ 
+    /*para %locations*/
+    int yycolumn=1;
+    #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = columnNum; yylloc.last_column = columnNum+yyleng-1; columnNum += yyleng;
+ 
 
 	int aux = 0;
     int aux_2 = 0;
@@ -24,11 +30,7 @@
 
     /*Flag para verificar se há erro sintatico*/
     int error = 0;
-
-    /*para %locations*/
-    int yycolumn=1;
-    #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = columnNum; yylloc.last_column = columnNum+yyleng-1; columnNum += yyleng;
-    
+   
 %}
 
 %X COMMENTS
@@ -562,6 +564,9 @@ int main(int argc, char *argv[]){
             yyparse();
             symbolTabel(raiz);
             imprimirTabelaSimbolos();
+            procurarNos(raiz);
+            imprimirASTAnotada(raiz, error, 0, 0);
+            //imprimirAST(raiz, error, 0, 0);
         }
     }else{
         

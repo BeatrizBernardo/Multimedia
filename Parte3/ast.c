@@ -30,6 +30,10 @@ ARVORE criarNo (char *tipoVariavel, char *valor, int numLinha, int numColuna){
         no->numLinha = numLinha;
         no->numColuna = numColuna;
 
+
+        /*string AST*/
+        no->noAnotado = 0;
+        no->stringAST = NULL;
         //no->valor = (char*)malloc(strlen(valor) + 1);
         //strcpy(no->valor, valor);
         

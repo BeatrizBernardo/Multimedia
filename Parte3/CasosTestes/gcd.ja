@@ -1,9 +1,13 @@
 class gcd {   
     public static int a;
     public static boolean b;
+    //public static boolean b;
 
     public static int funcao(int a){
-        
+        //int aaaaaaaaaaaaaaaaaaksadksakdnsakndsndksnkjfnskjnkjsnkjfnskjnkjsandsad;
+        //boolean snakdjnskjndjksndkankjdndkjsandknskdnasjdna;
+        int a;
+        int a;
     }
 
     public static int funcao(double a){
@@ -13,6 +17,14 @@ class gcd {
     public static int funcao(boolean a){
         
     }
+
+    public static int funcao(boolean a){
+        
+    }
+
+    public static void main(String[] args) {
+    
+    }   
 
     public static void main(int c, int d) {    
         int a, b;    
