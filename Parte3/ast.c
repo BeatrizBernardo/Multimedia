@@ -8,7 +8,7 @@
 /* Cada nó tem que ser criado, introduzindo o valor da variavel (p.e. 5) e o tipo da variavel (p.e. INT)
 *  No final o nó deve ser devolvido outra vez
 */
-ARVORE criarNo (char *tipoVariavel, char *valor){
+ARVORE criarNo (char *tipoVariavel, char *valor, int numLinha, int numColuna){
     ARVORE no;
     no = (ARVORE)malloc(sizeof(ARV));
 
@@ -26,6 +26,10 @@ ARVORE criarNo (char *tipoVariavel, char *valor){
             no->tipoVariavel = strdup(tipoVariavel);
         }
         
+        /*adicionar a posiçao da string*/
+        no->numLinha = numLinha;
+        no->numColuna = numColuna;
+
         //no->valor = (char*)malloc(strlen(valor) + 1);
         //strcpy(no->valor, valor);
         

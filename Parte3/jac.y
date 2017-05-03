@@ -26,6 +26,12 @@
     ARVORE copia;
         
 %}
+%locations      /*variavel global do yacc que permite obter informações sobre a 
+                a posição de cada um dos elementos*/
+
+                /*tells yacc to enable  management of position information associ-
+              ated  with each token, provided by the lexer in the global vari-
+              able yylloc*/
 
 %union{
         char* string;   
@@ -60,7 +66,7 @@
 
 %%
 
-Program: CLASS ID OBRACE Program_2 CBRACE   {   $$ = criarNo("Program", NULL);
+Program: CLASS ID OBRACE Program_2 CBRACE   {   $$ = criarNo("Program", NULL, @1.last_line, @1.first_column);
                                                 $$->filho = criarIrmao(criarNo("Id", $2),$4); free($2);
                                                 raiz = $$; }
         ; 
@@ -73,39 +79,39 @@ Program_2: Program_2 FieldDecl          {$$ = criarIrmao($1, $2);}
         ;
 
 FieldDecl: PUBLIC STATIC FieldDecl_2 SEMI               {$$ = $3;} 
-        | error SEMI                                    {$$ = criarNo("Error", NULL); error = 1;}
+        | error SEMI                                    {$$ = criarNo("Error", NULL, @1.last_line, @1.first_column); error = 1;}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA ID }*/
-FieldDecl_2: FieldDecl_2 COMMA ID                       {       $$ = criarIrmao($1, copia=criarNo("FieldDecl", NULL));
-                                                                copia->filho = criarIrmao(criarNo($$->filho->tipoVariavel, $$->filho->valor), criarNo("Id", $3));
+FieldDecl_2: FieldDecl_2 COMMA ID                       {       $$ = criarIrmao($1, copia=criarNo("FieldDecl", NULL, @1.last_line, @1.first_column));
+                                                                copia->filho = criarIrmao(criarNo($$->filho->tipoVariavel, $$->filho->valor, @1.last_line, @1.first_column), criarNo("Id", $3, @1.last_line, @1.first_column));
                                                                 free($3);
                                                         }
-        | Type ID                                       {       $$ = criarNo("FieldDecl", NULL); 
-                                                                $$->filho = criarIrmao($1, criarNo("Id", $2)); free($2);
+        | Type ID                                       {       $$ = criarNo("FieldDecl", NULL, @1.last_line, @1.first_column); 
+                                                                $$->filho = criarIrmao($1, criarNo("Id", $2, @1.last_line, @1.first_column)); free($2);
                                                         }
         ;
 
-MethodDecl: PUBLIC STATIC MethodHeader MethodBody       {$$ = criarNo("MethodDecl", NULL); $$->filho = criarIrmao($3, $4);}
+MethodDecl: PUBLIC STATIC MethodHeader MethodBody       {$$ = criarNo("MethodDecl", NULL, @1.last_line, @1.first_column); $$->filho = criarIrmao($3, $4);}
         ;
 
-MethodHeader: Type ID OCURV MethodHeader_2 CCURV        {       $$ = criarNo("MethodHeader", NULL); 
+MethodHeader: Type ID OCURV MethodHeader_2 CCURV        {       $$ = criarNo("MethodHeader", NULL, @1.last_line, @1.first_column); 
                                                                 $$->filho = $1; 
-                                                                $$->filho = criarIrmao($$->filho, criarNo("Id", $2)); free($2);
+                                                                $$->filho = criarIrmao($$->filho, criarNo("Id", $2, @1.last_line, @1.first_column)); free($2);
                                                                 $$->filho = criarIrmao($$->filho, $4);
                                                         }
-        |VOID ID OCURV MethodHeader_2 CCURV             {       $$ = criarNo("MethodHeader", NULL); 
-                                                                $$->filho = criarIrmao(criarNo("Void", NULL), criarNo("Id", $2)); free($2);
+        |VOID ID OCURV MethodHeader_2 CCURV             {       $$ = criarNo("MethodHeader", NULL, @1.last_line, @1.first_column); 
+                                                                $$->filho = criarIrmao(criarNo("Void", NULL, @1.last_line, @1.first_column), criarNo("Id", $2, @1.last_line, @1.first_column)); free($2);
                                                                 $$->filho = criarIrmao($$->filho, $4);
                                                         }
         ;
 
 /*deve ser opcional - sim ou não - [ FormalParams ]*/        
 MethodHeader_2: FormalParams            {$$ = $1;}
-        |                               {$$ = criarNo("MethodParams", NULL); $$->filho = NULL;}
+        |                               {$$ = criarNo("MethodParams", NULL, @1.last_line, @1.first_column); $$->filho = NULL;}
         ;
 
-MethodBody: OBRACE MethodBody_2 CBRACE          {$$ = criarNo("MethodBody", NULL); $$->filho = $2;}
+MethodBody: OBRACE MethodBody_2 CBRACE          {$$ = criarNo("MethodBody", NULL, @1.last_line, @1.first_column); $$->filho = $2;}
         ;
 
 /*deve repetir 0 ou + vezes { VarDecl | Statement }*/
@@ -113,7 +119,7 @@ MethodBody_2: MethodBody_2 VarDecl              {$$ = $1; $$ = criarIrmao($1, $2
         |MethodBody_2 Statement                 {       $$ = $1; 
                                                         if($2 != NULL){
                                                                 if($2->irmao != NULL){
-                                                                        $$ = criarIrmao($1, copia = criarNo("Block", NULL));
+                                                                        $$ = criarIrmao($1, copia = criarNo("Block", NULL, @1.last_line, @1.first_column));
                                                                         copia->filho = $2;
                                                                 }else{
                                                                       $$ = criarIrmao($1, $2);  
@@ -125,19 +131,19 @@ MethodBody_2: MethodBody_2 VarDecl              {$$ = $1; $$ = criarIrmao($1, $2
         |                                       {$$ = NULL;}
         ;
 
-FormalParams: FormalParams_2                    {$$ = criarNo("MethodParams", NULL); $$->filho = $1;}
-        | STRING OSQUARE CSQUARE ID             {       $$ = criarNo("MethodParams", NULL);
-                                                        $$->filho = criarNo("ParamDecl", NULL);
-                                                        $$->filho->filho = criarIrmao(criarNo("StringArray", NULL), criarNo("Id", $4));free($4);
+FormalParams: FormalParams_2                    {$$ = criarNo("MethodParams", NULL, @1.last_line, @1.first_column); $$->filho = $1;}
+        | STRING OSQUARE CSQUARE ID             {       $$ = criarNo("MethodParams", NULL, @1.last_line, @1.first_column);
+                                                        $$->filho = criarNo("ParamDecl", NULL, @1.last_line, @1.first_column);
+                                                        $$->filho->filho = criarIrmao(criarNo("StringArray", NULL, @1.last_line, @1.first_column), criarNo("Id", $4, @1.last_line, @1.first_column));free($4);
                                                 }
         ;
   
 /*deve repetir 0 ou + vezes { COMMA Type ID }*/
-FormalParams_2:FormalParams_2 COMMA Type ID     {       $$ = criarIrmao($1, copia=criarNo("ParamDecl", NULL));
-                                                        copia->filho = criarIrmao($3, criarNo("Id", $4)); free($4);
+FormalParams_2:FormalParams_2 COMMA Type ID     {       $$ = criarIrmao($1, copia=criarNo("ParamDecl", NULL, @1.last_line, @1.first_column));
+                                                        copia->filho = criarIrmao($3, criarNo("Id", $4, @1.last_line, @1.first_column)); free($4);
                                                 }
-        | Type ID                               {       $$ = criarNo("ParamDecl", NULL);
-                                                        $$->filho = criarIrmao($1, criarNo("Id", $2)); free($2);
+        | Type ID                               {       $$ = criarNo("ParamDecl", NULL, @1.last_line, @1.first_column);
+                                                        $$->filho = criarIrmao($1, criarNo("Id", $2, @1.last_line, @1.first_column)); free($2);
                                                 }
         ;
 
@@ -145,12 +151,12 @@ VarDecl: VarDecl_2 SEMI          {$$ = $1;}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA ID }*/
-VarDecl_2: VarDecl_2 COMMA ID           {       $$ = criarIrmao($1, copia=criarNo("VarDecl", NULL));
-                                                copia->filho = criarIrmao(criarNo($$->filho->tipoVariavel, $$->filho->valor), criarNo("Id", $3));
+VarDecl_2: VarDecl_2 COMMA ID           {       $$ = criarIrmao($1, copia=criarNo("VarDecl", NULL, @1.last_line, @1.first_column));
+                                                copia->filho = criarIrmao(criarNo($$->filho->tipoVariavel, $$->filho->valor, @1.last_line, @1.first_column), criarNo("Id", $3, @1.last_line, @1.first_column));
                                                 free($3);
                                         }
-        | Type ID                       {       $$ = criarNo("VarDecl", NULL); 
-                                                $$->filho = criarIrmao($1, criarNo("Id", $2)); free($2);
+        | Type ID                       {       $$ = criarNo("VarDecl", NULL, @1.last_line, @1.first_column); 
+                                                $$->filho = criarIrmao($1, criarNo("Id", $2, @1.last_line, @1.first_column)); free($2);
                                         }
         ;
 
@@ -161,7 +167,7 @@ Type: BOOL              {$$ = criarNo("Bool", NULL);}
 
 Statement: OBRACE Statement_2 CBRACE                            {       if($2 != NULL){
                                                                                 if($2->irmao != NULL){
-                                                                                        $$ = criarNo("Block", NULL);
+                                                                                        $$ = criarNo("Block", NULL, @1.last_line, @1.first_column);
                                                                                         $$->filho = $2;
                                                                                 }else{
                                                                                         $$ = $2;
@@ -170,79 +176,79 @@ Statement: OBRACE Statement_2 CBRACE                            {       if($2 !=
                                                                                 $$ = $2;
                                                                         }
                                                                 }
-        | IF OCURV Expr CCURV Statement %prec IFX               {       $$ = criarNo("If", NULL); 
+        | IF OCURV Expr CCURV Statement %prec IFX               {       $$ = criarNo("If", NULL, @1.last_line, @1.first_column); 
                                                                         if($5 != NULL){
                                                                                 if($5->irmao != NULL){
-                                                                                        $$->filho = criarIrmao($3, copia = criarNo("Block", NULL));
-                                                                                        copia->filho = criarIrmao($5, criarNo("Block", NULL));
+                                                                                        $$->filho = criarIrmao($3, copia = criarNo("Block", NULL, @1.last_line, @1.first_column));
+                                                                                        copia->filho = criarIrmao($5, criarNo("Block", NULL, @1.last_line, @1.first_column));
                                                                                 }else{
-                                                                                        $$->filho = criarIrmao(criarIrmao($3, $5), criarNo("Block", NULL));
+                                                                                        $$->filho = criarIrmao(criarIrmao($3, $5), criarNo("Block", NULL, @1.last_line, @1.first_column));
                                                                                 }
                                                                         }else{
-                                                                                $$->filho = criarIrmao($3, criarIrmao(criarNo("Block", NULL), criarNo("Block", NULL)));
+                                                                                $$->filho = criarIrmao($3, criarIrmao(criarNo("Block", NULL, @1.last_line, @1.first_column), criarNo("Block", NULL, @1.last_line, @1.first_column)));
                                                                         }
                                                                         
                                                                 }
-        | IF OCURV Expr CCURV Statement ELSE Statement         {        $$ = criarNo("If", NULL); 
+        | IF OCURV Expr CCURV Statement ELSE Statement         {        $$ = criarNo("If", NULL, @1.last_line, @1.first_column); 
                                                                         if($5 != NULL){
                                                                                 if($5->irmao != NULL){
-                                                                                        $$->filho = criarIrmao($3, copia = criarNo("Block", NULL));
-                                                                                        copia->filho = criarIrmao($5, criarNo("Block", NULL));
+                                                                                        $$->filho = criarIrmao($3, copia = criarNo("Block", NULL, @1.last_line, @1.first_column));
+                                                                                        copia->filho = criarIrmao($5, criarNo("Block", NULL, @1.last_line, @1.first_column));
                                                                                 }else{
                                                                                         $$->filho = criarIrmao($3, $5);
                                                                                 }
                                                                         }else{
-                                                                                $$->filho = criarIrmao($3,  criarNo("Block", NULL));
+                                                                                $$->filho = criarIrmao($3,  criarNo("Block", NULL, @1.last_line, @1.first_column));
                                                                         }
                                                                         
                                                                         if($7 != NULL){
                                                                                 if($7->irmao != NULL){
-                                                                                        $$->filho = criarIrmao($$->filho, copia = criarNo("Block", NULL));
+                                                                                        $$->filho = criarIrmao($$->filho, copia = criarNo("Block", NULL, @1.last_line, @1.first_column));
                                                                                         copia->filho = $7;
                                                                                 }else{
                                                                                         $$->filho = criarIrmao($$->filho, $7);
                                                                                 }
                                                                         }else{
-                                                                               $$->filho = criarIrmao($$->filho, criarNo("Block", NULL));
+                                                                               $$->filho = criarIrmao($$->filho, criarNo("Block", NULL, @1.last_line, @1.first_column));
                                                                         }
                                                                         
                                                                 }
-        | WHILE OCURV Expr CCURV Statement                      {       $$ = criarNo("While", NULL); 
+        | WHILE OCURV Expr CCURV Statement                      {       $$ = criarNo("While", NULL, @1.last_line, @1.first_column); 
                                                                         if($5 != NULL){
                                                                                 if($5->irmao != NULL){
-                                                                                        $$->filho = criarIrmao($3, copia = criarNo("Block", NULL));
+                                                                                        $$->filho = criarIrmao($3, copia = criarNo("Block", NULL, @1.last_line, @1.first_column));
                                                                                         copia->filho = $5;
                                                                                 }else{
                                                                                         $$->filho = criarIrmao($3, $5);
                                                                                 }
                                                                         }else{                                                                                                                          
-                                                                                $$->filho = criarIrmao($3, criarNo("Block", NULL));
+                                                                                $$->filho = criarIrmao($3, criarNo("Block", NULL, @1.last_line, @1.first_column));
                                                                         }
                                                                 }
-        | DO Statement WHILE OCURV Expr CCURV SEMI              {       $$ = criarNo("DoWhile", NULL);
+        | DO Statement WHILE OCURV Expr CCURV SEMI              {       $$ = criarNo("DoWhile", NULL, @1.last_line, @1.first_column);
                                                                         if($2 != NULL){
                                                                                 if($2->irmao != NULL){
-                                                                                        $$->filho = criarIrmao(copia = criarNo("Block", NULL), $5);
+                                                                                        $$->filho = criarIrmao(copia = criarNo("Block", NULL, @1.last_line, @1.first_column), $5);
                                                                                         copia->filho = $2;
                                                                                 }else{
                                                                                         $$->filho = criarIrmao($2, $5);
                                                                                 }
                                                                         }else{
-                                                                             $$->filho = criarIrmao(criarNo("Block", NULL), $5);
+                                                                             $$->filho = criarIrmao(criarNo("Block", NULL, @1.last_line, @1.first_column), $5);
                                                                         }
                                                                         
                                                                 }
-        | PRINT OCURV Expr CCURV SEMI                           {       $$ = criarNo("Print", NULL); 
+        | PRINT OCURV Expr CCURV SEMI                           {       $$ = criarNo("Print", NULL, @1.last_line, @1.first_column); 
                                                                         $$->filho = $3;
                                                                 }
-        | PRINT OCURV STRLIT CCURV SEMI                         {$$ = criarNo("Print", NULL); $$->filho = criarNo("StrLit", $3); free($3);}
+        | PRINT OCURV STRLIT CCURV SEMI                         {$$ = criarNo("Print", NULL, @1.last_line, @1.first_column); $$->filho = criarNo("StrLit", $3, @1.last_line, @1.first_column); free($3);}
         | Assignment SEMI                                       {$$ = $1;}
         | MethodInvocation SEMI                                 {$$ = $1;}
         | ParseArgs SEMI                                        {$$ = $1;}
         | SEMI                                                  {$$ = NULL;}
-        | RETURN SEMI                                           {$$ = criarNo("Return", NULL);}
-        | RETURN Expr SEMI                                      {$$ = criarNo("Return", NULL); $$->filho = $2;}
-        | error SEMI                                            {$$ = criarNo("Error", NULL); error = 1;}
+        | RETURN SEMI                                           {$$ = criarNo("Return", NULL, @1.last_line, @1.first_column);}
+        | RETURN Expr SEMI                                      {$$ = criarNo("Return", NULL, @1.last_line, @1.first_column); $$->filho = $2;}
+        | error SEMI                                            {$$ = criarNo("Error", NULL, @1.last_line, @1.first_column); error = 1;}
         ;
 
 /*deve repetir 0 ou + vezes { Statement }*/
@@ -252,19 +258,19 @@ Statement_2:Statement_2 Statement       {$$ = $1; $$ = criarIrmao($1, $2);}
 
 
 
-Assignment: ID ASSIGN Expr      {       $$ = criarNo("Assign", NULL); 
-                                        $$->filho = criarIrmao(criarNo("Id", $1), $3); free($1);
+Assignment: ID ASSIGN Expr      {       $$ = criarNo("Assign", NULL, @1.last_line, @1.first_column); 
+                                        $$->filho = criarIrmao(criarNo("Id", $1, @1.last_line, @1.first_column), $3); free($1);
                                 }
         ;
 
-MethodInvocation: ID OCURV CCURV                                {       $$ = criarNo("Call", NULL);
-                                                                        $$->filho = criarNo("Id", $1); free($1);
+MethodInvocation: ID OCURV CCURV                                {       $$ = criarNo("Call", NULL, @1.last_line, @1.first_column);
+                                                                        $$->filho = criarNo("Id", $1, @1.last_line, @1.first_column); free($1);
                                                                 }
-        |ID OCURV Expr MethodInvocation_2 CCURV                 {       $$ = criarNo("Call", NULL);
-                                                                        $$->filho = criarIrmao(criarIrmao(criarNo("Id", $1), $3), $4); 
+        |ID OCURV Expr MethodInvocation_2 CCURV                 {       $$ = criarNo("Call", NULL, @1.last_line, @1.first_column);
+                                                                        $$->filho = criarIrmao(criarIrmao(criarNo("Id", $1, @1.last_line, @1.first_column), $3), $4); 
                                                                         free($1);
                                                                 }
-        |ID OCURV error CCURV                                   {$$ = criarNo("Error", NULL); error = 1;}
+        |ID OCURV error CCURV                                   {$$ = criarNo("Error", NULL, @1.last_line, @1.first_column); error = 1;}
         ;
 
 /*deve repetir 0 ou + vezes { COMMA Expr }*/
@@ -272,36 +278,36 @@ MethodInvocation_2: MethodInvocation_2 COMMA Expr               {$$ = $1; $$ = c
         |                                                       {$$ = NULL;}
         ;
 
-ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV         {       $$ = criarNo("ParseArgs", NULL); 
-                                                                        $$->filho = criarIrmao(criarNo("Id", $3), $5); free($3);}
-        | PARSEINT OCURV error CCURV                            {$$ = criarNo("Error", NULL); error = 1;}
+ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV         {       $$ = criarNo("ParseArgs", NULL, @1.last_line, @1.first_column); 
+                                                                        $$->filho = criarIrmao(criarNo("Id", $3, @1.last_line, @1.first_column), $5); free($3);}
+        | PARSEINT OCURV error CCURV                            {$$ = criarNo("Error", NULL, @1.last_line, @1.first_column); error = 1;}
         ;
 
 Expr2:MethodInvocation                  {$$ = $1;}              /*E' -> € {E'.n = E'.i}*/             
     | ParseArgs                         {$$ = $1;}
-    | Expr2 AND Expr2                   {$$ = criarNo("And", NULL); $$->filho = criarIrmao($1, $3);} /*AND vai para o topo da pilha, está no topo e a este vamos acrescentar um filho Expr e a este um irmão Expr*/
-    | Expr2 OR Expr2                    {$$ = criarNo("Or", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 EQ Expr2                    {$$ = criarNo("Eq", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 GEQ Expr2                   {$$ = criarNo("Geq", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 GT Expr2                    {$$ = criarNo("Gt", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 LEQ Expr2                   {$$ = criarNo("Leq", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 LT Expr2                    {$$ = criarNo("Lt", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 NEQ Expr2                   {$$ = criarNo("Neq", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 PLUS Expr2                  {$$ = criarNo("Add", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 MINUS Expr2                 {$$ = criarNo("Sub", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 STAR Expr2                  {$$ = criarNo("Mul", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 DIV Expr2                   {$$ = criarNo("Div", NULL);  $$->filho = criarIrmao($1, $3);}
-    | Expr2 MOD Expr2                   {$$ = criarNo("Mod", NULL);  $$->filho = criarIrmao($1, $3);}
-    | NOT Expr2                         {$$ = criarNo("Not", NULL); $$->filho = $2;}   
-    | PLUS Expr2      %prec NOT         {$$ = criarNo("Plus", NULL); $$->filho = $2;}              /*E'->NAND T E'1 {E'1.i = mknode("NAND", E'.i, Tn)}*/
-    | MINUS Expr2     %prec NOT         {$$ = criarNo("Minus", NULL); $$->filho = $2;}                   /*O meu nó actual (Minus) vai ser irmão do novo nó (Expr), que no final estará no posso da pilha $$*/
+    | Expr2 AND Expr2                   {$$ = criarNo("And", NULL, @1.last_line, @1.first_column); $$->filho = criarIrmao($1, $3);} /*AND vai para o topo da pilha, está no topo e a este vamos acrescentar um filho Expr e a este um irmão Expr*/
+    | Expr2 OR Expr2                    {$$ = criarNo("Or", NULL, @1.last_line, @1.first_column);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 EQ Expr2                    {$$ = criarNo("Eq", NULL, @1.last_line, @1.first_column);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 GEQ Expr2                   {$$ = criarNo("Geq", NULL, @1.last_line, @1.first_column);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 GT Expr2                    {$$ = criarNo("Gt", NULL, @1.last_line, @1.first_column);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 LEQ Expr2                   {$$ = criarNo("Leq", NULL, @1.last_line, @1.first_column);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 LT Expr2                    {$$ = criarNo("Lt", NULL, @1.last_line, @1.first_column);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 NEQ Expr2                   {$$ = criarNo("Neq", NULL, @1.last_line, @1.first_column);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 PLUS Expr2                  {$$ = criarNo("Add", NULL, @1.last_line, @1.first_column);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 MINUS Expr2                 {$$ = criarNo("Sub", NULL, @1.last_line, @1.first_column);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 STAR Expr2                  {$$ = criarNo("Mul", NULL, @1.last_line, @1.first_column);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 DIV Expr2                   {$$ = criarNo("Div", NULL, @1.last_line, @1.first_column);  $$->filho = criarIrmao($1, $3);}
+    | Expr2 MOD Expr2                   {$$ = criarNo("Mod", NULL, @1.last_line, @1.first_column);  $$->filho = criarIrmao($1, $3);}
+    | NOT Expr2                         {$$ = criarNo("Not", NULL, @1.last_line, @1.first_column); $$->filho = $2;}   
+    | PLUS Expr2      %prec NOT         {$$ = criarNo("Plus", NULL, @1.last_line, @1.first_column); $$->filho = $2;}              /*E'->NAND T E'1 {E'1.i = mknode("NAND", E'.i, Tn)}*/
+    | MINUS Expr2     %prec NOT         {$$ = criarNo("Minus", NULL, @1.last_line, @1.first_column); $$->filho = $2;}                   /*O meu nó actual (Minus) vai ser irmão do novo nó (Expr), que no final estará no posso da pilha $$*/
     | ID                                {$$ = criarNo("Id", $1); free($1);}      /*T->ID  {T.n = mkleaf("Id", ID.lexval)}*/
-    | ID DOTLENGTH                      {$$ = criarNo("Length", NULL); $$->filho = criarNo("Id", $1); free($1);} 
-    | BOOLLIT                           {$$ = criarNo("BoolLit", $1); free($1);}
-    | DECLIT                            {$$ = criarNo("DecLit", $1); free($1);}
-    | REALLIT                           {$$ = criarNo("RealLit", $1); free($1);}
+    | ID DOTLENGTH                      {$$ = criarNo("Length", NULL, @1.last_line, @1.first_column); $$->filho = criarNo("Id", $1, @1.last_line, @1.first_column); free($1);} 
+    | BOOLLIT                           {$$ = criarNo("BoolLit", $1, @1.last_line, @1.first_column); free($1);}
+    | DECLIT                            {$$ = criarNo("DecLit", $1, @1.last_line, @1.first_column); free($1);}
+    | REALLIT                           {$$ = criarNo("RealLit", $1, @1.last_line, @1.first_column); free($1);}
     | OCURV Expr CCURV                  {$$ = $2;}                      /*T->(E) {T.n = E.n}*/
-    | OCURV error CCURV                 {$$ = criarNo("Error", NULL); error = 1;}
+    | OCURV error CCURV                 {$$ = criarNo("Error", NULL, @1.last_line, @1.first_column); error = 1;}
     ;
 
 Expr:  Assignment       {$$ = $1;}              

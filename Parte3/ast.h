@@ -3,7 +3,7 @@
 
 #include "estruturas.h"
 
-ARVORE criarNo (char *tipoVariavel, char *valor);
+ARVORE criarNo (char *tipoVariavel, char *valor, int numLinha, int numColuna);
 ARVORE criarIrmao(ARVORE noActual, ARVORE novoNo);
 void imprimirAST(ARVORE noActual, int error, int numFilhos, int flagImprimir);
 void freeArvore(ARVORE noActual);
