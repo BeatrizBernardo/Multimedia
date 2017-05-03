@@ -1,6 +1,19 @@
 class gcd {   
     public static int a;
     public static boolean b;
+
+    public static int funcao(int a){
+        
+    }
+
+    public static int funcao(double a){
+        
+    }
+
+    public static int funcao(boolean a){
+        
+    }
+
     public static void main(int c, int d) {    
         int a, b;    
         a = Integer.parseInt(args[0]);    
@@ -15,5 +28,5 @@ class gcd {
                     b = b-a;        
                 System.out.println(a);    
         }
-    } 
+    }
 }

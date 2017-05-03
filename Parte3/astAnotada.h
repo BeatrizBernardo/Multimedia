@@ -17,6 +17,7 @@ typedef struct classe{
     char *paramTypes;
     char *type;
     int is_variavel; /*0 - não variavel, 1 - variavel*/
+    int num_params;
     CLASSE proximaClass;
     METHOD proximoMethod;
 }CLSS;

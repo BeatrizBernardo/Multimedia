@@ -10,6 +10,8 @@ class gcd2 {
         } else      
             System.out.println("Error: two parameters required.");  
     }  
+
+    
     public static int gcd(int a, int b) {    
         if (a == 0)        
             return b;    

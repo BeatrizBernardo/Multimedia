@@ -1,4 +1,6 @@
 lex jac.l && yacc -d -v jac.y && cc -g -o jac lex.yy.c y.tab.c ast.c ast.h estruturas.h astAnotada.c astAnotada.h
 echo
-echo Compilacao
+echo
 ./jac -s < CasosTestes/gcd.ja
+echo
+echo

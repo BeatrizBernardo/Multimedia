@@ -20,18 +20,8 @@ char *paraMinusculas(char *string){
 int retornaNumero(char *tipoVariavel){
     if(strcmp(tipoVariavel, "FieldDecl") == 0){
         return 1;
-    }else if(strcmp(tipoVariavel, "VarDecl") == 0){
-        return 2;
-    }else if(strcmp(tipoVariavel, "MethodDecl") == 0){
-        return 3;
     }else if(strcmp(tipoVariavel, "MethodHeader") == 0){
         return 4;
-    }else if(strcmp(tipoVariavel, "MethodParams") == 0){
-        return 5;
-    }else if(strcmp(tipoVariavel, "ParamDecl") == 0){
-        return 6;
-    }else if(strcmp(tipoVariavel, "MethodBody") == 0){
-        return 7;
     }else if(strcmp(tipoVariavel, "Program") == 0){
         return 8;
     }else{
@@ -55,22 +45,21 @@ void ultimoNoClasse(CLASSE tabelaSimbolos, CLASSE noActual){
 
 /*adicinar à estrutura METHOD em ultimo lugar*/
 void ultimoNoMethod(CLASSE tabelaSimbolos, METHOD noActual){
-    METHOD aux = tabelaSimbolos->proximoMethod->proximoMethod;
-    printf("1o no - %s\n", tabelaSimbolos->proximoMethod->name);
+    METHOD aux;
+    //printf("1o no - %s\n", tabelaSimbolos->proximoMethod->name);
                             
-    if(aux == NULL){
+    if(tabelaSimbolos->proximoMethod->proximoMethod == NULL){
         tabelaSimbolos->proximoMethod->proximoMethod = noActual;
         //aux = noActual;
         //printf("1->>>-%s\t\t%s\t\n",aux->name, aux->type);
-        printf("2->>>-%s\t\t%s\t\n",tabelaSimbolos->proximoMethod->proximoMethod->name, tabelaSimbolos->proximoMethod->proximoMethod->type);
+        //printf("2->>>-%s\t\t%s\t\n",tabelaSimbolos->proximoMethod->proximoMethod->name, tabelaSimbolos->proximoMethod->proximoMethod->type);
     }else{
-        //printf("----- aux %s \n", aux->name);
+        aux = tabelaSimbolos->proximoMethod;
         while(aux != NULL){
-            printf(">>>%s\t\t%s\t\n",aux->name, aux->type);
+            //printf("----> %s\n", aux->name);
             aux = aux->proximoMethod;
         }
         aux = noActual;
-        printf("->>>>>>>>>>>-%s\t\t%s\t\n", aux->name, aux->type);
     }
 }
 
@@ -137,6 +126,7 @@ void paramDecl(ARVORE noActual, CLASSE tabelaSimbolos){
                 /*tabelaSimbolos->paramTypes = (char*)malloc(strlen("(String[])")+1);
                 strcpy(tabelaSimbolos->paramTypes, "(String[])");*/
                 tabelaSimbolos->paramTypes = strdup("(String[])");
+                tabelaSimbolos->num_params = 1;
 
                 /*adicionar ao method*/
                 methodAux->name = strdup(noActual->filho->irmao->valor);
@@ -145,40 +135,59 @@ void paramDecl(ARVORE noActual, CLASSE tabelaSimbolos){
                 methodAux->proximoMethod = NULL;
                 ultimoNoMethod(tabelaSimbolos, methodAux);
 
+
             }else{
                 char aux[MAX_STR];
+                int nParams = 0;
                 strcpy(aux, "(");
                 while(noActual != NULL){
                     if(noActual->irmao == NULL){
-                        strcat(aux, paraMinusculas(noActual->filho->tipoVariavel));
+                        
                         /*adicionar ao method*/
                         methodAux->name = strdup(noActual->filho->irmao->valor);
-                        methodAux->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                        if(strcmp(noActual->filho->tipoVariavel, "Bool") == 0){
+                            methodAux->type = strdup("boolean");
+                        }else{
+                            methodAux->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                        }
                         methodAux->is_param = 1;
                         methodAux->proximoMethod = NULL;
+                        nParams++;
                         ultimoNoMethod(tabelaSimbolos, methodAux);
                         //free(methodAux->name);
                         //free(methodAux->type);
+
+                        /*add to string*/
+                        strcat(aux, methodAux->type);
                     }else{
-                        strcat(aux, paraMinusculas(noActual->filho->tipoVariavel));
-                        strcat(aux, ",");
+
                         /*adicionar ao method*/
                         methodAux->name = strdup(noActual->filho->irmao->valor);
-                        methodAux->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                        if(strcmp(noActual->filho->tipoVariavel, "Bool") == 0){
+                            methodAux->type = strdup("boolean");
+                        }else{
+                            methodAux->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                        }
                         methodAux->is_param = 1;
                         methodAux->proximoMethod = NULL;
+                        nParams++;
                         ultimoNoMethod(tabelaSimbolos, methodAux);
                         //free(methodAux->name);
                         //free(methodAux->type);
+                        /*add to string*/
+                        strcat(aux, methodAux->type);
+                        strcat(aux, ",");
                     }
                     
                     noActual = noActual->irmao;
                 }
                 strcat(aux, ")");
                 tabelaSimbolos->paramTypes = strdup(aux);
+                tabelaSimbolos->num_params = nParams;
             }
         }else{
-            tabelaSimbolos->paramTypes = NULL;
+            tabelaSimbolos->paramTypes = strdup("()");
+            tabelaSimbolos->num_params = 0;
         }
     }
 
@@ -186,7 +195,29 @@ void paramDecl(ARVORE noActual, CLASSE tabelaSimbolos){
 }
 
 void methodBody(ARVORE noActual, CLASSE tabelaSimbolos){
-    printf("%s\n", noActual->tipoVariavel);
+    METHOD methodAux;
+    methodAux = (METHOD)malloc(sizeof(MTHD));
+
+    if(noActual != NULL){
+        if(noActual->filho != NULL){
+            noActual = noActual->filho;
+            while(noActual != NULL){
+                if(strcmp(noActual->tipoVariavel, "VarDecl") == 0){
+                    methodAux->name = strdup(noActual->filho->irmao->valor);
+                    if(strcmp(noActual->filho->tipoVariavel, "Bool") == 0){
+                        methodAux->type = strdup("boolean");
+                    }else{
+                        methodAux->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                    }
+                    methodAux->is_param = 0;
+                    methodAux->proximoMethod = NULL;
+                    ultimoNoMethod(tabelaSimbolos, methodAux);
+                }
+                
+                noActual = noActual->irmao;
+            }
+        }
+    }
 
 }
 
@@ -204,19 +235,17 @@ void symbolTabel(ARVORE noActual){
                 if(no != NULL){
                     no->name = strdup(noActual->filho->irmao->valor);
                     no->paramTypes = NULL;
-                    no->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                    if(strcmp(noActual->filho->tipoVariavel, "Bool") == 0){
+                        no->type = strdup("boolean");
+                    }else{
+                        no->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                    }
                     no->is_variavel = 1;
+                    no->num_params = 0;
                     no->proximaClass = NULL;
                     no->proximoMethod = NULL;
                     ultimoNoClasse(tabelaSimbolos, no);
                 }
-            };break;
-            case 2:{
-                /*VarDecl*/
-                printf("2\n");
-            };break;
-            case 3:{
-                /*MethodDecl*/
             };break;
             case 4:{
                 /*MethodHeader*/
@@ -229,15 +258,24 @@ void symbolTabel(ARVORE noActual){
                 if(no != NULL){
                     no->name = strdup(noActual->filho->irmao->valor);
                     no->paramTypes = NULL;
-                    no->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                    if(strcmp(noActual->filho->tipoVariavel, "Bool") == 0){
+                        no->type = strdup("boolean");
+                    }else{
+                        no->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                    }
                     no->is_variavel = 0;
+                    no->num_params = 0;
                     no->proximaClass = NULL;
                     no->proximoMethod = NULL;
                     ultimoNoClasse(tabelaSimbolos, no);
 
                     /*adicionar o return - sempre o primeiro no a retornar*/
                     noAux->name = strdup("return");
-                    noAux->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                    if(strcmp(noActual->filho->tipoVariavel, "Bool") == 0){
+                        noAux->type = strdup("boolean");
+                    }else{
+                        noAux->type = strdup(paraMinusculas(noActual->filho->tipoVariavel));
+                    }
                     noAux->is_param = 0;
                     noAux->proximoMethod = NULL;
 
@@ -248,18 +286,8 @@ void symbolTabel(ARVORE noActual){
                 paramDecl(aux, no);
 
                 ARVORE aux2 = noActual->irmao;
-                methodBody(aux, no);
+                methodBody(aux2, no);
 
-            };break;
-            case 5:{
-                /*MethodParams*/
-            };break;
-            case 6:{
-                /*ParamDecl*/
-            };break;
-            case 7:{
-                /*MethodBody*/
-                printf("7\n");
             };break;
             case 8:{
                 /*Program*/
@@ -271,6 +299,7 @@ void symbolTabel(ARVORE noActual){
                     no->paramTypes = NULL;
                     no->type = NULL;
                     no->is_variavel = 1;
+                    no->num_params = 0;
                     no->proximaClass = NULL;
                     no->proximoMethod = NULL;
                     tabelaSimbolos = no;
