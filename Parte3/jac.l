@@ -24,6 +24,11 @@
 
     /*Flag para verificar se há erro sintatico*/
     int error = 0;
+
+    /*para %locations*/
+    int yycolumn=1;
+    #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = columnNum; yylloc.last_column = columnNum+yyleng-1; columnNum += yyleng;
+    
 %}
 
 %X COMMENTS
