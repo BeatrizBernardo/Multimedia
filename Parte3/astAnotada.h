@@ -35,9 +35,11 @@ void polimorfismo(CLASSE no, ARVORE noArv);
 void imprimirASTAnotada(ARVORE noActual, int error, int numFilhos, int flagImprimir);
 void nosAnotadosBasicos(ARVORE noActual, CLASSE tabela, int is_Call);
 char *procurarTipoVariavel(char *nome, CLASSE tabela);
-char *procurarTipoParametrosMetodo(ARVORE noActual, char *nome, CLASSE tabela, ARVORE noCall);
-char *procurarTipoRetornoMetodo(char *nome, CLASSE tabela);
+char *procurarTipoParametrosMetodo(ARVORE noActual, char *nome, CLASSE tabela);
+char *procurarTipoRetornoMetodo(char *nome, char *parametros, CLASSE tabela);
 void procurarNos(ARVORE noActual);
 char *compararTipos(char *tipo1, char *tipo2);
-void nosAnotadosOperadoresNumericos(ARVORE noActual, CLASSE tabela, int is_Call);
+void nosAnotadosOperadoresNumericos(ARVORE noActual, CLASSE tabela);
+void nosAnotadosCall(ARVORE noActual, CLASSE tabela);
+char *fazerParametros(ARVORE noActual);
 #endif
