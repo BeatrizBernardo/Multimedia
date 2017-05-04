@@ -209,11 +209,13 @@ void methodBody(ARVORE noActual, CLASSE tabelaSimbolos){
 }
 
 char *procurarTipoVariavel(char *nome, CLASSE tabela){
+
+    //printf(" - - -- - - -- -- - - - - - - -- - - - - - -- %s\n", nome);
     METHOD aux = tabela->proximoMethod;
-    CLASSE auxClasse = tabelaSimbolos->proximaClass;
+    CLASSE auxClasse = tabelaSimbolos;
     /*procura primeiro se é local*/
     while(aux != NULL){
-        //printf(">>>>>>>>>>>>>> %s %s\n", aux->name, aux->type);
+        //printf("aaaaaaaaaaaaa>>>>>>>>>>>>>> %s %s\n", aux->name, aux->type);
         if(strcmp(nome, aux->name) == 0){
             return aux->type;
         }
@@ -223,7 +225,7 @@ char *procurarTipoVariavel(char *nome, CLASSE tabela){
     /*procura nas globais*/
 
     while(auxClasse != NULL){
-        //printf("zzzzzzzzzzzzzzz %s %s\n", auxClasse->name, auxClasse->paramTypes);
+       // printf("zzzzzzzzzzzzzzz %s %s\n", auxClasse->name, auxClasse->paramTypes);
         if(strcmp(nome, auxClasse->name) == 0){
             if(auxClasse->paramTypes != NULL){
                 return auxClasse->paramTypes;
@@ -234,18 +236,41 @@ char *procurarTipoVariavel(char *nome, CLASSE tabela){
         }
         auxClasse = auxClasse->proximaClass;
     }
-
     return NULL;
 
 }
 
 /*espeficico para procurar metodos declarados no GLOBAL e devolver os parametros do metodo*/
-char *procurarTipoParametrosMetodo(char *nome, CLASSE tabela){
-    CLASSE auxClasse = tabelaSimbolos->proximaClass;
+char *procurarTipoParametrosMetodo(ARVORE noActual, char *nome, CLASSE tabela, ARVORE noCall){
+    //printf("------>>>>> %s - %s\n", noActual->tipoVariavel, noActual->valor);
+    char stringAux[MAX_STR];
+    ARVORE aux = noActual->irmao;
+    strcpy(stringAux, "(");
+    while(aux != NULL){
+        //printf("--    ->>>>> %s - %s\n", aux->tipoVariavel, aux->valor);
+        //printf("--<<<<<>>>>> %s\n", procurarTipoVariavel(aux->valor, tabela));
+        if(aux->irmao != NULL){
+            strcat(stringAux, procurarTipoVariavel(aux->valor, tabela));
+            strcat(stringAux, ",");
+        }else{
+            strcat(stringAux, procurarTipoVariavel(aux->valor, tabela));
+        }
+        aux = aux->irmao;
+    }
+    strcat(stringAux, ")");
+
+    //printf("-<-<-<-<-<-<--<-<-<-< %s - %s\n", noCall->stringAST, stringAux);
+
+    CLASSE auxClasse = tabela;
     while(auxClasse != NULL){
-        //printf("zzzzzzz %s - - %s %s is: %d\n",nome, auxClasse->name, auxClasse->paramTypes, auxClasse->is_variavel);
+        /*verificar se o nome é igual e se é uma função*/
+        //printf("-<-<-<-<-<-<--<-<-<-< %s\n", auxClasse->name);
         if((strcmp(nome, auxClasse->name) == 0) && (auxClasse->is_variavel == 0)){
-            return auxClasse->paramTypes;           
+            /*verificar se o tipo de retorno e parametros sao iguais*/
+            //printf("-<-<-<-<-<-<--<-<-<-< %s - %s\n", auxClasse->type, auxClasse->paramTypes);
+            if((strcmp(noCall->stringAST, auxClasse->type) == 0) && (strcmp(stringAux, auxClasse->paramTypes) == 0)){
+                return auxClasse->paramTypes;           
+            }
         }
         auxClasse = auxClasse->proximaClass;
     }
@@ -267,6 +292,19 @@ char *procurarTipoRetornoMetodo(char *nome, CLASSE tabela){
     return NULL;
 }
 
+/*função para comparar os tipos de retorno dos operadores numericos*/
+char *compararTipos(char *tipo1, char *tipo2){
+    if((strcmp(tipo1, "int") == 0) && (strcmp(tipo2, "int") == 0)){
+        return "int";
+    }else if((strcmp(tipo1, "double") == 0) || (strcmp(tipo2, "double") == 0)){
+        return "double";
+    }else if((strcmp(tipo1, "boolean") == 0) || (strcmp(tipo2, "boolean") == 0)){
+        //return "undef";
+        return "int";
+    }
+    return NULL;
+}
+
 void procurarNos(ARVORE noActual){
     CLASSE aux = tabelaSimbolos;
     if(noActual != NULL){
@@ -276,7 +314,8 @@ void procurarNos(ARVORE noActual){
             /*procurar o no correspondente na tabela*/
             while(aux != NULL){
                 if((strcmp(noActual->filho->irmao->valor, aux->name) == 0) && (aux->is_variavel == 0)){
-                    nosAnotados(noActual->irmao, aux);
+                    nosAnotadosBasicos(noActual->irmao, aux, 0);
+                    nosAnotadosOperadoresNumericos(noActual->irmao, aux, 0);
                 } 
                 aux = aux->proximaClass;                
             }
@@ -291,24 +330,14 @@ void procurarNos(ARVORE noActual){
     }
 }
 
-/*função para comparar os tipos de retorno dos operadores numericos*/
-char *compararTipos(char *tipo1, char *tipo2){
-    if((strcmp(tipo1, "int") == 0) && (strcmp(tipo2, "int") == 0)){
-        return "int";
-    }else if((strcmp(tipo1, "double") == 0) || (strcmp(tipo2, "double") == 0)){
-        return "double";
-    }
-    return NULL;
-}
-
-/*Verificação dos nós anotados*/
-void nosAnotados(ARVORE noActual, CLASSE tabela){
+/*Verificação dos nós anotados Básicos*/
+void nosAnotadosBasicos(ARVORE noActual, CLASSE tabela, int is_Call){
     int flagVarDecl = 0;
     if(noActual != NULL){
         if(strcmp(noActual->tipoVariavel, "VarDecl") == 0){
             //printf("----> %s\n", noActual->tipoVariavel);
             flagVarDecl = 1;            
-            
+            is_Call = 0;
         }else if((strcmp(noActual->tipoVariavel, "Eq") == 0) ||
           (strcmp(noActual->tipoVariavel, "Geq") == 0) ||
           (strcmp(noActual->tipoVariavel, "Gt") == 0) ||
@@ -320,68 +349,98 @@ void nosAnotados(ARVORE noActual, CLASSE tabela){
           (strcmp(noActual->tipoVariavel, "Or") == 0) ||
           (strcmp(noActual->tipoVariavel, "Not") == 0)){
             flagVarDecl = 0;
+            is_Call = 0;
             noActual->noAnotado = 1;
             noActual->stringAST = strdup("boolean");
         }else if((strcmp(noActual->tipoVariavel, "Length") == 0) || 
                 (strcmp(noActual->tipoVariavel, "DecLit") == 0) ||
                 (strcmp(noActual->tipoVariavel, "ParseArgs") == 0)){
             flagVarDecl = 0;
+            is_Call = 0;
             noActual->noAnotado = 1;
             noActual->stringAST = strdup("int");
         }else if(strcmp(noActual->tipoVariavel, "RealLit") == 0){
             flagVarDecl = 0;
+            is_Call = 0;
             noActual->noAnotado = 1;
             noActual->stringAST = strdup("double");
         }else if(strcmp(noActual->tipoVariavel, "StrLit") == 0){
             flagVarDecl = 0;
+            is_Call = 0;
             noActual->noAnotado = 1;
             noActual->stringAST = strdup("String");
         }else if(strcmp(noActual->tipoVariavel, "Id") == 0){
-            //printf("--->>->> %s %s\n", noActual->tipoVariavel, noActual->valor);
             flagVarDecl = 0;
-            noActual->noAnotado = 1;
-            noActual->stringAST = strdup(procurarTipoVariavel(noActual->valor, tabela));
-        }else if(strcmp(noActual->tipoVariavel, "Call") == 0){
-            //printf("-<-<-<-<-<-- %s %s\n", noActual->filho->tipoVariavel, noActual->filho->valor);
-            flagVarDecl = 0;
-            noActual->noAnotado = 1;
-            //printf("--->>>>>>>> %s\n", noActual->filho->valor);
-            noActual->stringAST = strdup(procurarTipoRetornoMetodo(noActual->filho->valor, tabela));
-
-            noActual = noActual->filho; 
-            noActual->noAnotado = 1;
-            noActual->stringAST = strdup(procurarTipoParametrosMetodo(noActual->valor, tabela));      
+            if(is_Call == 0){
+                noActual->noAnotado = 1;
+                noActual->stringAST = strdup(procurarTipoVariavel(noActual->valor, tabela));
+            }
+            is_Call = 0;
         }else if(strcmp(noActual->tipoVariavel, "Assign") == 0){
             //printf("-<-<-<-<-<-- %s %s\n", noActual->filho->tipoVariavel, noActual->filho->valor);
             flagVarDecl = 0;
+            is_Call = 0;
             noActual->noAnotado = 1;
             noActual->stringAST = strdup(procurarTipoVariavel(noActual->filho->valor, tabela));
-        }else if((strcmp(noActual->tipoVariavel, "Add") == 0) ||
-                (strcmp(noActual->tipoVariavel, "Sub") == 0) ||
-                (strcmp(noActual->tipoVariavel, "Mul") == 0) ||
-                (strcmp(noActual->tipoVariavel, "Div") == 0) ||
-                (strcmp(noActual->tipoVariavel, "Mod") == 0)){
-            flagVarDecl = 0;
-            noActual->noAnotado = 1;
-            noActual->stringAST = strdup(
-                                    compararTipos(
-                                        procurarTipoVariavel(noActual->filho->valor,tabela),
-                                        procurarTipoVariavel(noActual->filho->irmao->valor, tabela)
-                                    ));
-        }else if((strcmp(noActual->tipoVariavel, "Plus") == 0) ||
-                (strcmp(noActual->tipoVariavel, "Minus") == 0)){
-            flagVarDecl = 0;
-            noActual->noAnotado = 1;
-            noActual->stringAST = strdup(procurarTipoVariavel(noActual->filho->valor, tabela));
+        }else if(strcmp(noActual->tipoVariavel, "Call") == 0){
+            is_Call = 1;
+        }else{
+            is_Call = 0;
         }
     }
 
     if(noActual->filho != NULL && flagVarDecl == 0){
-        nosAnotados(noActual->filho, tabela);
+        nosAnotadosBasicos(noActual->filho, tabela, is_Call);
     }
 
     if(noActual->irmao != NULL){
-        nosAnotados(noActual->irmao, tabela);
+        is_Call = 0;
+        nosAnotadosBasicos(noActual->irmao, tabela, is_Call);
+    }
+}
+
+/*Verificação dos nós anotados*/
+void nosAnotadosOperadoresNumericos(ARVORE noActual, CLASSE tabela, int is_Call){
+    int flagVarDecl = 0;
+    ARVORE auxNo;
+    if(noActual != NULL){
+        if((strcmp(noActual->tipoVariavel, "Add") == 0) ||
+                (strcmp(noActual->tipoVariavel, "Sub") == 0) ||
+                (strcmp(noActual->tipoVariavel, "Mul") == 0) ||
+                (strcmp(noActual->tipoVariavel, "Div") == 0) ||
+                (strcmp(noActual->tipoVariavel, "Mod") == 0)){
+            is_Call = 0;
+            flagVarDecl = 0;
+            auxNo = noActual;
+
+            //noActual->noAnotado = 1;
+            printf("@@@--->>->> %s %s --- %d - - %s\n", noActual->filho->tipoVariavel, noActual->filho->valor, is_Call, noActual->filho->stringAST);
+            printf("@@@--->>->> %s %s --- %d - - %s\n", noActual->filho->irmao->tipoVariavel, noActual->filho->irmao->valor, is_Call, noActual->filho->irmao->stringAST);
+            /*noActual->stringAST = strdup(
+                                    compararTipos(
+                                        procurarTipoVariavel(noActual->filho->valor,tabela),
+                                        procurarTipoVariavel(noActual->filho->irmao->valor, tabela)
+                                    ));*/
+        }else if((strcmp(noActual->tipoVariavel, "Plus") == 0) ||
+                (strcmp(noActual->tipoVariavel, "Minus") == 0)){
+            is_Call = 0;
+            flagVarDecl = 0;
+            //noActual->noAnotado = 1;
+            //noActual->stringAST = strdup(procurarTipoVariavel(noActual->filho->valor, tabela));
+        }else if(strcmp(noActual->tipoVariavel, "Call") == 0){
+            is_Call = 1;
+        }else{
+            is_Call = 0;
+        }
+    }
+
+    if(noActual->filho != NULL && flagVarDecl == 0){
+        nosAnotadosOperadoresNumericos(noActual->filho, tabela, is_Call);
+    }
+
+    if(noActual->irmao != NULL){
+        is_Call = 0;
+        nosAnotadosOperadoresNumericos(noActual->irmao, tabela, is_Call);
     }
 }
 

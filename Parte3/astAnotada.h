@@ -33,10 +33,11 @@ void imprimirTabelasMethod();
 void ultimoNoMethod(CLASSE tabelaSimbolos, METHOD noActual);
 void polimorfismo(CLASSE no, ARVORE noArv);
 void imprimirASTAnotada(ARVORE noActual, int error, int numFilhos, int flagImprimir);
-void nosAnotados(ARVORE noActual, CLASSE tabela);
+void nosAnotadosBasicos(ARVORE noActual, CLASSE tabela, int is_Call);
 char *procurarTipoVariavel(char *nome, CLASSE tabela);
-char *procurarTipoParametrosMetodo(char *nome, CLASSE tabela);
+char *procurarTipoParametrosMetodo(ARVORE noActual, char *nome, CLASSE tabela, ARVORE noCall);
 char *procurarTipoRetornoMetodo(char *nome, CLASSE tabela);
 void procurarNos(ARVORE noActual);
 char *compararTipos(char *tipo1, char *tipo2);
+void nosAnotadosOperadoresNumericos(ARVORE noActual, CLASSE tabela, int is_Call);
 #endif
