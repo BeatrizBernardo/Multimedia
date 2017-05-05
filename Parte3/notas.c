@@ -11,7 +11,8 @@ CLASSE tabelaSimbolos = NULL;
 
 char *paraMinusculas(char *string){
     char *str = strdup(string);
-    for(int i = 0; str[i]; i++){
+    int i;
+    for(i = 0; str[i]; i++){
         str[i] = tolower(str[i]);
     }
     return str;
@@ -689,10 +690,11 @@ void symbolTabel(ARVORE noActual){
 }
 
 void imprimirASTAnotada(ARVORE noActual, int error, int numFilhos, int flagImprimir){
+    int i;
     if(noActual != NULL){
         if(error ==  0 && flagImprimir == 0){
             if(noActual->valor != NULL){
-                for(int i=0; i < numFilhos; i++){
+                for(i=0; i < numFilhos; i++){
                     printf("..");
                 }
                 if(noActual->noAnotado == 1){
@@ -701,7 +703,7 @@ void imprimirASTAnotada(ARVORE noActual, int error, int numFilhos, int flagImpri
                     printf("%s(%s)\n", noActual->tipoVariavel, noActual->valor);
                 }
             }else{
-                for(int i=0; i < numFilhos; i++){
+                for(i=0; i < numFilhos; i++){
                     printf("..");
                 }
                 if(noActual->noAnotado == 1){

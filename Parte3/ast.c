@@ -66,15 +66,16 @@ ARVORE criarIrmao(ARVORE noActual, ARVORE novoNo){
 
 
 void imprimirAST(ARVORE noActual, int error, int numFilhos, int flagImprimir){
+    int i;
     if(noActual != NULL){
         if(error ==  0 && flagImprimir == 0){
             if(noActual->valor != NULL){
-                for(int i=0; i < numFilhos; i++){
+                for(i=0; i < numFilhos; i++){
                     printf("..");
                 }
                 printf("%s(%s)\n", noActual->tipoVariavel, noActual->valor);
             }else{
-                for(int i=0; i < numFilhos; i++){
+                for(i=0; i < numFilhos; i++){
                     printf("..");
                 }
                 printf("%s\n", noActual->tipoVariavel);
