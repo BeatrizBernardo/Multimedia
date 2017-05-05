@@ -563,8 +563,9 @@ int main(int argc, char *argv[]){
             aux_2 = 1;
             yyparse();
             symbolTabel(raiz);
+            
             imprimirTabelaSimbolos();
-            procurarNos(raiz);
+            //procurarNos(raiz);
             imprimirASTAnotada(raiz, error, 0, 0);
             //imprimirAST(raiz, error, 0, 0);
         }

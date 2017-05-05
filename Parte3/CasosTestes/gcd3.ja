@@ -1,12 +1,17 @@
   class teste { 
-    public static int z(int b, double c, int d) { 
-          z(1, .2, .3) ;
-        } 
+    public static double x;
+    public static int main(String[] args) { 
+        z(1, .2, .3) ;
+
+    } 
           
-    public static double z(double b, int c, double d) { 
+    public static double ooo(double b, int c, double d) { 
         
     } 
-   public static double z(double b, double c, double d) { 
-        
+
+    public static double z(double b, double c, double d) { 
+        System.out.println(x);
+        int x;    
+        System.out.println(x);
     } 
 }

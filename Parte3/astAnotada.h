@@ -37,9 +37,15 @@ void nosAnotadosBasicos(ARVORE noActual, CLASSE tabela, int is_Call);
 char *procurarTipoVariavel(char *nome, CLASSE tabela);
 char *procurarTipoParametrosMetodo(ARVORE noActual, char *nome, CLASSE tabela);
 char *procurarTipoRetornoMetodo(char *nome, char *parametros, CLASSE tabela);
-void procurarNos(ARVORE noActual);
+void procurarNos(ARVORE noActual, CLASSE noClasse);
 char *compararTipos(char *tipo1, char *tipo2);
 void nosAnotadosOperadoresNumericos(ARVORE noActual, CLASSE tabela);
 void nosAnotadosCall(ARVORE noActual, CLASSE tabela);
 char *fazerParametros(ARVORE noActual);
+
+
+
+
+void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall);
+
 #endif

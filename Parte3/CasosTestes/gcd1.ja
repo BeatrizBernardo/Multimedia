@@ -1,5 +1,6 @@
 class gcd2 {  
-    public static int gcd;  
+    public static int gcd;
+    public static double z;  
     public static void main(String[] args) {    
         int a, b;    
         if (args.length >= 2) {      
@@ -11,7 +12,8 @@ class gcd2 {
             System.out.println("Error: two parameters required.");  
     }  
     
-    public static int gcd(int a, int b) {    
+    public static int gcd(int a, int b) {   
+        double z; 
         if (a == 0)        
             return b;    
         else {        
@@ -19,8 +21,9 @@ class gcd2 {
                 if (a > b)                
                     a = a-b;            
                 else                
-                    b = b-a;        
-            return a+a;    
+                    b = b-a;  
+            z = -2;    
+            return z+a;    
         }  
     } 
 }
