@@ -1,12 +1,18 @@
-class gcd { 
+class teste { 
+    public static double x;
+    public static double x;
     
-    public static boolean x;
-    public static double y, z;
-    public static int a, b, c, d;
+    public static int main(String[] args) { 
+        x = z(4,4);   
+        System.out.println(args)    ;
+    } 
 
-
-
-    public static void cenas(){
-        {{a = b;}}
+    public static double z(int a, double b) { 
+  
+    } 
+    
+    public static double z(double a, double b) { 
+       
     }
+
 }

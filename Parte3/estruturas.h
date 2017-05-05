@@ -12,6 +12,9 @@ typedef struct arvore{
     /*posicao dos elementos*/
     int numLinha;
     int numColuna;
+
+    /*posição na tabela global classe*/
+    int pos;
     /*filho*/
     ARVORE filho;
     ARVORE irmao;

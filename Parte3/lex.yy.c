@@ -737,8 +737,8 @@ char *yytext;
  
     /*para %locations*/
     int yycolumn=1;
-    #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = columnNum; yylloc.last_column = columnNum+yyleng-1; columnNum += yyleng;
- 
+    //#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = columnNum; yylloc.last_column = columnNum - yyleng;
+    #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = yycolumn;  yylloc.last_column = yycolumn+yyleng-1; yycolumn += yyleng;
 
 	int aux = 0;
     int aux_2 = 0;
@@ -1055,17 +1055,17 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 101 "jac.l"
-{BEGIN INVSTR; columnNum += yyleng; invColumnNum = columnNum-1;}
+{BEGIN INVSTR; columnNum += yyleng; invColumnNum = columnNum-1; lineNum=yylineno;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 102 "jac.l"
-{BEGIN 0; columnNum += yyleng;}
+{BEGIN 0; columnNum += yyleng; lineNum=yylineno;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 104 "jac.l"
-{columnNum+=yyleng;}
+{columnNum+=yyleng;lineNum=yylineno;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -1081,7 +1081,7 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 108 "jac.l"
-{BEGIN COMMENTS; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
+{BEGIN COMMENTS; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng; commentColumnNum = yylineno; lineNum=yylineno;}
 	YY_BREAK
 case YY_STATE_EOF(COMMENTS):
 #line 109 "jac.l"
@@ -1091,38 +1091,38 @@ case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
 #line 110 "jac.l"
-{lineNum++; columnNum = 1;} 
+{lineNum++; columnNum = 1; lineNum=yylineno;} 
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 111 "jac.l"
-{columnNum += yyleng;}
+{columnNum += yyleng; lineNum=yylineno;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 112 "jac.l"
-{columnNum += yyleng; BEGIN 0;}
+{columnNum += yyleng; lineNum=yylineno; BEGIN 0;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 114 "jac.l"
-{BEGIN COMMENT; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
+{BEGIN COMMENT; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng; commentColumnNum = yylineno; lineNum=yylineno;}
 	YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
 #line 115 "jac.l"
-{lineNum++; columnNum = 1; BEGIN 0;} 
+{lineNum++; columnNum = 1;  lineNum=yylineno; BEGIN 0;} 
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 116 "jac.l"
-{columnNum += yyleng;}
+{columnNum += yyleng; lineNum=yylineno;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 118 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("OCURV\n");
                 }
@@ -1134,7 +1134,7 @@ YY_RULE_SETUP
 case 14:
 YY_RULE_SETUP
 #line 127 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("CCURV\n");
                 } 
@@ -1146,7 +1146,7 @@ YY_RULE_SETUP
 case 15:
 YY_RULE_SETUP
 #line 136 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("OBRACE\n");
                 }
@@ -1158,7 +1158,7 @@ YY_RULE_SETUP
 case 16:
 YY_RULE_SETUP
 #line 145 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("CBRACE\n");
                 }
@@ -1170,7 +1170,7 @@ YY_RULE_SETUP
 case 17:
 YY_RULE_SETUP
 #line 154 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("OSQUARE\n");
                 }
@@ -1182,7 +1182,7 @@ YY_RULE_SETUP
 case 18:
 YY_RULE_SETUP
 #line 163 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("CSQUARE\n");
                 }
@@ -1195,7 +1195,7 @@ YY_RULE_SETUP
 case 19:
 YY_RULE_SETUP
 #line 173 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("AND\n");
                 }
@@ -1207,7 +1207,7 @@ YY_RULE_SETUP
 case 20:
 YY_RULE_SETUP
 #line 182 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("OR\n");
                 }
@@ -1219,7 +1219,7 @@ YY_RULE_SETUP
 case 21:
 YY_RULE_SETUP
 #line 191 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("LT\n");
                 }
@@ -1231,7 +1231,7 @@ YY_RULE_SETUP
 case 22:
 YY_RULE_SETUP
 #line 200 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("GT\n");
                 }
@@ -1243,7 +1243,7 @@ YY_RULE_SETUP
 case 23:
 YY_RULE_SETUP
 #line 209 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("EQ\n");
                 }
@@ -1255,7 +1255,7 @@ YY_RULE_SETUP
 case 24:
 YY_RULE_SETUP
 #line 218 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("NEQ\n");
                 }
@@ -1267,7 +1267,7 @@ YY_RULE_SETUP
 case 25:
 YY_RULE_SETUP
 #line 227 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("LEQ\n");
                 }
@@ -1279,7 +1279,7 @@ YY_RULE_SETUP
 case 26:
 YY_RULE_SETUP
 #line 236 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("GEQ\n");
                 }
@@ -1291,7 +1291,7 @@ YY_RULE_SETUP
 case 27:
 YY_RULE_SETUP
 #line 245 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("PLUS\n");
                 }
@@ -1303,7 +1303,7 @@ YY_RULE_SETUP
 case 28:
 YY_RULE_SETUP
 #line 254 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("MINUS\n");
                 }
@@ -1315,7 +1315,7 @@ YY_RULE_SETUP
 case 29:
 YY_RULE_SETUP
 #line 263 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("STAR\n");
                 }
@@ -1327,7 +1327,7 @@ YY_RULE_SETUP
 case 30:
 YY_RULE_SETUP
 #line 272 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("DIV\n");
                 }
@@ -1339,7 +1339,7 @@ YY_RULE_SETUP
 case 31:
 YY_RULE_SETUP
 #line 281 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("MOD\n");
                 }
@@ -1351,7 +1351,7 @@ YY_RULE_SETUP
 case 32:
 YY_RULE_SETUP
 #line 290 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("NOT\n");
                 }
@@ -1363,7 +1363,7 @@ YY_RULE_SETUP
 case 33:
 YY_RULE_SETUP
 #line 299 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("ASSIGN\n");
                 }
@@ -1375,7 +1375,7 @@ YY_RULE_SETUP
 case 34:
 YY_RULE_SETUP
 #line 308 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("SEMI\n");
                 }
@@ -1387,7 +1387,7 @@ YY_RULE_SETUP
 case 35:
 YY_RULE_SETUP
 #line 317 "jac.l"
-{columnNum += yyleng; 
+{columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("COMMA\n");
                 }
@@ -1399,7 +1399,7 @@ YY_RULE_SETUP
 case 36:
 YY_RULE_SETUP
 #line 326 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("BOOL\n");
                     }
@@ -1411,7 +1411,7 @@ YY_RULE_SETUP
 case 37:
 YY_RULE_SETUP
 #line 335 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("BOOLLIT(%s)\n", yytext);
                     }
@@ -1424,7 +1424,7 @@ YY_RULE_SETUP
 case 38:
 YY_RULE_SETUP
 #line 345 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("CLASS\n");
                     }
@@ -1436,7 +1436,7 @@ YY_RULE_SETUP
 case 39:
 YY_RULE_SETUP
 #line 354 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("DO\n");
                     }
@@ -1448,7 +1448,7 @@ YY_RULE_SETUP
 case 40:
 YY_RULE_SETUP
 #line 363 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("DOTLENGTH\n");
                     }
@@ -1460,7 +1460,7 @@ YY_RULE_SETUP
 case 41:
 YY_RULE_SETUP
 #line 372 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("DOUBLE\n");
                     }
@@ -1472,7 +1472,7 @@ YY_RULE_SETUP
 case 42:
 YY_RULE_SETUP
 #line 381 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("ELSE\n");
                     }
@@ -1484,7 +1484,7 @@ YY_RULE_SETUP
 case 43:
 YY_RULE_SETUP
 #line 390 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("IF\n");
                     }
@@ -1496,7 +1496,7 @@ YY_RULE_SETUP
 case 44:
 YY_RULE_SETUP
 #line 399 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("INT\n");
                     }
@@ -1508,7 +1508,7 @@ YY_RULE_SETUP
 case 45:
 YY_RULE_SETUP
 #line 408 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("PARSEINT\n");
                     }
@@ -1520,7 +1520,7 @@ YY_RULE_SETUP
 case 46:
 YY_RULE_SETUP
 #line 417 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("PRINT\n");
                     }
@@ -1532,7 +1532,7 @@ YY_RULE_SETUP
 case 47:
 YY_RULE_SETUP
 #line 426 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("PUBLIC\n");
                     }
@@ -1544,7 +1544,7 @@ YY_RULE_SETUP
 case 48:
 YY_RULE_SETUP
 #line 435 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("RETURN\n");
                     }
@@ -1556,7 +1556,7 @@ YY_RULE_SETUP
 case 49:
 YY_RULE_SETUP
 #line 444 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("STATIC\n");
                     }
@@ -1568,7 +1568,7 @@ YY_RULE_SETUP
 case 50:
 YY_RULE_SETUP
 #line 453 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("STRING\n");
                     }
@@ -1580,7 +1580,7 @@ YY_RULE_SETUP
 case 51:
 YY_RULE_SETUP
 #line 462 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("VOID\n");
                     }
@@ -1592,7 +1592,7 @@ YY_RULE_SETUP
 case 52:
 YY_RULE_SETUP
 #line 471 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("WHILE\n");
                     }
@@ -1604,7 +1604,7 @@ YY_RULE_SETUP
 case 53:
 YY_RULE_SETUP
 #line 480 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("RESERVED(%s)\n", yytext);
                 }
@@ -1617,7 +1617,7 @@ YY_RULE_SETUP
 case 54:
 YY_RULE_SETUP
 #line 491 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("ID(%s)\n", yytext);
                 }
@@ -1630,7 +1630,7 @@ YY_RULE_SETUP
 case 55:
 YY_RULE_SETUP
 #line 501 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("DECLIT(%s)\n", yytext);
                 }
@@ -1643,7 +1643,7 @@ YY_RULE_SETUP
 case 56:
 YY_RULE_SETUP
 #line 511 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("REALLIT(%s)\n", yytext);
                 }
@@ -1656,7 +1656,7 @@ YY_RULE_SETUP
 case 57:
 YY_RULE_SETUP
 #line 521 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("STRLIT(%s)\n", yytext);
                 }
@@ -1669,13 +1669,13 @@ YY_RULE_SETUP
 case 58:
 YY_RULE_SETUP
 #line 531 "jac.l"
-{columnNum += yyleng;}
+{columnNum += yyleng; lineNum=yylineno;}
 	YY_BREAK
 case 59:
 /* rule 59 can match eol */
 YY_RULE_SETUP
 #line 532 "jac.l"
-{lineNum++; columnNum = 1;}
+{yycolumn = 1;lineNum++; columnNum = 1; lineNum=yylineno;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
@@ -1686,7 +1686,7 @@ case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 case YY_STATE_EOF(INVSTR):
 #line 536 "jac.l"
-{   columnNum += yyleng; 
+{   columnNum += yyleng; lineNum=yylineno;
             if(aux==1){
                 yyterminate();
             }else{
@@ -2734,10 +2734,10 @@ int main(int argc, char *argv[]){
         }else if(strcmp(argv[1], "-s") == 0){
             aux_2 = 1;
             yyparse();
-            symbolTabel(raiz);
+            analiseAST(raiz);
             
             imprimirTabelaSimbolos();
-            //procurarNos(raiz);
+
             imprimirASTAnotada(raiz, error, 0, 0);
             //imprimirAST(raiz, error, 0, 0);
         }

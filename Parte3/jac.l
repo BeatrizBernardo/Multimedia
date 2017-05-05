@@ -10,8 +10,8 @@
  
     /*para %locations*/
     int yycolumn=1;
-    #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = columnNum; yylloc.last_column = columnNum+yyleng-1; columnNum += yyleng;
- 
+    //#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = columnNum; yylloc.last_column = columnNum - yyleng;
+    #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = yycolumn;  yylloc.last_column = yycolumn+yyleng-1; yycolumn += yyleng;
 
 	int aux = 0;
     int aux_2 = 0;
@@ -98,24 +98,24 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
 
 %%
 
-\"				{BEGIN INVSTR; columnNum += yyleng; invColumnNum = columnNum-1;}
-<INVSTR>\"		{BEGIN 0; columnNum += yyleng;}
+\"				{BEGIN INVSTR; columnNum += yyleng; invColumnNum = columnNum-1; lineNum=yylineno;}
+<INVSTR>\"		{BEGIN 0; columnNum += yyleng; lineNum=yylineno;}
 			
-<INVSTR>({ESC}|{NOTESC})		        {columnNum+=yyleng;}
+<INVSTR>({ESC}|{NOTESC})		        {columnNum+=yyleng;lineNum=yylineno;}
 <INVSTR>{NOTESC2}                 {printf("Line %d, col %d: invalid escape sequence (%s)\n", lineNum, columnNum, yytext); columnNum+=yyleng;}
 <INVSTR>("\n"|"\r"|"\r\n")            {printf("Line %d, col %d: unterminated string literal\n", lineNum, invColumnNum); lineNum++; columnNum = 1; BEGIN 0;}
 
-"/*"                                {BEGIN COMMENTS; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
+"/*"                                {BEGIN COMMENTS; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng; commentColumnNum = yylineno; lineNum=yylineno;}
 <COMMENTS><<EOF>>                   {printf("Line %d, col %d: unterminated comment\n", commentLineNum, commentColumnNum); BEGIN 0;}
-<COMMENTS>"\n"|"\r"|"\r\n"          {lineNum++; columnNum = 1;} 
-<COMMENTS>.                        	 {columnNum += yyleng;}
-<COMMENTS>"*/"                      {columnNum += yyleng; BEGIN 0;}
+<COMMENTS>"\n"|"\r"|"\r\n"          {lineNum++; columnNum = 1; lineNum=yylineno;} 
+<COMMENTS>.                        	 {columnNum += yyleng; lineNum=yylineno;}
+<COMMENTS>"*/"                      {columnNum += yyleng; lineNum=yylineno; BEGIN 0;}
 
-"//"				    {BEGIN COMMENT; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng;}
-<COMMENT>"\n"|"\r"|"\r\n"           {lineNum++; columnNum = 1; BEGIN 0;} 
-<COMMENT>.          	            {columnNum += yyleng;}
+"//"				    {BEGIN COMMENT; commentLineNum = lineNum; commentColumnNum = columnNum; columnNum += yyleng; commentColumnNum = yylineno; lineNum=yylineno;}
+<COMMENT>"\n"|"\r"|"\r\n"           {lineNum++; columnNum = 1;  lineNum=yylineno; BEGIN 0;} 
+<COMMENT>.          	            {columnNum += yyleng; lineNum=yylineno;}
 
-{OCURV}     {   columnNum += yyleng; 
+{OCURV}     {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("OCURV\n");
                 }
@@ -124,7 +124,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{CCURV}     {   columnNum += yyleng; 
+{CCURV}     {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("CCURV\n");
                 } 
@@ -133,7 +133,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{OBRACE}    {   columnNum += yyleng; 
+{OBRACE}    {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("OBRACE\n");
                 }
@@ -142,7 +142,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{CBRACE}    {   columnNum += yyleng; 
+{CBRACE}    {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("CBRACE\n");
                 }
@@ -151,7 +151,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{OSQUARE}   {   columnNum += yyleng; 
+{OSQUARE}   {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("OSQUARE\n");
                 }
@@ -160,7 +160,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{CSQUARE}   {   columnNum += yyleng; 
+{CSQUARE}   {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("CSQUARE\n");
                 }
@@ -170,7 +170,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{AND}       {   columnNum += yyleng; 
+{AND}       {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("AND\n");
                 }
@@ -179,7 +179,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{OR}        {   columnNum += yyleng; 
+{OR}        {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("OR\n");
                 }
@@ -188,7 +188,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{LT}        {   columnNum += yyleng; 
+{LT}        {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("LT\n");
                 }
@@ -197,7 +197,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{GT}        {   columnNum += yyleng; 
+{GT}        {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("GT\n");
                 }
@@ -206,7 +206,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{EQ}        {   columnNum += yyleng; 
+{EQ}        {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("EQ\n");
                 }
@@ -215,7 +215,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{NEQ}       {   columnNum += yyleng; 
+{NEQ}       {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("NEQ\n");
                 }
@@ -224,7 +224,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{LEQ}       {   columnNum += yyleng; 
+{LEQ}       {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("LEQ\n");
                 }
@@ -233,7 +233,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{GEQ}       {   columnNum += yyleng; 
+{GEQ}       {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("GEQ\n");
                 }
@@ -242,7 +242,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{PLUS}      {   columnNum += yyleng; 
+{PLUS}      {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("PLUS\n");
                 }
@@ -251,7 +251,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{MINUS}     {   columnNum += yyleng; 
+{MINUS}     {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("MINUS\n");
                 }
@@ -260,7 +260,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{STAR}      {   columnNum += yyleng; 
+{STAR}      {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("STAR\n");
                 }
@@ -269,7 +269,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{DIV}       {   columnNum += yyleng; 
+{DIV}       {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("DIV\n");
                 }
@@ -278,7 +278,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{MOD}       {   columnNum += yyleng; 
+{MOD}       {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("MOD\n");
                 }
@@ -287,7 +287,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{NOT}       {   columnNum += yyleng; 
+{NOT}       {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("NOT\n");
                 }
@@ -296,7 +296,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{ASSIGN}    {   columnNum += yyleng; 
+{ASSIGN}    {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("ASSIGN\n");
                 }
@@ -305,7 +305,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{SEMI}      {   columnNum += yyleng; 
+{SEMI}      {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("SEMI\n");
                 }
@@ -314,7 +314,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{COMMA}     {columnNum += yyleng; 
+{COMMA}     {columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("COMMA\n");
                 }
@@ -323,7 +323,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{BOOL}          {   columnNum += yyleng; 
+{BOOL}          {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("BOOL\n");
                     }
@@ -332,7 +332,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{BOOLLIT}       {   columnNum += yyleng; 
+{BOOLLIT}       {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("BOOLLIT(%s)\n", yytext);
                     }
@@ -342,7 +342,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{CLASS}         {   columnNum += yyleng; 
+{CLASS}         {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("CLASS\n");
                     }
@@ -351,7 +351,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{DO}            {   columnNum += yyleng; 
+{DO}            {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("DO\n");
                     }
@@ -360,7 +360,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{DOTLENGTH}     {   columnNum += yyleng; 
+{DOTLENGTH}     {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("DOTLENGTH\n");
                     }
@@ -369,7 +369,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{DOUBLE}        {   columnNum += yyleng; 
+{DOUBLE}        {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("DOUBLE\n");
                     }
@@ -378,7 +378,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{ELSE}          {   columnNum += yyleng; 
+{ELSE}          {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("ELSE\n");
                     }
@@ -387,7 +387,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{IF}            {   columnNum += yyleng; 
+{IF}            {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("IF\n");
                     }
@@ -396,7 +396,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{INT}           {   columnNum += yyleng; 
+{INT}           {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("INT\n");
                     }
@@ -405,7 +405,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{PARSEINT}      {   columnNum += yyleng; 
+{PARSEINT}      {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("PARSEINT\n");
                     }
@@ -414,7 +414,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{PRINT}         {   columnNum += yyleng; 
+{PRINT}         {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("PRINT\n");
                     }
@@ -423,7 +423,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{PUBLIC}        {   columnNum += yyleng; 
+{PUBLIC}        {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("PUBLIC\n");
                     }
@@ -432,7 +432,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{RETURN}        {   columnNum += yyleng; 
+{RETURN}        {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("RETURN\n");
                     }
@@ -441,7 +441,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{STATIC}        {   columnNum += yyleng; 
+{STATIC}        {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("STATIC\n");
                     }
@@ -450,7 +450,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{STRING}        {   columnNum += yyleng; 
+{STRING}        {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("STRING\n");
                     }
@@ -459,7 +459,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{VOID}          {   columnNum += yyleng; 
+{VOID}          {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("VOID\n");
                     }
@@ -468,7 +468,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{WHILE}         {   columnNum += yyleng; 
+{WHILE}         {   columnNum += yyleng; lineNum=yylineno;
                     if(aux==1){
                         printf("WHILE\n");
                     }
@@ -477,7 +477,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                     }
                 }
 
-{RESERVED}  {   columnNum += yyleng; 
+{RESERVED}  {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("RESERVED(%s)\n", yytext);
                 }
@@ -488,7 +488,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
             }
 
 
-{ID}        {   columnNum += yyleng; 
+{ID}        {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("ID(%s)\n", yytext);
                 }
@@ -498,7 +498,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{DECLIT}    {   columnNum += yyleng; 
+{DECLIT}    {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("DECLIT(%s)\n", yytext);
                 }
@@ -508,7 +508,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{REALLIT}   {   columnNum += yyleng; 
+{REALLIT}   {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("REALLIT(%s)\n", yytext);
                 }
@@ -518,7 +518,7 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-{STRLIT}    {   columnNum += yyleng; 
+{STRLIT}    {   columnNum += yyleng; lineNum=yylineno;
                 if(aux==1){
                     printf("STRLIT(%s)\n", yytext);
                 }
@@ -528,12 +528,12 @@ REALLIT (({NUMERO}{EXP})|(\.{NUMERO})|({NUMERO}\.)|(\.{NUMERO}{EXP}?)|({NUMERO}\
                 }
             }
 
-"\t"|"\f"|" " 	        {columnNum += yyleng;}
-"\n"|"\r"|"\r\n"        {lineNum++; columnNum = 1;}
+"\t"|"\f"|" " 	        {columnNum += yyleng; lineNum=yylineno;}
+"\n"|"\r"|"\r\n"        {yycolumn = 1;lineNum++; columnNum = 1; lineNum=yylineno;}
 
 .		{printf("Line %d, col %d: illegal character (%c)\n", lineNum, columnNum, yytext[0]); columnNum+=yyleng;} 
 
-<<EOF>> {   columnNum += yyleng; 
+<<EOF>> {   columnNum += yyleng; lineNum=yylineno;
             if(aux==1){
                 yyterminate();
             }else{
@@ -562,10 +562,10 @@ int main(int argc, char *argv[]){
         }else if(strcmp(argv[1], "-s") == 0){
             aux_2 = 1;
             yyparse();
-            symbolTabel(raiz);
+            analiseAST(raiz);
             
             imprimirTabelaSimbolos();
-            //procurarNos(raiz);
+
             imprimirASTAnotada(raiz, error, 0, 0);
             //imprimirAST(raiz, error, 0, 0);
         }

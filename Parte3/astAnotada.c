@@ -22,11 +22,14 @@ char *paraMinusculas(char *string){
 char *compararTipos(char *tipo1, char *tipo2){
     if((strcmp(tipo1, "int") == 0) && (strcmp(tipo2, "int") == 0)){
         return "int";
+    }else if((strcmp(tipo1, "boolean") == 0) && (strcmp(tipo2, "boolean") == 0)){
+        return "boolean";
     }else if((strcmp(tipo1, "double") == 0) || (strcmp(tipo2, "double") == 0)){
         return "double";
     }else if((strcmp(tipo1, "boolean") == 0) || (strcmp(tipo2, "boolean") == 0)){
-        //return "undef";
-        return "int";
+        return "undef";
+    }else if((strcmp(tipo1, "undef") == 0) || (strcmp(tipo2, "undef") == 0)){
+        return "undef";
     }
     return NULL;
 }
@@ -74,6 +77,8 @@ int retornaNumero(char *tipoVariavel){
         return 12;                
     }else if(strcmp(tipoVariavel, "Call") == 0){
         return 13;
+    }else if(strcmp(tipoVariavel, "Print") == 0){
+        return 14;
     }else{
         return 0;
     }
@@ -89,6 +94,7 @@ void ultimoNoClasse(CLASSE tabelaSimbolos, CLASSE noActual){
         while(tabelaSimbolos->proximaClass != NULL){
             tabelaSimbolos = tabelaSimbolos->proximaClass;
         }
+        noActual->pos = tabelaSimbolos->pos+1;
         tabelaSimbolos->proximaClass = noActual;
     }
 }
@@ -155,11 +161,18 @@ void imprimirTabelasMethod(){
     }
 }
 
+/*para chmar os symbolTabels*/
+void analiseAST(ARVORE raiz){
+    symbolTabel(raiz);
+    pesquisarNomeMetodoTabela(raiz, tabelaSimbolos);
+}
+
 void symbolTabel(ARVORE noActual){
     if(noActual != NULL){
 
         int numero = retornaNumero(noActual->tipoVariavel);
         switch(numero){
+            /*FieldDecl*/
             case 1:{
                 /*FieldDecl*/
                 CLASSE no;
@@ -178,10 +191,11 @@ void symbolTabel(ARVORE noActual){
                     no->proximaClass = NULL;
                     no->proximoMethod = NULL;
 
-                    //polimorfismo(no, noActual->filho->irmao);
+                    verificarRepeticaoClasse(no, noActual->filho->irmao);
                     ultimoNoClasse(tabelaSimbolos, no);
                 }
             };break;
+            /*MethodHeader*/
             case 2:{
                 /*MethodHeader*/
                 CLASSE no;
@@ -200,6 +214,7 @@ void symbolTabel(ARVORE noActual){
                     }
                     no->is_variavel = 0;
                     no->num_params = 0;
+                    no->pos = 0;
                     no->proximaClass = NULL;
                     no->proximoMethod = NULL;
 
@@ -220,9 +235,11 @@ void symbolTabel(ARVORE noActual){
                 ARVORE nomeFuncao = noActual->filho->irmao;
                 paramDecl(aux, no, nomeFuncao);
                 ultimoNoClasse(tabelaSimbolos, no);
-                /*para passar o irmao - MethodBody*/
-                symbolTabel2(noActual->irmao, no, 0);
+                /*nó na arvore também tem numero de posicao*/
+                noActual->filho->irmao->pos = no->pos;
+                //printf(">>>>>>>>>>>>>>>> %s %d - %d\n", noActual->filho->irmao->valor, noActual->filho->irmao->pos, no->pos);
             };break;
+            /*Program*/
             case 3:{
                 /*Program*/
                 CLASSE no;
@@ -234,12 +251,13 @@ void symbolTabel(ARVORE noActual){
                     no->type = NULL;
                     no->is_variavel = 1;
                     no->num_params = 0;
+                    no->pos = 1; /*tem a posicao nº 1*/
                     no->proximaClass = NULL;
                     no->proximoMethod = NULL;
                     tabelaSimbolos = no;
-                    //ultimoNoClasse(tabelaSimbolos, no);
                 }
             };break;
+            /*default*/
             case 0:{};
         }
 
@@ -250,6 +268,30 @@ void symbolTabel(ARVORE noActual){
         if(noActual->irmao != NULL){
             symbolTabel(noActual->irmao);
         }
+    }
+}
+
+void pesquisarNomeMetodoTabela(ARVORE noActual, CLASSE auxClasse){
+
+    if(noActual != NULL){
+        if(strcmp(noActual->tipoVariavel, "MethodHeader") == 0){
+            while(auxClasse != NULL){
+                if((strcmp(noActual->filho->irmao->valor, auxClasse->name) == 0) && noActual->filho->irmao->pos == auxClasse->pos){
+                    /*para passar o irmao - MethodBody*/
+                    symbolTabel2(noActual->irmao, auxClasse, 0);
+                    //printf(" - - - %s - - %s - tipo %s\n",noActual->filho->irmao->valor, auxClasse->name, auxClasse->type);
+                }
+                auxClasse = auxClasse->proximaClass;
+            }
+        }
+
+    }
+
+    if(noActual->filho != NULL){
+        pesquisarNomeMetodoTabela(noActual->filho, auxClasse);
+    }
+    if(noActual->irmao != NULL){
+        pesquisarNomeMetodoTabela(noActual->irmao, auxClasse);
     }
 }
 
@@ -265,7 +307,7 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
                 /*adicionar o VarDecl*/
 
                 METHOD methodAux;
-                //printf(" - - -  %s \n", noActual->tipoVariavel);
+                //printf(" - - -  %s \n", noActual->filho->irmao->valor);
 
                 methodAux = (METHOD)malloc(sizeof(MTHD));
                 methodAux->name = strdup(noActual->filho->irmao->valor);
@@ -276,6 +318,9 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
                 }
                 methodAux->is_param = 0;
                 methodAux->proximoMethod = NULL;
+
+                verificarRepeticaoMetodo(tabela, noActual->filho->irmao, methodAux);
+
                 ultimoNoMethod(tabela, methodAux);
 
                 flagVarDecl = 1;
@@ -312,11 +357,17 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
             /*IDS*/
             case 9:{
                 //printf("--- %s %s -- %s\n", noActual->tipoVariavel, noActual->valor, tabela->name);
-               // printf(" - ->> %s\n ", procurarTipoVariavel(noActual->valor, tabela));
+                //printf(" - ->> %s\n ", procurarTipoVariavel(noActual->valor, tabela));
                 /*verificar se existe na tabela local - caso contrario na global*/
                 if(flagVarDecl == 0 && flagCall == 0){
-                    noActual->noAnotado = 1;
-                    noActual->stringAST = strdup(procurarTipoVariavel(noActual->valor, tabela));
+                    char *string = procurarTipoVariavel(noActual->valor, tabela);
+                    if(string != NULL){
+                        noActual->noAnotado = 1;
+                        noActual->stringAST = strdup(string);
+                    }else{
+                        noActual->noAnotado = 1;
+                        noActual->stringAST = strdup("undef");
+                    }
                 }
                 flagCall = 0;
             };break;
@@ -324,8 +375,15 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
             case 10:{
                 flagVarDecl = 0;
                 flagCall = 0;
-                noActual->noAnotado = 1;
-                noActual->stringAST = strdup(procurarTipoVariavel(noActual->filho->valor, tabela));
+                char *string = procurarTipoVariavel(noActual->filho->valor, tabela);
+                if(string != NULL){
+                    noActual->noAnotado = 1;
+                    noActual->stringAST = strdup(string);
+                }else{
+                    noActual->noAnotado = 1;
+                    noActual->stringAST = strdup("undef");
+                }
+                
             };break;
             /*Operadores numericos*/
             case 11:{
@@ -358,7 +416,47 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
             /*Call*/
             case 13:{
                 flagCall = 1;
-                printf("@@@@@@ - %s\n", noActual->tipoVariavel);
+                /*se já estiver visitado não faz nada*/
+                /*if(noActual->noAnotado != 1){
+                    if(noActual->filho != NULL && flagVarDecl == 0){
+                        symbolTabel2(noActual->filho, tabela, flagCall);
+                    }*/
+
+                    symbolTabel2(noActual->filho, tabela, flagCall);
+
+                    //printf("@@@@@@ - %s\n", noActual->tipoVariavel);
+                    //printf("@@@@@@##### - %s\n", noActual->filho->valor);
+
+                    char *string = procurarTipoParametrosMetodo(noActual->filho, noActual->filho->valor);
+                    //printf("---- string: %s\n", string);
+                    if(string != NULL){
+                        noActual->filho->noAnotado = 1;
+                        noActual->filho->stringAST = strdup(string);
+                        //printf("----metodo: %s parametros - -- : %s\n", noActual->filho->valor, noActual->filho->stringAST);
+                        noActual->noAnotado = 1;
+                        noActual->stringAST = strdup(procurarTipoRetornoMetodo(noActual->filho->valor, noActual->filho->stringAST));
+                        //printf("----CAll: %s retorno - -- : %s\n", noActual->tipoVariavel, noActual->stringAST);
+                    }else{
+                        noActual->filho->noAnotado = 1;
+                        noActual->filho->stringAST = strdup("undef");
+                        noActual->noAnotado = 1;
+                        noActual->stringAST = strdup("undef");
+                    }
+                   /*if(noActual->irmao != NULL){
+                        flagCall = 0;
+                        symbolTabel2(noActual->irmao, tabela, flagCall);
+                    }
+                }*/
+                
+            };break;
+            /*Print*/
+            case 14:{
+                symbolTabel2(noActual->filho, tabela, flagCall);
+                if(strcmp(noActual->filho->stringAST, "String[]") == 0){
+                    printf("Line %d, col %d: Incompatible type void in return statement", noActual->filho->numLinha, noActual->filho->numColuna);
+                    exit(0);
+                }
+                //printf("@@@ %s\n", noActual->filho->stringAST);
             };break;
             /*default - outros*/
             case 0:{
@@ -378,6 +476,103 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
     }
 }
 
+/*espeficico para procurar metodos declarados no GLOBAL e devolver os parametros do metodo*/
+char *procurarTipoParametrosMetodo(ARVORE noActual, char *nome){
+    //printf("------>>>>> %s - %s\n", noActual->tipoVariavel, noActual->valor);
+    char stringAux[MAX_STR];
+    ARVORE aux = noActual->irmao;
+    ARVORE aux2 = noActual->irmao;
+    int num_params = 0;
+    strcpy(stringAux, "(");
+    while(aux != NULL){
+        //printf("--    ->>>>> %s - %s\n", aux->tipoVariavel, aux->valor);
+        //printf("--<<<<<>>>>> %s\n", aux->stringAST);
+        if(aux->irmao != NULL){
+            strcat(stringAux, aux->stringAST);
+            strcat(stringAux, ",");
+            num_params++;
+        }else{
+            strcat(stringAux, aux->stringAST);
+            num_params++;
+        }
+        aux = aux->irmao;
+    }
+    strcat(stringAux, ")");
+
+    //printf("-<-<-<-<-<-<--<-<-<-< - %s  - - num_params %d\n", stringAux, num_params);
+
+    CLASSE auxClasse = tabelaSimbolos;
+    while(auxClasse != NULL){
+        /*verificar se o nome é igual e se é uma função*/
+        //printf("%%%%%%%%%%%%%%%% %s - %s\n", nome, auxClasse->name );
+        if((strcmp(nome, auxClasse->name) == 0) && (auxClasse->is_variavel == 0)){
+            /*verificar se o tipo de retorno e parametros sao iguais*/
+            //printf("-<-<-<-<-<-<--<-<-<-< %s %s - %s\n",auxClasse->name, auxClasse->type, auxClasse->paramTypes);
+            if( (strcmp(stringAux, auxClasse->paramTypes) == 0)){
+                return auxClasse->paramTypes;           
+            }
+        }
+        auxClasse = auxClasse->proximaClass;
+    }
+    CLASSE auxClasse2 = tabelaSimbolos;
+
+    METHOD auxMethod;
+    ARVORE auxArv = aux2; 
+    int numMatched = 0;
+    while(auxClasse2 != NULL){
+        /*verificar se o nome é igual e se é uma função*/
+        //printf(" - - - nome %s - %s  is_variavel %d  num_params %d\n", nome, auxClasse2->name, auxClasse2->is_variavel, auxClasse2->num_params);
+        if((strcmp(nome, auxClasse2->name) == 0) && (auxClasse2->is_variavel == 0) && (auxClasse2->num_params == num_params)){
+            /*primeiro parametro do metodo*/
+            auxMethod = auxClasse2->proximoMethod->proximoMethod;
+            while(auxMethod != NULL && aux2 != NULL){
+                if(auxMethod->is_param == 1){
+                    //printf(" - - - %s %s \n", auxMethod->name, auxMethod->type);    
+                    //printf("-- funcao recebe %s ---  recebeu %s\n", auxMethod->type, aux2->stringAST);
+                    if(strcmp(aux2->stringAST, "int") == 0 && strcmp(auxMethod->type, "double") == 0){
+                        numMatched++;
+                    }else if(strcmp(aux2->stringAST, "int") == 0 && strcmp(auxMethod->type, "int") == 0){
+                        numMatched++;
+                    }else if(strcmp(aux2->stringAST, "double") == 0 && strcmp(auxMethod->type, "double") == 0){
+                        numMatched++;
+                    }
+                }
+                auxMethod = auxMethod->proximoMethod;
+                aux2 = aux2->irmao;
+            }
+            //printf("%%%%%%%%%%%%%%%%%%%%%% %d - %d\n", numMatched, num_params);
+            if(numMatched == num_params){
+                printf("Line %d, col %d: Reference to method %s%s is ambiguous\n", noActual->numLinha, noActual->numColuna, auxClasse2->name, stringAux);
+                exit(0);
+                return auxClasse2->paramTypes;
+            }
+        }
+        numMatched = 0;
+        aux2 = auxArv;
+        auxClasse2 = auxClasse2->proximaClass;
+    }
+
+    printf("Line %d, col %d: Cannot find symbol %s%s\n", noActual->numLinha, noActual->numColuna, noActual->valor, stringAux);
+    exit(0);
+    return NULL;
+}
+
+/*devolve o tipo de retorno do metodo*/
+char *procurarTipoRetornoMetodo(char *nome, char *parametros){
+    CLASSE auxClasse = tabelaSimbolos->proximaClass;
+    while(auxClasse != NULL){
+       // printf("zzzzzzz %s - - %s %s is: %d\n",nome, auxClasse->name, auxClasse->type, auxClasse->is_variavel);
+        if((strcmp(nome, auxClasse->name) == 0) && (auxClasse->is_variavel == 0)){
+            if(strcmp(parametros, auxClasse->paramTypes) == 0){
+                return auxClasse->type;              
+            }    
+        }
+        auxClasse = auxClasse->proximaClass;
+    }
+    return NULL;
+}
+
+/*procura o tipo de retorno de uma variavel - primeiro na tabela local, depois na global*/
 char *procurarTipoVariavel(char *nome, CLASSE tabela){
 
     //printf(" - - -- - - -- -- - - - - - - -- - - - - - -- %s\n", nome);
@@ -396,7 +591,7 @@ char *procurarTipoVariavel(char *nome, CLASSE tabela){
 
     while(auxClasse != NULL){
         //printf("zzzzzzzzzzzzzzz %s %s\n", auxClasse->name, auxClasse->paramTypes);
-        if(strcmp(nome, auxClasse->name) == 0){
+        if((strcmp(nome, auxClasse->name) == 0) && (auxClasse->is_variavel == 1)){
             if(auxClasse->paramTypes != NULL){
                 return auxClasse->paramTypes;
             }else{
@@ -410,7 +605,7 @@ char *procurarTipoVariavel(char *nome, CLASSE tabela){
 
 }
 
-void paramDecl(ARVORE noActual, CLASSE tabelaSimbolos, ARVORE nomeFuncao){
+void paramDecl(ARVORE noActual, CLASSE tabela, ARVORE nomeFuncao){
     METHOD methodAux;
 
     if(noActual != NULL){
@@ -418,17 +613,17 @@ void paramDecl(ARVORE noActual, CLASSE tabelaSimbolos, ARVORE nomeFuncao){
             noActual = noActual->filho;
             if(strcmp(noActual->filho->tipoVariavel, "StringArray") == 0){
                 methodAux = (METHOD)malloc(sizeof(MTHD));
-                /*tabelaSimbolos->paramTypes = (char*)malloc(strlen("(String[])")+1);
-                strcpy(tabelaSimbolos->paramTypes, "(String[])");*/
-                tabelaSimbolos->paramTypes = strdup("(String[])");
-                tabelaSimbolos->num_params = 1;
+                /*tabela->paramTypes = (char*)malloc(strlen("(String[])")+1);
+                strcpy(tabela->paramTypes, "(String[])");*/
+                tabela->paramTypes = strdup("(String[])");
+                tabela->num_params = 1;
 
                 /*adicionar ao method*/
                 methodAux->name = strdup(noActual->filho->irmao->valor);
                 methodAux->type = strdup("String[]");
                 methodAux->is_param = 1;
                 methodAux->proximoMethod = NULL;
-                ultimoNoMethod(tabelaSimbolos, methodAux);
+                ultimoNoMethod(tabela, methodAux);
 
 
             }else{
@@ -448,7 +643,7 @@ void paramDecl(ARVORE noActual, CLASSE tabelaSimbolos, ARVORE nomeFuncao){
                         methodAux->is_param = 1;
                         methodAux->proximoMethod = NULL;
                         nParams++;
-                        ultimoNoMethod(tabelaSimbolos, methodAux);
+                        ultimoNoMethod(tabela, methodAux);
 
                         /*add to string*/
                         strcat(aux, methodAux->type);
@@ -464,7 +659,7 @@ void paramDecl(ARVORE noActual, CLASSE tabelaSimbolos, ARVORE nomeFuncao){
                         methodAux->is_param = 1;
                         methodAux->proximoMethod = NULL;
                         nParams++;
-                        ultimoNoMethod(tabelaSimbolos, methodAux);
+                        ultimoNoMethod(tabela, methodAux);
 
                         /*add to string*/
                         strcat(aux, methodAux->type);
@@ -474,15 +669,15 @@ void paramDecl(ARVORE noActual, CLASSE tabelaSimbolos, ARVORE nomeFuncao){
                     noActual = noActual->irmao;
                 }
                 strcat(aux, ")");
-                tabelaSimbolos->paramTypes = strdup(aux);
-                tabelaSimbolos->num_params = nParams;
+                tabela->paramTypes = strdup(aux);
+                tabela->num_params = nParams;
             }
         }else{
-            tabelaSimbolos->paramTypes = strdup("()");
-            tabelaSimbolos->num_params = 0;
+            tabela->paramTypes = strdup("()");
+            tabela->num_params = 0;
         }
     }
-    //polimorfismo(tabelaSimbolos, nomeFuncao);
+    verificarRepeticaoClasse(tabela, nomeFuncao);
     
     //free(methodAux);
 }
@@ -534,4 +729,53 @@ void imprimirASTAnotada(ARVORE noActual, int error, int numFilhos, int flagImpri
         free(noActual);
         
     }  
+}
+
+/*verifica se já existe uma função com o mesmo nome e/ou mesmo parametros*/
+void verificarRepeticaoClasse(CLASSE no, ARVORE noArv){
+    CLASSE aux = tabelaSimbolos;
+    
+    while(aux != NULL){
+        //printf(">>> %s %s %s\n", aux->name, no->name, noArv->valor);
+        /*quando é uma variavel global com o mesmo nome*/
+        if((strcmp(aux->name, no->name) == 0) && (aux->is_variavel == 1 && no->is_variavel == 1)){
+            //return 1;
+            //printf("1\n");
+            if(strcmp(aux->type, no->type) == 0){
+                printf("Line %d, col %d: Symbol %s already defined\n", noArv->numLinha, noArv->numColuna, no->name);
+                exit(0);
+            }
+        /*quando é uma função com o mesmo nome*/
+        }else if((strcmp(aux->name, no->name) == 0) && (aux->is_variavel == 0 && no->is_variavel == 0)){            
+            //printf(" ---- %s \n", aux->paramTypes);
+            //printf(" ---- %s \n", no->paramTypes);
+            /*quando os parametros sao iguais*/
+            if(strcmp(aux->paramTypes, no->paramTypes) == 0){
+                printf("Line %d, col %d: Symbol %s%s already defined\n", noArv->numLinha, noArv->numColuna, no->name, no->paramTypes);
+                exit(0);
+            }else{
+                //return 3;
+                //printf("3\n");
+            }
+
+        /*quando não é igual*/
+        }else{
+            //return 0;
+            //printf("0\n");
+        }
+        aux = aux->proximaClass;
+    }
+}
+
+/*verificar se existe uma repetição de parametros dentro de um metodo*/
+void verificarRepeticaoMetodo(CLASSE no, ARVORE noArv, METHOD method){
+    METHOD auxMethod = no->proximoMethod;
+    while(auxMethod != NULL){
+        if(strcmp(auxMethod->name, method->name) == 0){
+            printf("Line %d, col %d: Symbol %s already defined\n", noArv->numLinha, noArv->numColuna, method->name);
+            exit(0);
+        }
+
+        auxMethod = auxMethod->proximoMethod;
+    }
 }
