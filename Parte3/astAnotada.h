@@ -51,4 +51,6 @@ void pesquisarNomeMetodoTabela(ARVORE noActual, CLASSE auxClasse);
 char *procurarTipoRetornoMetodo(char *nome, char *parametros);
 void verificarRepeticaoClasse(CLASSE no, ARVORE noArv);
 void verificarRepeticaoMetodo(CLASSE no, ARVORE noArv, METHOD method);
+char *removechar(char *string);
+void verificarRangeOutBounds(ARVORE noArv);
 #endif

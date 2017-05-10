@@ -9,6 +9,24 @@
 
 CLASSE tabelaSimbolos = NULL;
 
+/*retirada e modificada de http://stackoverflow.com/questions/7821997/c-remove-chars-from-string*/
+char *removechar(char *string){
+    char t = '_';
+    char *str = strdup(string);
+    int i,j;
+    i = 0;
+    while(i<strlen(str))
+    {
+        if (str[i]==t) 
+        { 
+            for (j=i; j<strlen(str); j++)
+                str[j]=str[j+1];   
+        } else i++;
+    }
+    return str;
+}
+
+/*retirada e modificada já não me lembro de onde*/
 char *paraMinusculas(char *string){
     char *str = strdup(string);
     int i;
@@ -54,8 +72,7 @@ int retornaNumero(char *tipoVariavel){
           (strcmp(tipoVariavel, "Or") == 0) ||
           (strcmp(tipoVariavel, "Not") == 0)){
         return 5;
-    }else if((strcmp(tipoVariavel, "Length") == 0) || 
-            (strcmp(tipoVariavel, "DecLit") == 0) ||
+    }else if((strcmp(tipoVariavel, "Length") == 0) ||
             (strcmp(tipoVariavel, "ParseArgs") == 0)){
         return 6;
     }else if(strcmp(tipoVariavel, "RealLit") == 0){
@@ -79,6 +96,8 @@ int retornaNumero(char *tipoVariavel){
         return 13;
     }else if(strcmp(tipoVariavel, "Print") == 0){
         return 14;
+    }else if(strcmp(tipoVariavel, "DecLit") == 0){
+        return 15;
     }else{
         return 0;
     }
@@ -333,8 +352,17 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
                 flagVarDecl = 0;
                 flagCall = 0;
             };break;
-            /*valores inteiros*/
+            /*Length e ParseArgs*/
             case 6:{
+                noActual->noAnotado = 1;
+                noActual->stringAST = strdup("int");
+                flagVarDecl = 0;
+                flagCall = 0;
+            };break;
+            /*DecLit*/
+            case 15:{
+                //printf("#### %s %s\n", noActual->tipoVariavel, noActual->valor);
+                verificarRangeOutBounds(noActual);
                 noActual->noAnotado = 1;
                 noActual->stringAST = strdup("int");
                 flagVarDecl = 0;
@@ -342,6 +370,7 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
             };break;
             /*valores reais*/
             case 7:{
+                verificarRangeOutBounds(noActual);
                 noActual->noAnotado = 1;
                 noActual->stringAST = strdup("double");
                 flagVarDecl = 0;
@@ -519,6 +548,8 @@ char *procurarTipoParametrosMetodo(ARVORE noActual, char *nome){
     METHOD auxMethod;
     ARVORE auxArv = aux2; 
     int numMatched = 0;
+    int countNumMethods = 0;
+    char *auxString;
     while(auxClasse2 != NULL){
         /*verificar se o nome é igual e se é uma função*/
         //printf(" - - - nome %s - %s  is_variavel %d  num_params %d\n", nome, auxClasse2->name, auxClasse2->is_variavel, auxClasse2->num_params);
@@ -535,16 +566,16 @@ char *procurarTipoParametrosMetodo(ARVORE noActual, char *nome){
                         numMatched++;
                     }else if(strcmp(aux2->stringAST, "double") == 0 && strcmp(auxMethod->type, "double") == 0){
                         numMatched++;
-                    }
+                    }                    
                 }
                 auxMethod = auxMethod->proximoMethod;
                 aux2 = aux2->irmao;
             }
-            //printf("%%%%%%%%%%%%%%%%%%%%%% %d - %d\n", numMatched, num_params);
-            if(numMatched == num_params){
-                printf("Line %d, col %d: Reference to method %s%s is ambiguous\n", noActual->numLinha, noActual->numColuna, auxClasse2->name, stringAux);
-                exit(0);
-                return auxClasse2->paramTypes;
+            //printf("%%%%%%%%%%%%%%%%%%%%%% %s - %s\n", nome, auxClasse2->name);
+            if(numMatched == num_params ){
+                countNumMethods++;
+                //return auxClasse2->paramTypes;
+                auxString = strdup(auxClasse2->paramTypes);
             }
         }
         numMatched = 0;
@@ -552,6 +583,13 @@ char *procurarTipoParametrosMetodo(ARVORE noActual, char *nome){
         auxClasse2 = auxClasse2->proximaClass;
     }
 
+    if(countNumMethods == 1){
+        //return auxClasse2->paramTypes;
+        return auxString;
+    }else if(countNumMethods > 1){
+        printf("Line %d, col %d: Reference to method %s%s is ambiguous\n", noActual->numLinha, noActual->numColuna, noActual->valor, stringAux);
+        exit(0);
+    }
     printf("Line %d, col %d: Cannot find symbol %s%s\n", noActual->numLinha, noActual->numColuna, noActual->valor, stringAux);
     exit(0);
     return NULL;
@@ -731,7 +769,7 @@ void imprimirASTAnotada(ARVORE noActual, int error, int numFilhos, int flagImpri
     }  
 }
 
-/*verifica se já existe uma função com o mesmo nome e/ou mesmo parametros*/
+/*verifica se já existe uma função com o mesmo nome e/ou mesmo parametros na tabela global*/
 void verificarRepeticaoClasse(CLASSE no, ARVORE noArv){
     CLASSE aux = tabelaSimbolos;
     
@@ -740,11 +778,13 @@ void verificarRepeticaoClasse(CLASSE no, ARVORE noArv){
         /*quando é uma variavel global com o mesmo nome*/
         if((strcmp(aux->name, no->name) == 0) && (aux->is_variavel == 1 && no->is_variavel == 1)){
             //return 1;
-            //printf("1\n");
-            if(strcmp(aux->type, no->type) == 0){
+            //printf("@@@@@ %s \n", noArv->valor);
+            printf("Line %d, col %d: Symbol %s already defined\n", noArv->numLinha, noArv->numColuna, no->name);
+            exit(0);
+            /*if(strcmp(aux->type, no->type) == 0){
                 printf("Line %d, col %d: Symbol %s already defined\n", noArv->numLinha, noArv->numColuna, no->name);
                 exit(0);
-            }
+            }*/
         /*quando é uma função com o mesmo nome*/
         }else if((strcmp(aux->name, no->name) == 0) && (aux->is_variavel == 0 && no->is_variavel == 0)){            
             //printf(" ---- %s \n", aux->paramTypes);
@@ -777,5 +817,28 @@ void verificarRepeticaoMetodo(CLASSE no, ARVORE noArv, METHOD method){
         }
 
         auxMethod = auxMethod->proximoMethod;
+    }
+}
+
+void verificarRangeOutBounds(ARVORE noArv){
+    printf("@@@@@ %s - - %s\n", noArv->tipoVariavel, noArv->valor);
+    char *newString = removechar(noArv->valor);
+    char *restoString;
+    if(strcmp(noArv->tipoVariavel, "DecLit")==0){
+        /*range: -2147483648 to 2147483647 inclusive*/
+        int numero = atoi(newString);
+        if(numero <= -2147483648 || numero >= 2147483647){
+            printf("Line %d, col %d: Number %s out of bounds", noArv->numLinha, noArv->numColuna, noArv->valor);
+            exit(0);
+        }
+        //printf("@@@@@ %d\n", numero);
+    }else if(strcmp(noArv->tipoVariavel, "RealLit")==0){
+        /*range:  4.9E-324 to 1.7976931348623157E308*/
+        double numero = strtod(newString, &restoString);
+        if(numero <= -4.9E-324 || numero >= 1.7976931348623157E308){
+            printf("Line %d, col %d: Number %s out of bounds", noArv->numLinha, noArv->numColuna, noArv->valor);
+            exit(0);
+        }
+        printf("@@@@@ %s -- %lf\n", noArv->valor, numero);
     }
 }
