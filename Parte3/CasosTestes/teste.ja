@@ -1,8 +1,8 @@
 class teste { 
-    public static double x;
+    public static boolean x;
     
     public static int main(String[] args) { 
-        x = 4.9E-324;
+        x = 1 + true ;
         //System.out.println(args);
     } 
 }

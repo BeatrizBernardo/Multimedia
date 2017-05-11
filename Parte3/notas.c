@@ -21,7 +21,9 @@ char *removechar( char *string){
 }
 
 int main(){
+    int a = 2;
     float x = 1.7976931348623157E308;
-    printf("@@@@ %f\n", x);
+    float y = 1.797693134;
+    printf("@@@@ %f\n", (a == 1? x:y));
     return 0;
 }

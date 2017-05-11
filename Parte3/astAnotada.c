@@ -42,10 +42,10 @@ char *compararTipos(char *tipo1, char *tipo2){
         return "int";
     }else if((strcmp(tipo1, "boolean") == 0) && (strcmp(tipo2, "boolean") == 0)){
         return "boolean";
-    }else if((strcmp(tipo1, "double") == 0) || (strcmp(tipo2, "double") == 0)){
-        return "double";
     }else if((strcmp(tipo1, "boolean") == 0) || (strcmp(tipo2, "boolean") == 0)){
         return "undef";
+    }else if((strcmp(tipo1, "double") == 0) || (strcmp(tipo2, "double") == 0)){
+        return "double";
     }else if((strcmp(tipo1, "undef") == 0) || (strcmp(tipo2, "undef") == 0)){
         return "undef";
     }
@@ -412,7 +412,21 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
                     noActual->noAnotado = 1;
                     noActual->stringAST = strdup("undef");
                 }
-                
+
+                printf("@@@ %s %s %s\n", noActual->filho->valor, noActual->filho->stringAST, string);
+                printf("@@@@@ %s %s %s\n", noActual->filho->irmao->valor, noActual->filho->irmao->tipoVariavel, noActual->filho->irmao->stringAST);
+
+                /*detecção de erros de imcompatibilidade de tipos*/
+                if((strcmp(string, "int") == 0) && (strcmp(noActual->filho->irmao->tipoVariavel, "BoolLit") == 0 || strcmp(noActual->filho->irmao->tipoVariavel, "RealLit") == 0)){
+                    printf("Line %d, col %d: Incompatible type %s in %s statement\n", noActual->filho->numLinha, noActual->filho->numColuna, string, noActual->filho->valor);
+                    exit(0);
+                }else if((strcmp(string, "double") == 0) && (strcmp(noActual->filho->irmao->tipoVariavel, "BoolLit") == 0)){
+                    printf("Line %d, col %d: Incompatible type %s in %s statement\n", noActual->filho->numLinha, noActual->filho->numColuna, string, noActual->filho->valor);
+                    exit(0);
+                }else if((strcmp(string, "boolean") == 0) && (strcmp(noActual->filho->irmao->tipoVariavel, "DecLit") == 0 || strcmp(noActual->filho->irmao->tipoVariavel, "RealLit") == 0)){
+                    printf("Line %d, col %d: Incompatible type %s in %s statement\n", noActual->filho->numLinha, noActual->filho->numColuna, string, noActual->filho->valor);
+                    exit(0);
+                }
             };break;
             /*Operadores numericos*/
             case 11:{
@@ -421,8 +435,8 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
                 if(noActual->filho != NULL && flagVarDecl == 0){
                     symbolTabel2(noActual->filho, tabela, flagCall);
                 }
-                //printf("@@@--->>->> %s %s ---- - %s\n", noActual->filho->tipoVariavel, noActual->filho->valor, noActual->filho->stringAST);
-                //printf("@@@--->>->> %s %s ---  - - %s\n", noActual->filho->irmao->tipoVariavel, noActual->filho->irmao->valor, noActual->filho->irmao->stringAST);
+                printf("@@@--->>->> %s %s ---- - %s\n", noActual->filho->tipoVariavel, noActual->filho->valor, noActual->filho->stringAST);
+                printf("@@@--->>->> %s %s ---  - - %s\n", noActual->filho->irmao->tipoVariavel, noActual->filho->irmao->valor, noActual->filho->irmao->stringAST);
                 noActual->noAnotado = 1;
                 noActual->stringAST = strdup(compararTipos(noActual->filho->stringAST,noActual->filho->irmao->stringAST));
                 if(noActual->irmao != NULL){
@@ -821,7 +835,7 @@ void verificarRepeticaoMetodo(CLASSE no, ARVORE noArv, METHOD method){
 }
 
 void verificarRangeOutBounds(ARVORE noArv){
-    printf("@@@@@ %s - - %s\n", noArv->tipoVariavel, noArv->valor);
+    //printf("@@@@@ %s - - %s\n", noArv->tipoVariavel, noArv->valor);
     char *newString = removechar(noArv->valor);
     char *restoString;
     if(strcmp(noArv->tipoVariavel, "DecLit")==0){
@@ -835,10 +849,10 @@ void verificarRangeOutBounds(ARVORE noArv){
     }else if(strcmp(noArv->tipoVariavel, "RealLit")==0){
         /*range:  4.9E-324 to 1.7976931348623157E308*/
         double numero = strtod(newString, &restoString);
-        if(numero <= -4.9E-324 || numero >= 1.7976931348623157E308){
+        if((numero <= 4.9E-324 || numero >= 1.7976931348623157E308) || (numero >= -4.9E-324 || numero <= -1.7976931348623157E308)){
             printf("Line %d, col %d: Number %s out of bounds", noArv->numLinha, noArv->numColuna, noArv->valor);
             exit(0);
         }
-        printf("@@@@@ %s -- %lf\n", noArv->valor, numero);
+        //printf("@@@@@ %s -- %lf\n", noArv->valor, numero);
     }
 }

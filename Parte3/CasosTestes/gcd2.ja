@@ -5,7 +5,7 @@ class gcd2 {
         int a, b;
         boolean c;
         double x;
-        a = a(1, 2); 
+        a = c(1, 2); 
         if (args.length >= 2) {      
             a = Integer.parseInt(args[0]);      
             b = Integer.parseInt(args[1]); 
@@ -19,7 +19,7 @@ class gcd2 {
     public static boolean b(int a, int b) {  
         int x;
         double v;
-        v = -2.0;
+        v = -200000;
         //int g;
         //g = c(a,b);
         x = c(c(3,8),c(5,c(4,5)));
