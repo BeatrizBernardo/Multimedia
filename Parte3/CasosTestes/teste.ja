@@ -1,0 +1,7 @@
+class teste { 
+    public static void f(int a, double b, boolean c){}
+    
+    public static void main(String[] args) { 
+        f(1, 2, true);
+    } 
+}

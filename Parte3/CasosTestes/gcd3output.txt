@@ -1,0 +1,222 @@
+
+
+===== Class teste Symbol Table =====
+x		double
+main	(String[])	int
+x	(int,int,double,boolean)	double
+x	(double,int,boolean,double)	double
+x	(boolean,boolean,int,int)	double
+x	(double,double,double,int)	double
+x	(int,int,int,int)	double
+c	()	int
+
+===== Method main(String[]) Symbol Table =====
+return		int
+args		String[]	param
+a		int
+x		int
+
+===== Method x(int,int,double,boolean) Symbol Table =====
+return		double
+b		int	param
+c		int	param
+d		double	param
+f		boolean	param
+
+===== Method x(double,int,boolean,double) Symbol Table =====
+return		double
+b		double	param
+g		int	param
+h		boolean	param
+s		double	param
+
+===== Method x(boolean,boolean,int,int) Symbol Table =====
+return		double
+b		boolean	param
+c		boolean	param
+d		int	param
+f		int	param
+
+===== Method x(double,double,double,int) Symbol Table =====
+return		double
+b		double	param
+c		double	param
+d		double	param
+f		int	param
+
+===== Method x(int,int,int,int) Symbol Table =====
+return		double
+b		int	param
+c		int	param
+d		int	param
+f		int	param
+
+===== Method c() Symbol Table =====
+return		int
+
+Program
+..Id(teste)
+..FieldDecl
+....Double
+....Id(x)
+..MethodDecl
+....MethodHeader
+......Int
+......Id(main)
+......MethodParams
+........ParamDecl
+..........StringArray
+..........Id(args)
+....MethodBody
+......VarDecl
+........Int
+........Id(a)
+......VarDecl
+........Int
+........Id(x)
+......Assign - undef
+........Id(c) - undef
+........Mod - int
+..........Call - int
+............Id(c) - ()
+..........Id(a) - int
+......Print
+........Id(x) - int
+......Assign - int
+........Id(x) - int
+........Call - undef
+..........Id(x) - undef
+..........RealLit(4.4) - double
+..........DecLit(45) - int
+..........RealLit(5.5) - double
+..........BoolLit(true) - boolean
+......Assign - int
+........Id(x) - int
+........Call - double
+..........Id(x) - (double,double,double,int)
+..........RealLit(4.4) - double
+..........DecLit(45) - int
+..........RealLit(5.5) - double
+..........DecLit(55) - int
+......Assign - int
+........Id(x) - int
+........Call - double
+..........Id(x) - (double,double,double,int)
+..........DecLit(4) - int
+..........DecLit(45) - int
+..........RealLit(5.5) - double
+..........DecLit(55) - int
+......Assign - int
+........Id(x) - int
+........Call - double
+..........Id(x) - (double,int,boolean,double)
+..........RealLit(4.4) - double
+..........DecLit(45) - int
+..........BoolLit(true) - boolean
+..........RealLit(55.5) - double
+......Assign - int
+........Id(x) - int
+........Call - undef
+..........Id(x) - undef
+..........BoolLit(true) - boolean
+..........BoolLit(false) - boolean
+..........RealLit(5.5) - double
+..........RealLit(5.6) - double
+..MethodDecl
+....MethodHeader
+......Double
+......Id(x)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(b)
+........ParamDecl
+..........Int
+..........Id(c)
+........ParamDecl
+..........Double
+..........Id(d)
+........ParamDecl
+..........Bool
+..........Id(f)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Double
+......Id(x)
+......MethodParams
+........ParamDecl
+..........Double
+..........Id(b)
+........ParamDecl
+..........Int
+..........Id(g)
+........ParamDecl
+..........Bool
+..........Id(h)
+........ParamDecl
+..........Double
+..........Id(s)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Double
+......Id(x)
+......MethodParams
+........ParamDecl
+..........Bool
+..........Id(b)
+........ParamDecl
+..........Bool
+..........Id(c)
+........ParamDecl
+..........Int
+..........Id(d)
+........ParamDecl
+..........Int
+..........Id(f)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Double
+......Id(x)
+......MethodParams
+........ParamDecl
+..........Double
+..........Id(b)
+........ParamDecl
+..........Double
+..........Id(c)
+........ParamDecl
+..........Double
+..........Id(d)
+........ParamDecl
+..........Int
+..........Id(f)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Double
+......Id(x)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(b)
+........ParamDecl
+..........Int
+..........Id(c)
+........ParamDecl
+..........Int
+..........Id(d)
+........ParamDecl
+..........Int
+..........Id(f)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Int
+......Id(c)
+......MethodParams
+....MethodBody
+
+
