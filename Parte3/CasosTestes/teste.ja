@@ -1,8 +1,7 @@
 class teste { 
-    public static boolean x;
+    public static void f(int a, double b, boolean c){}
     
-    public static int main(String[] args) { 
-        x = 1 + true ;
-        //System.out.println(args);
+    public static void main(String[] args) { 
+        f(1, 2, true);
     } 
 }

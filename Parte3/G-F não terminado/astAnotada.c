@@ -413,8 +413,8 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
                     noActual->stringAST = strdup("undef");
                 }
 
-                printf("@@@ %s %s %s\n", noActual->filho->valor, noActual->filho->stringAST, string);
-                printf("@@@@@ %s %s %s\n", noActual->filho->irmao->valor, noActual->filho->irmao->tipoVariavel, noActual->filho->irmao->stringAST);
+                //printf("@@@ %s %s %s\n", noActual->filho->valor, noActual->filho->stringAST, string);
+                //printf("@@@@@ %s %s %s\n", noActual->filho->irmao->valor, noActual->filho->irmao->tipoVariavel, noActual->filho->irmao->stringAST);
 
                 /*detecção de erros de imcompatibilidade de tipos*/
                 if((strcmp(string, "int") == 0) && (strcmp(noActual->filho->irmao->tipoVariavel, "BoolLit") == 0 || strcmp(noActual->filho->irmao->tipoVariavel, "RealLit") == 0)){
@@ -435,8 +435,8 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
                 if(noActual->filho != NULL && flagVarDecl == 0){
                     symbolTabel2(noActual->filho, tabela, flagCall);
                 }
-                printf("@@@--->>->> %s %s ---- - %s\n", noActual->filho->tipoVariavel, noActual->filho->valor, noActual->filho->stringAST);
-                printf("@@@--->>->> %s %s ---  - - %s\n", noActual->filho->irmao->tipoVariavel, noActual->filho->irmao->valor, noActual->filho->irmao->stringAST);
+                //printf("@@@--->>->> %s %s ---- - %s\n", noActual->filho->tipoVariavel, noActual->filho->valor, noActual->filho->stringAST);
+                //printf("@@@--->>->> %s %s ---  - - %s\n", noActual->filho->irmao->tipoVariavel, noActual->filho->irmao->valor, noActual->filho->irmao->stringAST);
                 noActual->noAnotado = 1;
                 noActual->stringAST = strdup(compararTipos(noActual->filho->stringAST,noActual->filho->irmao->stringAST));
                 if(noActual->irmao != NULL){
@@ -579,6 +579,8 @@ char *procurarTipoParametrosMetodo(ARVORE noActual, char *nome){
                     }else if(strcmp(aux2->stringAST, "int") == 0 && strcmp(auxMethod->type, "int") == 0){
                         numMatched++;
                     }else if(strcmp(aux2->stringAST, "double") == 0 && strcmp(auxMethod->type, "double") == 0){
+                        numMatched++;
+                    }else if(strcmp(aux2->stringAST, "boolean") == 0 && strcmp(auxMethod->type, "boolean") == 0){
                         numMatched++;
                     }                    
                 }
