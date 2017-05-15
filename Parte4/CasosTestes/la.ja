@@ -1,0 +1,107 @@
+class asdf {
+	public static int a, b, c;
+	public static boolean d, e, f;
+	public static double g, h, i;
+	public static double j;
+	public static boolean k;
+	public static int l;
+
+	public static void main1(String[] args) {
+		int a, b, c;
+		boolean d, e, f;
+		double g, h, i;
+		double j;
+		boolean k;
+		int l;
+	}
+	public static void main2(int a, int b, int c) {
+	}
+	public static void main3(boolean a, int b, double c, int d) {
+	}
+	public static void main4() {
+		main(a,b,c,d,e,f,g);
+		main(a,b,c,d,e,f,g);		
+		
+		/*do; while(1);
+		do {} while(1);
+		do main(); while(0);
+		do {main();} while(0);
+		do {main();main();} while(1);*/
+
+		/*while(1);
+		while(1){}
+		while(0) main();
+		while(0){main();}
+		while(1){main();main();}
+		if (2);
+		if (2) {}
+		if (2); else;
+		if (2) {} else {}*/
+		
+		if (1) block1();
+		if (1) {block1();}
+		if (0) block0(); else block0();
+		if (0) {block0();} else {block0();}
+
+		if (2) {
+			block2(); 
+			block2();
+		}
+		if (0) 
+			block0(); 
+		else 
+			block0();
+		if (1) {
+			block1();
+		} else {
+			block1();
+			block1();
+		}
+		if (1) {
+			block1();
+			block1();
+		} else {
+			block1();
+		}
+		if (2) {
+			block2();
+			block2();
+		} else {
+			block2();
+			block2();
+		}
+
+		
+		aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa();
+		/*{}
+		{
+			noblock();
+		}
+		{
+			block1();
+			block1();
+		}
+		{
+			{}
+			{}
+		}
+		{
+			{noblock();}
+			{}
+		}
+		{
+			{block1();}
+			{block1();}
+		}
+		{
+			{block1();block1();}
+			{}
+		}
+		{
+			{}
+			{block1();block1();}
+		}*/
+		
+	}
+
+}
