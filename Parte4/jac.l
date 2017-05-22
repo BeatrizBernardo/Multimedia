@@ -573,6 +573,12 @@ int main(int argc, char *argv[]){
             yyparse();
             analiseAST(raiz);
             imprimirAST(raiz, error, 0, 1);
+        }else{
+            /*construção do llvm*/
+            aux_2 = 1;
+            yyparse();
+            
+
         }
     }else{
         
