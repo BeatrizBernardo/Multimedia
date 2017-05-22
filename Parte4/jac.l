@@ -565,9 +565,14 @@ int main(int argc, char *argv[]){
             analiseAST(raiz);
             
             imprimirTabelaSimbolos();
-
-            imprimirASTAnotada(raiz, error, 0, 0);
+    
+            imprimirASTAnotada(raiz, error, 0, 1);
             //imprimirAST(raiz, error, 0, 0);
+        }else if(strcmp(argv[1], "-3") == 0){
+            aux_2 = 1;
+            yyparse();
+            analiseAST(raiz);
+            imprimirAST(raiz, error, 0, 1);
         }
     }else{
         
