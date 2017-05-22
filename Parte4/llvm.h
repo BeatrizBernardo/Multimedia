@@ -7,5 +7,6 @@
 
 void llvmFile(ARVORE noActual);
 void inicializarTabelaSimbolos(ARVORE raiz);
+char *tipoDeValores(char *tipo);
 
 #endif
