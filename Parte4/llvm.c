@@ -68,7 +68,7 @@ void llvmPrints(ARVORE noActual){
         switch(numero){
             /*Print*/
             case 14:{
-                /*guardar posição numa estrutura*/
+                /*guardar posição numa estrutura e na raiz->pos e editar estrutura ARVORE para guardar tamanho de strng*/
                 printf(" %s \n", noActual->filho->tipoVariavel);
 
             };break;
