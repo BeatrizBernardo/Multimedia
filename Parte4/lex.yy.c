@@ -2752,8 +2752,7 @@ int main(int argc, char *argv[]){
         /*construção do llvm*/
         aux_2 = 1;
         yyparse();
-        inicializarTabelaSimbolos(raiz);
-        llvmFile(raiz);
+        inicializarLLVM(raiz);
     }
     return 0;
 }

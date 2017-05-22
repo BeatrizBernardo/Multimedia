@@ -77,6 +77,8 @@ int retornaNumero(char *tipoVariavel){
         return 12;                
     }else if(strcmp(tipoVariavel, "Call") == 0){
         return 13;
+    }else if(strcmp(tipoVariavel, "Print") == 0){
+        return 14;
     }else{
         return 0;
     }

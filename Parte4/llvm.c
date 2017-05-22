@@ -26,7 +26,7 @@ char *tipoDeValores(char *tipo){
     return NULL;
 }
 
-void inicializarTabelaSimbolos(ARVORE raiz){
+void inicializarLLVM(ARVORE raiz){
     symTab = getSymbolTabel(raiz);
 
     /*get variables and methods names*/
@@ -58,23 +58,30 @@ void inicializarTabelaSimbolos(ARVORE raiz){
         symTab = symTab->proximaClass;
     }
 
+    llvmPrints(raiz);
 }
 
-void llvmFile(ARVORE noActual){
+/*retorna prints no inicio de LLVM*/
+void llvmPrints(ARVORE noActual){
     if(noActual != NULL){
         int numero = retornaNumero(noActual->tipoVariavel);
         switch(numero){
-            
+            /*Print*/
+            case 14:{
+                /*guardar posição numa estrutura*/
+                printf(" %s \n", noActual->filho->tipoVariavel);
+
+            };break;
             /*default*/
             case 0:{};
         }
 
         if(noActual->filho != NULL){
-            llvmFile(noActual->filho);
+            llvmPrints(noActual->filho);
         }
 
         if(noActual->irmao != NULL){
-            llvmFile(noActual->irmao);
+            llvmPrints(noActual->irmao);
         }
     }   
 }

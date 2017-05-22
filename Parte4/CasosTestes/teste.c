@@ -3,7 +3,8 @@ int main(void);
 int a(int b, int c);
 
 int main(void){
-    printf("qualquercoisa");
+    printf("%d\n", a(2,2));
+    printf("qualquercoisa de qualquercoisa");
     return 0;
 }
 

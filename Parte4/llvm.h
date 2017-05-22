@@ -5,8 +5,8 @@
 #include "ast.h"
 #include "astAnotada.h"
 
-void llvmFile(ARVORE noActual);
-void inicializarTabelaSimbolos(ARVORE raiz);
+void inicializarLLVM(ARVORE raiz);
 char *tipoDeValores(char *tipo);
+void llvmPrints(ARVORE noActual);
 
 #endif
