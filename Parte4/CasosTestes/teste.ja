@@ -1,4 +1,5 @@
 class teste { 
+    public static int a;
     public static void f(int a, double b, boolean c){}
     
     public static void main(String[] args) { 

@@ -7,6 +7,7 @@
     #include "estruturas.h"
     #include "ast.h"
     #include "astAnotada.h"
+    #include "llvm.h"
  
     /*para %locations*/
     int yycolumn=1;
@@ -27,6 +28,7 @@
 
     /*cenas sobre a AST*/
     ARVORE raiz = NULL;
+
 
     /*Flag para verificar se há erro sintatico*/
     int error = 0;
@@ -573,15 +575,13 @@ int main(int argc, char *argv[]){
             yyparse();
             analiseAST(raiz);
             imprimirAST(raiz, error, 0, 1);
-        }else{
-            /*construção do llvm*/
-            aux_2 = 1;
-            yyparse();
-            
-
         }
     }else{
-        
+        /*construção do llvm*/
+        aux_2 = 1;
+        yyparse();
+        inicializarTabelaSimbolos(raiz);
+        llvmFile(raiz);
     }
     return 0;
 }

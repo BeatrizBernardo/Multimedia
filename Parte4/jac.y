@@ -6,6 +6,8 @@
     #include "y.tab.h"
     #include "estruturas.h"
     #include "ast.h"
+    #include "astAnotada.h"
+    #include "llvm.h"
 
     void yyerror (const char *s);
     int yylex(void);

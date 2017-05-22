@@ -11,9 +11,11 @@ class gcd2 {
         } else      
             System.out.println("Error: two parameters required.");  
     }  
+
+    public static double t;  
     
     public static int gcd(int a, int b) {   
-        double z; 
+        
         if (a == 0)        
             return b;    
         else {        
@@ -22,8 +24,8 @@ class gcd2 {
                     a = a-b;            
                 else                
                     b = b-a;  
-            z = -2;    
-            return z+a;    
+            
+            return a;    
         }  
     } 
 }

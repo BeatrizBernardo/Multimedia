@@ -713,3 +713,8 @@ void imprimirASTAnotada(ARVORE noActual, int error, int numFilhos, int flagImpri
         
     }  
 }
+
+CLASSE getSymbolTabel(ARVORE raiz){
+    analiseAST(raiz);
+    return tabelaSimbolos;
+}
