@@ -2,18 +2,32 @@ class gcd2 {
     public static int gcd;
     public static double z;  
     public static void main(String[] args) {    
-        int a, b;    
+        int d;
+        int a, b;   
+        double f; 
         if (args.length >= 2) {      
             a = Integer.parseInt(args[0]);      
             b = Integer.parseInt(args[1]);      
             gcd = gcd(a, b);      
-            System.out.println(gcd);    
-        } else      
+            System.out.println(gcd + 4);    
+        } else{
+            
+            d = 5;
+            
+            f = 5.5;
             System.out.println("Error: two parameters required.");  
+  
+        }     
+            
+
     }  
 
-    public static double t;  
-    
+
+    public static int a(int b, double c, boolean d){
+        System.out.println(b);  
+        return 1;
+    }
+
     public static int gcd(int a, int b) {   
         
         if (a == 0)        

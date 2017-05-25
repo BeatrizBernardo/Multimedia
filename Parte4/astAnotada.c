@@ -55,8 +55,7 @@ int retornaNumero(char *tipoVariavel){
           (strcmp(tipoVariavel, "Not") == 0)){
         return 5;
     }else if((strcmp(tipoVariavel, "Length") == 0) || 
-            (strcmp(tipoVariavel, "DecLit") == 0) ||
-            (strcmp(tipoVariavel, "ParseArgs") == 0)){
+            (strcmp(tipoVariavel, "DecLit") == 0) ){
         return 6;
     }else if(strcmp(tipoVariavel, "RealLit") == 0){
         return 7;
@@ -79,6 +78,10 @@ int retornaNumero(char *tipoVariavel){
         return 13;
     }else if(strcmp(tipoVariavel, "Print") == 0){
         return 14;
+    }else if(strcmp(tipoVariavel, "ParseArgs") == 0){
+        return 15;
+    }else if(strcmp(tipoVariavel, "Return") == 0){
+        return 16;
     }else{
         return 0;
     }
@@ -331,7 +334,8 @@ void symbolTabel2(ARVORE noActual, CLASSE tabela, int flagCall){
                 flagCall = 0;
             };break;
             /*valores inteiros*/
-            case 6:{
+            case 6:{ }
+            case 15:{
                 noActual->noAnotado = 1;
                 noActual->stringAST = strdup("int");
                 flagVarDecl = 0;
@@ -560,12 +564,12 @@ char *procurarTipoRetornoMetodo(char *nome, char *parametros){
 /*procura o tipo de retorno de uma variavel - primeiro na tabela local, depois na global*/
 char *procurarTipoVariavel(char *nome, CLASSE tabela){
 
-    //printf(" - - -- - - -- -- - - - - - - -- - - - - - -- %s\n", nome);
+    //printf(" - - -- - - -- -- - - - - - - -- - - - - - -- %s %s\n", nome, tabela->name);
     METHOD aux = tabela->proximoMethod;
     CLASSE auxClasse = tabelaSimbolos;
     /*procura primeiro se é local*/
     while(aux != NULL){
-        //printf("aaaaaaaaaaaaa>>>>>>>>>>>>>> %s %s\n", aux->name, aux->type);
+       //printf("aaaaaaaaaaaaa>>>>>>>>>>>>>> %s %s\n", aux->name, aux->type);
         if(strcmp(nome, aux->name) == 0){
             return aux->type;
         }

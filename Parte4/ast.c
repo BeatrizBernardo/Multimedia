@@ -30,6 +30,7 @@ ARVORE criarNo (char *tipoVariavel, char *valor, int numLinha, int numColuna){
         no->numColuna = numColuna;
 
         no->pos = 0;
+        no->tamanhoString = 0;
 
         /*string AST*/
         no->noAnotado = 0;
