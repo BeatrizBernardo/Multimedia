@@ -1,6 +1,6 @@
-class gcd2 {  
+/*class gcd2 {  
     public static int gcd;
-    public static double z;  
+    //public static double z;  
     public static void main(String[] args) {    
         int d;
         int a, b;   
@@ -42,4 +42,14 @@ class gcd2 {
             return a;    
         }  
     } 
+}*/
+
+class gcd2{
+    public static int z;
+    public static void main(String[] args){
+        int c;
+        double z;
+        c = -1;
+        return;
+    }
 }

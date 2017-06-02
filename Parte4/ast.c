@@ -35,12 +35,9 @@ ARVORE criarNo (char *tipoVariavel, char *valor, int numLinha, int numColuna){
         /*string AST*/
         no->noAnotado = 0;
         no->stringAST = NULL;
-        //no->valor = (char*)malloc(strlen(valor) + 1);
-        //strcpy(no->valor, valor);
         
         no->filho = NULL;
         no->irmao = NULL;        
-        //printf("<<<<<< >>>>>>><<<<<<<<<>>>>>>> %s\n", no->tipoVariavel);
     }
     return no;
 }

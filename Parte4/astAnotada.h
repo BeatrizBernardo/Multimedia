@@ -8,7 +8,8 @@ typedef struct method{
     char *name;
     char *type;
     int is_param; /*0 - NO, 1 - YES*/
-    METHOD proximoMethod;
+    int variavelTemporaria; /*variavel temporaria no LLVM*/
+    METHOD proximoMethod; 
 }MTHD;
 
 typedef struct classe *CLASSE;
@@ -19,6 +20,7 @@ typedef struct classe{
     int is_variavel; /*0 - não variavel, 1 - variavel*/
     int num_params;
     int pos; /*marcar a posição na tabela global*/
+    int variavelTemporaria; /*variavel temporaria no LLVM*/
     CLASSE proximaClass;
     METHOD proximoMethod;
 }CLSS;
